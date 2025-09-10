@@ -47,4 +47,6 @@ dependencies {
 
     ksp(libs.com.google.dagger.compiler)
     ksp(libs.com.google.dagger.android.processor)
+
+    implementation("de.tebbeubben.remora:lib")
 }
