@@ -57,7 +57,7 @@ class OverviewMenusImpl @Inject constructor(
     ) {
 
         PRE(R.string.overview_show_predictions, app.aaps.core.ui.R.attr.predictionColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.prediction_shortname, enabledByDefault = true),
-        BG_PARAB(R.string.overview_show_bgParabola, app.aaps.core.ui.R.attr.bgParabolaColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.bgParabola_shortname),
+        BG_PARAB(R.string.overview_show_bgParabola, app.aaps.core.ui.R.attr.bgParabolaColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.bgParabola_shortname, enabledByDefault = true),
         TREAT(R.string.overview_show_treatments, app.aaps.core.ui.R.attr.cobColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.treatments_shortname, enabledByDefault = true),
         BAS(R.string.overview_show_basals, app.aaps.core.ui.R.attr.basal, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.basal_shortname, enabledByDefault = true),
         ABS(R.string.overview_show_abs_insulin, app.aaps.core.ui.R.attr.iobColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.abs_insulin_shortname),
@@ -105,9 +105,9 @@ class OverviewMenusImpl @Inject constructor(
                 }
             else
                 listOf(
-                    arrayOf(true, true, true, true, false, false, false, false, false, false, false, false, false, false, false),
-                    arrayOf(false, false, false, false, true, false, false, false, false, false, false, false, false, false, false),
-                    arrayOf(false, false, false, false, false, true, false, false, false, false, false, false, false, false, false)
+                    arrayOf(true, false, true, true, false, false, false, false, false, false, false, false, false, false, false),
+                    arrayOf(false, false, false, false, false, true, false, false, false, false, false, false, false, false, false),
+                    arrayOf(false, false, false, false, false, false, true, false, false, false, false, false, false, false, false)
                 )
 
     @Synchronized
