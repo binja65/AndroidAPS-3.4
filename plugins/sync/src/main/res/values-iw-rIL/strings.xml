@@ -64,6 +64,7 @@
     <string name="ns_use_ws_title">התחבר ל-websockets</string>
     <string name="ns_use_ws_summary">משמעות ההפעלה: עדכונים, קבלת התראות והודעות במהירות גבוהה יותר תוך צריכת סוללה גבוהה יותר, בדומה ל-v1. כל שאר המעלים ל-NS חייבים להשתמש בפרוטוקול v3.</string>
     <!-- Tidepool -->
+    <string name="summary_tidepool_dev_servers">אם האפשרות מופעלת, נתונים יישלחו לשרתי ניסוי במקום לשרתים הרגילים</string>
     <string name="title_tidepool_dev_servers">שימוש בשרתי אינטגרציה (בדיקה)</string>
     <string name="tidepool">Tidepool</string>
     <string name="tidepool_shortname">TDP</string>
