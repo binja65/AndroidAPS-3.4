@@ -75,6 +75,7 @@
     <string name="ns_use_ws_title">連線到 Websockets</string>
     <string name="ns_use_ws_summary">啟用意味著：更快的更新、接收警報和公告以及更高的電池消耗，類似於 v1。所有其他上傳器到 NS 必須使用 v3 協議。</string>
     <!-- Tidepool -->
+    <string name="summary_tidepool_dev_servers">若啟用，資料上傳將會發送至測試伺服器，而非一般的伺服器。</string>
     <string name="title_tidepool_dev_servers">使用集成（測試）伺服器</string>
     <string name="tidepool">Tidepool</string>
     <string name="tidepool_shortname">TDP</string>
