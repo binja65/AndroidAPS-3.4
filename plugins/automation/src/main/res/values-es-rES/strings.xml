@@ -140,4 +140,5 @@
     <string name="triggerStepsCountLabel">Número de pasos</string>
     <string name="triggerStepsCountDesc">Número de pasos por %1$s minutos %2$s %3$.0f</string>
     <string name="triggerStepsCountDropdownLabel">Duración de la medición</string>
+    <!--    SMB mode-->
 </resources>
