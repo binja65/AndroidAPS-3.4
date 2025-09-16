@@ -140,4 +140,5 @@
     <string name="triggerStepsCountLabel">Počet kroků</string>
     <string name="triggerStepsCountDesc">Počet kroků za %1$s minut %2$s %3$.0f</string>
     <string name="triggerStepsCountDropdownLabel">Délka měření</string>
+    <!--    SMB mode-->
 </resources>
