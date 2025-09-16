@@ -16,6 +16,7 @@ import app.aaps.core.graph.data.ScaledDataPoint
 import app.aaps.core.graph.data.Shape
 import app.aaps.core.interfaces.aps.AutosensData
 import app.aaps.core.interfaces.aps.AutosensResult
+import app.aaps.core.interfaces.aps.GlucoseStatusAutoIsf
 import app.aaps.core.interfaces.aps.IobTotal
 import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.graph.Scale
@@ -290,7 +291,7 @@ class PrepareIobAutosensGraphDataWorker(
         // BG PARABOLA
         val bgParabolaArrayHist: MutableList<ScaledDataPoint> = ArrayList()
         val bgParabolaArrayPrediction: MutableList<ScaledDataPoint> = ArrayList()
-        val glucoseStatus = glucoseStatusProvider.glucoseStatusData
+        val glucoseStatus = glucoseStatusProvider.glucoseStatusData  as GlucoseStatusAutoIsf?
         val corr = glucoseStatus?.corrSqu ?: 0.0
         if ( corr > 0.0) {
             val a0 = glucoseStatus!!.a0

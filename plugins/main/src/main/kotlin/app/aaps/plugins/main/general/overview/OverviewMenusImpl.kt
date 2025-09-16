@@ -26,6 +26,7 @@ import app.aaps.core.interfaces.aps.Loop
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.overview.OverviewMenus
+import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventRefreshOverview
@@ -45,7 +46,8 @@ class OverviewMenusImpl @Inject constructor(
     private val preferences: Preferences,
     private val rxBus: RxBus,
     private val config: Config,
-    private val loop: Loop
+    private val loop: Loop,
+    private val activePlugin: ActivePlugin
 ) : OverviewMenus {
 
     enum class CharTypeData(
@@ -70,14 +72,14 @@ class OverviewMenusImpl @Inject constructor(
         SEN(R.string.overview_show_sensitivity, app.aaps.core.ui.R.attr.ratioColor, app.aaps.core.ui.R.attr.menuTextColorInverse, primary = false, secondary = true, shortnameId = R.string.sensitivity_shortname),
         VAR_SENS(R.string.overview_show_variable_sens, app.aaps.core.ui.R.attr.ratioColor, app.aaps.core.ui.R.attr.menuTextColorInverse, primary = false, secondary = true, shortnameId = R.string.variable_sensitivity_shortname),
         ACT(R.string.overview_show_activity, app.aaps.core.ui.R.attr.activityColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.activity_shortname),
-        BG_PARAB(R.string.overview_show_bgParabola, app.aaps.core.ui.R.attr.bgParabolaColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.bgParabola_shortname),
+        BG_PARAB(R.string.overview_show_bgParabola, app.aaps.core.ui.R.attr.bgParabolaColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.bgParabola_shortname, enabledByDefault = true),
         DEVSLOPE(R.string.overview_show_deviation_slope, app.aaps.core.ui.R.attr.devSlopePosColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.devslope_shortname),
         HR(R.string.overview_show_heartRate, app.aaps.core.ui.R.attr.heartRateColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.heartRate_shortname),
         STEPS(R.string.overview_show_steps, app.aaps.core.ui.R.attr.stepsColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.steps_shortname),
     }
 
     init {
-        CharTypeData.PRE.visibility = {
+         CharTypeData.PRE.visibility = {
             when {
                 config.APS        -> loop.lastRun?.request?.hasPredictions == true
                 config.AAPSCLIENT -> true
@@ -85,7 +87,7 @@ class OverviewMenusImpl @Inject constructor(
             }
         }
         CharTypeData.DEVSLOPE.visibility = { config.isDev() }
-        CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) }
+        //CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf }     // see below
     }
 
     companion object {
@@ -120,7 +122,7 @@ class OverviewMenusImpl @Inject constructor(
                 }
             else
                 listOf(
-                    arrayOf(true, true, true, false, false, false, false, false, false, false, false, false, false, false, false),
+                    arrayOf(true, false, true, true, false, false, false, false, false, false, false, false, false, false, false),
                     arrayOf(false, false, false, false, true, false, false, false, false, false, false, false, false, false, false),
                     arrayOf(false, false, false, false, false, true, false, false, false, false, false, false, false, false, false)
                 )
@@ -159,12 +161,6 @@ class OverviewMenusImpl @Inject constructor(
         )
         chartButton.setOnClickListener { v: View ->
             var itemRow = 0
-            val predictionsAvailable: Boolean = when {
-                config.APS        -> loop.lastRun?.request?.hasPredictions == true
-                config.AAPSCLIENT -> true
-                else              -> false
-            }
-            val runningAutoisf =  loop.lastRun?.request?.algorithm?.name == "AUTO_ISF"
             val popup = PopupWindow(v.context)
             popup.setBackgroundDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground).toDrawable())
             val scrollView = ScrollView(v.context)                        // required to be able to scroll menu on low res screen
@@ -176,6 +172,9 @@ class OverviewMenusImpl @Inject constructor(
 
             scrollView.addView(layout)
             layout.columnCount = MAX_GRAPHS
+            val runningAutoIsf = activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
+            CharTypeData.BG_PARAB.visibility = { runningAutoIsf }
+            CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf }
 
             // insert primary items
             CharTypeData.entries.forEach { m ->
