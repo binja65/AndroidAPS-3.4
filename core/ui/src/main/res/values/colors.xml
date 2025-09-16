@@ -101,7 +101,7 @@
     <color name="sens">#008585</color>
 
     <!--    AutoISF-->
-    <color name="bgParabolaColor">#AA00AA</color>
+    <color name="bgParabolaColor">#FF00FF</color>
 
     <color name="ribbonDefault">#8C8C8C</color>
     <color name="daySelected">#D000FF00</color>
