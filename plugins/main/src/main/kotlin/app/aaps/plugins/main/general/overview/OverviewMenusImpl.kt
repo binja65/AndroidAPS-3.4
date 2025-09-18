@@ -78,6 +78,11 @@ class OverviewMenusImpl @Inject constructor(
         STEPS(R.string.overview_show_steps, app.aaps.core.ui.R.attr.stepsColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.steps_shortname),
     }
 
+    private val runningAutoIsf: Boolean
+        get() = try {
+            activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
+        } catch (e: Exception) { false }
+
     init {
          CharTypeData.PRE.visibility = {
             when {
@@ -87,7 +92,8 @@ class OverviewMenusImpl @Inject constructor(
             }
         }
         CharTypeData.DEVSLOPE.visibility = { config.isDev() }
-        //CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf }     // see below
+        CharTypeData.BG_PARAB.visibility = { runningAutoIsf }
+        CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf }
     }
 
     companion object {
@@ -98,7 +104,7 @@ class OverviewMenusImpl @Inject constructor(
     override fun enabledTypes(graph: Int): String {
         val r = StringBuilder()
         for (type in CharTypeData.entries)
-            if (setting[graph][type.ordinal]) {
+            if (setting[graph][type.ordinal] && type.visibility()) {
                 r.append(rh.gs(type.shortnameId))
                 r.append(" ")
             }
@@ -172,9 +178,6 @@ class OverviewMenusImpl @Inject constructor(
 
             scrollView.addView(layout)
             layout.columnCount = MAX_GRAPHS
-            val runningAutoIsf = activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
-            CharTypeData.BG_PARAB.visibility = { runningAutoIsf }
-            CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf }
 
             // insert primary items
             CharTypeData.entries.forEach { m ->
