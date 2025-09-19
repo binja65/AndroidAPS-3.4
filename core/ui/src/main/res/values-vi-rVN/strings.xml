@@ -10,12 +10,20 @@
     <string name="wrong_pump_data">Phát hiện dữ liệu từ bơm khác. Đổi trình điều khiển để đặt lại trạng thái.</string>
     <string name="bg_label">Đường huyết</string>
     <string name="calibration">Hiệu chuẩn</string>
+    <string name="alarminxmin">Báo động sau %1$d phút</string>
     <string name="treatmentdeliveryerror">Bolus gặp lỗi. Hãy kiểm tra thủ công lượng insulin và carb đã bơm</string>
+    <string name="bolus_reminder">Nhắc nhở bolus</string>
+    <string name="pumpsuspended">Bơm đã tạm dừng</string>
+    <string name="pump_running">Pump đang chạy</string>
+    <string name="loopsuspended">Vòng lặp đã tạm dừng</string>
     <string name="profileswitch_ismissing">Thiếu ProfileSwitch. Vui lòng thực hiện chuyển hồ sơ (profile switch) hoặc nhấn ‘Kích hoạt hồ sơ’ (Activate Profile) trong LocalProfile.</string>
     <string name="select_for_removal">Chọn để xóa</string>
     <string name="confirm_remove_multiple_items">Bạn có chắc chắn muốn xóa %1$d mục không</string>
+    <string name="location_permission_not_granted">Chưa cấp quyền vị trí. Hãy cho phép trong cài đặt Android.</string>
     <!--    Protection-->
     <!--    Profile-->
+    <string name="minimalbasalvaluereplaced">Giá trị basal đã được thay bằng giá trị tối thiểu được hỗ trợ: %1$s</string>
+    <string name="maximumbasalvaluereplaced">Giá trị basal đã được thay bằng giá trị tối đa được hỗ trợ: %1$s</string>
     <!--    ProfileFunction-->
     <!--    APSResult-->
     <!--    ProfileSwitch-->
@@ -24,7 +32,9 @@
     <!--    Command-->
     <!--    PumpEnactResult-->
     <!--    CarbsReq-->
+    <string name="carbsreq">Cần thêm %1$d g carb trong vòng %2$d phút</string>
     <!--    TDDStatsActivity-->
+    <string name="warning_Message">Kết quả có thể sai lệch nếu tính cả bolus dùng để mồi/đổ đầy ống!</string>
     <!--    Ntp-->
     <!-- User Entry -->
     <!-- HardLimits -->
@@ -32,12 +42,16 @@
     <!-- Autotune -->
     <!-- Alerts -->
     <!-- BolusWizard -->
+    <string name="bolus_advisor_message">Bạn đang có đường huyết cao. Thay vì ăn ngay, nên chờ đến khi đường huyết ổn định hơn. Bạn có muốn thực hiện bolus chỉnh sửa ngay và được nhắc khi đến giờ ăn? Trong trường hợp này, không có carbs nào được ghi nhận và bạn sẽ phải sử dụng wizard một lần nữa khi được nhắc.</string>
+    <string name="slowabsorptiondetected"><![CDATA[<font color=\'%1$s\'>!!!!! Phát hiện hấp thụ carb chậm: %2$d%% thời gian. Kiểm tra lại tính toán của bạn. COB có thể bị đánh giá quá cao, dẫn đến việc bơm insulin nhiều hơn !!!!!</font>]]></string>
+    <string name="wizard_no_cob">COB không xác định! Thiếu dữ liệu BG hoặc ứng dụng vừa khởi động lại?</string>
     <!--    Preferences-->
     <!--    Protection-->
     <!--    Pumps -->
     <!--    Constraints-->
     <!--    Dialogs-->
     <!-- TwoMessagesDialog -->
+    <string name="password_preferences_decrypt_prompt">Bạn sẽ được yêu cầu nhập mật khẩu chính, cần để giải mã các cài đặt đã nhập.</string>
     <!-- <unattended_export> -->
     <!-- <unattended_export result messages> -->
     <string name="export_result_message_about_to_expire">Đã xuất cài đặt: mật khẩu sắp hết hạn. Vui lòng xuất thủ công và nhập lại mật khẩu.</string>
@@ -51,6 +65,7 @@
     <!-- BluetoothDevicePreference -->
     <!--    Combo-->
     <!--    BlePreCheck-->
+    <string name="ble_not_supported_or_not_paired">Không hỗ trợ Bluetooth hoặc thiết bị chưa được ghép nối.</string>
     <string name="location_not_found_message">Để phát hiện Bluetooth trên các thiết bị mới, cần bật dịch vụ vị trí. AAPS không theo dõi vị trí của bạn và có thể tắt dịch vụ vị trí sau khi ghép nối thành công.</string>
     <!--    Preferences -->
     <!-- SmsCommunicator -->
