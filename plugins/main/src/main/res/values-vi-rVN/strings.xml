@@ -50,10 +50,6 @@
     <string name="smscommunicator_set_closed_loop_reply_with_code">Chuyển chế độ Loop sang Vòng lặp kín: trả lời mã %1$s</string>
     <string name="smscommunicator_current_loop_mode">Chế độ Vòng lặp hiện tại: %1$s</string>
     <string name="wrong_format">Định dạng sai</string>
-    <string name="sms_actual_bg">Đường huyết:</string>
-    <string name="sms_last_bg">Đường huyết gần nhất:</string>
-    <string name="sms_delta">Độ lệch:</string>
-    <string name="sms_iob">IOB:</string>
     <string name="sms_wrong_tbr_duration">Thời gian TBR phải là bội số của %1$d phút và lớn hơn 0.</string>
     <string name="a11y_otp_qr_code">Mã QR để thiết lập mật khẩu dùng một lần</string>
     <string name="disabled_loop">Vòng lặp đã tắt</string>
