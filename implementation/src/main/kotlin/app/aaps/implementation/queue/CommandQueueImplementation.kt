@@ -104,7 +104,7 @@ class CommandQueueImplementation @Inject constructor(
     private val decimalFormatter: DecimalFormatter,
     private val instantiator: Instantiator,
     private val jobName: CommandQueueName,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : CommandQueue {
 
     private val disposable = CompositeDisposable()
@@ -167,7 +167,8 @@ class CommandQueueImplementation @Inject constructor(
         synchronized(queue) {
             for (i in queue.indices.reversed()) {
                 if (queue[i].commandType == type) {
-                    queue.removeAt(i)
+                    queue.removeAt(i).callback
+                        ?.result(instantiator.providePumpEnactResult().success(false).enacted(false))?.run()
                 }
             }
         }
