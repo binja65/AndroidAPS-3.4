@@ -53,16 +53,66 @@
     <string name="profileswitch_ismissing">Thiếu ProfileSwitch. Vui lòng thực hiện chuyển hồ sơ (profile switch) hoặc nhấn ‘Kích hoạt hồ sơ’ (Activate Profile) trong LocalProfile.</string>
     <string name="select_for_removal">Chọn để xóa</string>
     <string name="confirm_remove_multiple_items">Bạn có chắc chắn muốn xóa %1$d mục không</string>
+    <string name="stoptemptarget">Dừng mục tiêu tạm thời</string>
+    <string name="closedloop">Vòng lặp kín</string>
+    <string name="openloop">Vòng lặp mở</string>
+    <string name="lowglucosesuspend">Tạm ngừng khi đường huyết thấp</string>
+    <string name="pump_disconnected">Pump đã ngắt kết nối</string>
+    <string name="pump_suspended">Pump đã tạm ngưng</string>
+    <string name="mode_reverted">Chế độ đã được khôi phục</string>
+    <string name="dia">DIA</string>
+    <string name="ic_short">IC</string>
+    <string name="isf_short">ISF</string>
+    <string name="canceling_tbr_failed">Hủy liều basal tạm thời thất bại</string>
+    <string name="canceling_eb_failed">Hủy liều bolus mở rộng thất bại</string>
+    <string name="virtualpump_uploadstatus_title">Tải trạng thái bơm lên NS hoặc Tidepool</string>
+    <string name="iob_label">Insulin đang hoạt động (IOB)</string>
+    <string name="loopstatus_targets">MỤC TIÊU:</string>
+    <string name="loopstatus_OAPS_result">KẾT QUẢ OAPS:</string>
+    <string name="extended_bolus_data_point_graph">%1$.2f U ( %2$.2f U/h )</string>
+    <string name="temp_basal_tsf_fake_extended">%1$.2f U/h (%2$.2fE) @%3$s</string>
+    <string name="temp_basal_tsf_absolute">%1$.2f U/h @%2$s</string>
+    <string name="temp_basal_tsf_percent">%1$.0f%% @%2$s</string>
+    <string name="extended_bolus_full">E %1$.2f U/h @%2$s %3$s/%4$s min</string>
+    <string name="extended_bolus_medium">%1$.2f U/h %2$s/%3$s\'</string>
+    <string name="nav_export">Xuất cài đặt</string>
     <string name="location_permission_not_granted">Chưa cấp quyền vị trí. Hãy cho phép trong cài đặt Android.</string>
     <!--    Protection-->
+    <string name="wrongpassword">Sai mật khẩu</string>
+    <string name="wrongpin">Sai mã PIN</string>
+    <string name="passwords_dont_match">Mật khẩu không khớp</string>
+    <string name="pin_dont_match">Mã PIN không khớp</string>
     <!--    Profile-->
+    <string name="basalprofilenotaligned">Giá trị liều basal không khớp với giờ: %1$s</string>
     <string name="minimalbasalvaluereplaced">Giá trị basal đã được thay bằng giá trị tối thiểu được hỗ trợ: %1$s</string>
     <string name="maximumbasalvaluereplaced">Giá trị basal đã được thay bằng giá trị tối đa được hỗ trợ: %1$s</string>
+    <string name="profile_per_unit">/U</string>
+    <string name="profile_ins_units_per_hour">U/h</string>
+    <string name="profile_carbs_per_unit">g/U</string>
     <!--    ProfileFunction-->
+    <string name="startprofile">Bắt đầu hồ sơ %1$d%% trong %2$d phút</string>
     <!--    APSResult-->
+    <string name="cancel_temp">Huỷ liều basal tạm</string>
+    <string name="let_temp_basal_run">Cho basal tạm thời tiếp tục</string>
+    <string name="duration">Thời lượng</string>
+    <string name="reason">Lý do</string>
+    <string name="nochangerequested">Không có thay đổi nào được yêu cầu</string>
     <!--    ProfileSwitch-->
+    <string name="zerovalueinprofile">Hồ sơ không hợp lệ: %1$s</string>
     <!--    Temptarget-->
+    <string name="mins">%1$d phút</string>
     <!--    Translator-->
+    <string name="careportal_mbg">Đường huyết nhập tay hoặc hiệu chuẩn</string>
+    <string name="careportal_settings_export">Xuất cài đặt</string>
+    <string name="careportal_note">Ghi chú</string>
+    <string name="careportal_question">Câu hỏi</string>
+    <string name="careportal_exercise">Bài tập luyện</string>
+    <string name="careportal_announcement_message">Thông báo: %1$s</string>
+    <string name="careportal_settings_export_message">Xuất cài đặt : %1$s</string>
+    <string name="careportal_note_message">Ghi chú: %1$s</string>
+    <string name="careportal_question_message">Câu hỏi: %1$s</string>
+    <string name="careportal_exercise_message">Bài tập luyện : %1$s</string>
+    <string name="careportal_pump_site_change">Thay vị trí kim truyền</string>
     <!--    Command-->
     <!--    PumpEnactResult-->
     <!--    CarbsReq-->
@@ -84,10 +134,20 @@
     <!--    Pumps -->
     <!--    Constraints-->
     <!--    Dialogs-->
+    <string name="ok">ĐỒNG Ý</string>
+    <string name="dismiss">BỎ QUA</string>
     <!-- TwoMessagesDialog -->
     <string name="password_preferences_decrypt_prompt">Bạn sẽ được yêu cầu nhập mật khẩu chính, cần để giải mã các cài đặt đã nhập.</string>
     <!-- <unattended_export> -->
+    <string name="export_ok">ĐỒNG Ý</string>
+    <string name="export_warning">Cảnh báo</string>
+    <string name="export_expired">Đã hết hạn</string>
+    <string name="export_disabled">Vô hiệu hoá</string>
+    <string name="export_failed">Thất bại</string>
+    <string name="export_alert">CẢNH BÁO</string>
     <!-- <unattended_export result messages> -->
+    <string name="export_result_message_exported">Xuất cài đặt</string>
+    <string name="export_result_message_failed">Xuất cài đặt THẤT BẠI!</string>
     <string name="export_result_message_about_to_expire">Đã xuất cài đặt: mật khẩu sắp hết hạn. Vui lòng xuất thủ công và nhập lại mật khẩu.</string>
     <string name="export_result_message_expired">Xuất cài đặt bị hủy: mật khẩu đã hết hạn. Vui lòng xuất thủ công và nhập lại!</string>
     <string name="export_result_message_disabled">Cảnh báo (automation): Xuất cài đặt chưa được bật!</string>
@@ -95,15 +155,26 @@
     <string name="a11y_min_button_description">giảm %1$s bởi%2$s</string>
     <string name="a11y_plus_button_description">tăng %1$s bởi %2$s</string>
     <string name="you_are_on_allowed_limit">Đã đạt giới hạn cho phép</string>
+    <string name="format_hour_minute">%1$dh %2$dm</string>
     <!-- datetime layout -->
+    <string name="event_time_label">Thời gian sự kiện</string>
     <!-- BluetoothDevicePreference -->
+    <string name="need_connect_permission">Ứng dụng yêu cầu quyền Bluetooth</string>
     <!--    Combo-->
+    <string name="user_request" comment="26 characters max for translation">Yêu cầu người dùng</string>
+    <string name="pump_paired" comment="26 characters max for translation">Pump đã ghép nối</string>
     <!--    BlePreCheck-->
+    <string name="ble_not_supported">Thiết bị không hỗ trợ Bluetooth.</string>
     <string name="ble_not_supported_or_not_paired">Không hỗ trợ Bluetooth hoặc thiết bị chưa được ghép nối.</string>
+    <string name="ble_not_enabled">Bluetooth chưa được bật.</string>
+    <string name="location_not_found_title">Vị trí chưa được bật</string>
     <string name="location_not_found_message">Để phát hiện Bluetooth trên các thiết bị mới, cần bật dịch vụ vị trí. AAPS không theo dõi vị trí của bạn và có thể tắt dịch vụ vị trí sau khi ghép nối thành công.</string>
     <!--    Preferences -->
+    <string name="nav_plugin_preferences">Tùy chọn plugin</string>
     <!-- SmsCommunicator -->
+    <string name="smscommunicator_missingsmspermission">Thiếu quyền SMS</string>
     <!-- About -->
+    <string name="cta_dont_kill_my_app_info">Đừng tắt ứng dụng này!</string>
     <string name="about_link_urls">\n\nDocumentation:\nhttps://wiki.aaps.app\n\nFacebook:\nhttps://www.facebook.com/groups/AndroidAPSUsers</string>
     <plurals name="days">
         <item quantity="other">%1$d ngày</item>
@@ -119,6 +190,26 @@
     <string name="cleanup_db_confirm_sync">Bạn có muốn dọn dẹp cơ sở dữ liệu không?\nViệc này sẽ xóa các thay đổi đã theo dõi và dữ liệu lịch sử cũ hơn 3 tháng.\nThao tác này sẽ giúp đồng bộ toàn bộ nhanh hơn đáng kể.</string>
     <string name="cleared_entries">Các mục đã được xóa</string>
     <!--    Weekday-->
+    <string name="weekday_sunday_short">Sun</string>
+    <string name="weekday_saturday_short">Sat</string>
+    <string name="weekday_friday_short">Fri</string>
+    <string name="weekday_thursday_short">Thu</string>
+    <string name="weekday_wednesday_short">Wed</string>
+    <string name="weekday_tuesday_short">Tue</string>
+    <string name="weekday_monday_short">Mon</string>
     <!-- WeekdayPicker -->
+    <string name="monday_short">M</string>
+    <string name="tuesday_short">T</string>
+    <string name="wednesday_short">W</string>
+    <string name="thursday_short">T</string>
+    <string name="friday_short">F</string>
+    <string name="saturday_short">S</string>
+    <string name="sunday_short">S</string>
     <!--    DecimalFormatterImpl -->
+    <string name="format_insulin_units1">%1$.1f U</string>
+    <string name="format_insulin_units">%1$.2f U</string>
+    <string name="percent_rate_duration">Tốc độ: %1$.2f%% (%2$.2f U/h) Thời gian: %3$d phút</string>
+    <string name="rate_percent_duration">Tốc độ: %1$.2f U/h (%2$.2f%%) Thời gian: %3$d min</string>
+    <string name="percent_rate_duration_formatted"><![CDATA[<b>Tốc độ</b>: %1$.2f%% (%2$.2f U/h)<br><b>Thời gian</b>: %3$d phút<br>]]></string>
+    <string name="rate_percent_duration_formatted"><![CDATA[<b>Tốc độ</b>: %1$.2f U/h (%2$.2f%%) <br><b>Thời gian</b>: %3$d phút<br>]]></string>
 </resources>
