@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--    General-->
+    <string name="pump_base_basal_rate">%1$.2f U/h</string>
+    <string name="pump_not_initialized_profile_not_set">Bơm chưa được khởi tạo, hồ sơ (profile) chưa được thiết lập!</string>
     <string name="failed_update_basal_profile">Cập nhật hồ sơ liều basal không thành công</string>
     <string name="bolus_delivered_successfully">Đã tiêm Bolus thành công %1$.2f U</string>
     <string name="no_valid_basal_rate">Không đọc được liều basal hợp lệ từ bơm</string>
     <string name="limiting_iob">Giới hạn IOB: %1$.1f U – Lý do: %2$s.</string>
     <string name="loop_disabled">VÒNG LẶP BỊ TẮT DO GIỚI HẠN AN TOÀN</string>
+    <string name="event_type">Loại sự kiện</string>
+    <string name="reload">Tải lại</string>
+    <string name="mgdl">mg/dl</string>
+    <string name="mmol">mmol/l</string>
+    <string name="save">Lưu</string>
+    <string name="snooze">Nhắc lại</string>
+    <string name="virtual_pump">Virtual Pump</string>
+    <string name="constraints">Giới hạn</string>
+    <string name="pump_paused">Pump đã tạm dừng</string>
+    <string name="and">Và</string>
+    <string name="patient_name_default" comment="This is default patient display name, when user does not provide real one">Người dùng</string>
+    <string name="result">Kết quả</string>
+    <string name="settings">Cài đặt</string>
+    <string name="statuslights">Đèn báo trạng thái</string>
+    <string name="do_ns_upload_title">Tải dữ liệu đường huyết lên NS</string>
+    <string name="configbuilder_insulin">Thuốc Insulin</string>
+    <string name="value_unavailable_short">n/a</string>
+    <string name="master_password">Mật khẩu chính</string>
+    <string name="ue_export_to_csv">Xuất dữ liệu sang Excel (csv)</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="pump">Bơm</string>
+    <string name="missed_bg_readings">Thiếu dữ liệu đường huyết</string>
+    <string name="treatments_iob_label_string">IOB:</string>
+    <string name="mute">Im lặng</string>
+    <string name="success">Thành công</string>
+    <string name="advanced_settings_title">Cài đặt nâng cao</string>
+    <string name="extendedbolusdeliveryerror">Tiêm liều Bolus mở rộng thất bại</string>
+    <string name="aps_mode_title">Chế độ APS</string>
+    <string name="extended_bolus">Bolus mở rộng</string>
+    <string name="paused">Đã tạm dừng</string>
+    <string name="tdd_total">TDD Total</string>
+    <string name="tdd_old_data">Dữ liệu cũ</string>
     <string name="btwatchdog_summary">Tắt Bluetooth của điện thoại trong một giây nếu không thể kết nối với bơm. Điều này có thể hữu ích trên một số điện thoại khi ngăn xếp Bluetooth bị treo.</string>
     <string name="wrong_pump_data">Phát hiện dữ liệu từ bơm khác. Đổi trình điều khiển để đặt lại trạng thái.</string>
     <string name="bg_label">Đường huyết</string>
