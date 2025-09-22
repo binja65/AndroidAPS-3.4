@@ -25,9 +25,67 @@
     <string name="enable_smb_summary">Sử dụng Super Micro Boluses (SMB) thay cho basal tạm thời để có tác dụng nhanh hơn</string>
     <string name="enable_smb_always_summary">Bật SMB mọi lúc, không phụ thuộc vào COB, mục tiêu tạm thời hoặc bolus. Chỉ khả dụng khi sử dụng nguồn BG có bộ lọc dữ liệu nâng cao</string>
     <string name="enable_smb_after_carbs_summary">Bật SMB trong 6 giờ sau khi nạp carb, ngay cả khi COB bằng 0. Chỉ khả dụng khi sử dụng nguồn BG có bộ lọc dữ liệu nâng cao</string>
+    <string name="enable_smb_with_cob_summary">Bật SMB khi còn COB hoạt động.</string>
+    <string name="enable_smb_with_temp_target_summary">Bật SMB khi có mục tiêu tạm thời đang hoạt động (sắp ăn, tập thể dục)</string>
+    <string name="enable_smb_with_high_temp_target_summary">Bật SMB khi có mục tiêu tạm thời cao đang hoạt động (tập thể dục, trên 100 mg/dl hoặc 5,5 mmol/l)</string>
+    <string name="smb_max_minutes_summary">Số phút basal tối đa để giới hạn cho SMB</string>
+    <string name="carbs_req_threshold_summary">Số gram carbs tối thiểu để hiển thị cảnh báo gợi ý carbs. Gợi ý carbs dưới mức này sẽ không kích hoạt thông báo.</string>
+    <string name="lgs_threshold_summary">Đường huyết dưới mức này sẽ tạm dừng việc tiêm insulin. Mức mặc định sử dụng mô hình mục tiêu chuẩn. Người dùng có thể đặt giá trị trong khoảng 60 mg/dL (3,3 mmol/L) đến 100 mg/dL (5,5 mmol/L). Các giá trị dưới 65 mg/dL (3,6 mmol/L) sẽ sử dụng mô hình mặc định</string>
+    <string name="increasing_max_basal">Tăng basal tối đa vì thiết lập nhỏ hơn basal tối đa trong hồ sơ</string>
+    <string name="use_dynamic_sensitivity_summary">Điều chỉnh thuật toán để dùng độ nhạy insulin động thay cho giá trị hồ sơ</string>
     <!--    Verify if needed in safety-->
     <!--    Autotune   -->
     <!--    Loop -->
+    <string name="smb_frequency_exceeded">Một liều bolus đã được bơm trong vòng 3 phút trước, bỏ qua SMB</string>
+    <string name="pump_not_initialized">Pump chưa được khởi tạo!</string>
+    <string name="description_loop">Bật hoặc tắt chức năng thực thi để kích hoạt vòng lặp.</string>
+    <string name="ignore5m">Bỏ qua 5 phút</string>
+    <string name="ignore15m">Bỏ qua 15 phút</string>
+    <string name="ignore30m">Bỏ qua 30 phút</string>
+    <string name="open_loop_new_suggestion">Có đề xuất mới</string>
+    <string name="request_label">Yêu cầu</string>
+    <string name="loop_constraints_processed_label">Đã áp dụng giới hạn an toàn</string>
+    <string name="loop_open_mode_min_change_summary" formatted="false">Open Loop sẽ chỉ hiển thị yêu cầu thay đổi mới nếu thay đổi lớn hơn giá trị này theo %. Giá trị mặc định là 20%</string>
+    <string name="fallback_smb_no_tdd">Chuyển sang SMB. Không đủ dữ liệu TDD.</string>
+    <string name="fallback_to_isf_no_tdd">Chuyển sang độ nhạy insulin theo profile. Không đủ dữ liệu. Lý do: %1$s</string>
     <!-- Autotune -->
+    <string name="autotune_description">Hướng dẫn hỗ trợ điều chỉnh profile (ISF, tỉ lệ carb và liều basal)</string>
+    <string name="autotune_auto_summary">Nếu bật, Autotune sẽ tự động cập nhật và áp dụng hồ sơ đầu vào sau khi tính toán theo quy tắc tự động.</string>
+    <string name="autotune_categorize_uam_as_basal_summary">Chỉ bật khi bạn luôn nhập đúng toàn bộ carb đã ăn. Khi đó, Autotune sẽ dùng các mức tăng đột ngột để đề xuất điều chỉnh basal.</string>
+    <string name="autotune_tune_insulin_curve_summary">Chỉ bật nếu bạn sử dụng ‘free peak’. Tùy chọn này sẽ điều chỉnh thời gian đỉnh và thời gian hoạt động của insulin</string>
+    <string name="autotune_circadian_ic_isf_summary">Autotune sẽ không điều chỉnh các biến đổi theo nhịp sinh học (circadian). Tùy chọn này chỉ áp dụng việc hiệu chỉnh trung bình của IC và ISF vào hồ sơ nhịp sinh học của bạn</string>
+    <string name="autotune_additional_log_title">Ghi nhiều thông tin nhật ký hơn để hỗ trợ gỡ lỗi</string>
+    <string name="autotune_additional_log_summary">Chỉ bật khi được nhà phát triển yêu cầu để gửi thêm thông tin nhật ký, hỗ trợ gỡ lỗi plugin Autotune</string>
+    <string name="autotune_default_tune_days_summary">Số ngày dữ liệu mặc định được Autotune xử lý (tối đa 30)</string>
+    <string name="autotune_ic_warning">Profile đã chọn có %1$d giá trị IC. Autotune sẽ sử dụng %2$.2f g/U</string>
+    <string name="autotune_isf_warning">Profile đã chọn có %1$d giá trị ISF. Autotune sẽ sử dụng %2$.1f %3$s/U</string>
+    <string name="autotune_error">Dữ liệu đầu vào lỗi, hãy thử chạy lại Autotune hoặc giảm số ngày</string>
+    <string name="autotune_error_more_days">Dữ liệu đầu vào lỗi, hãy tăng số ngày</string>
+    <string name="autotune_warning_during_run">Đang bắt đầu tính toán Autotune, vui lòng chờ</string>
+    <string name="autotune_warning_after_run">Hãy kiểm tra kết quả cẩn thận trước khi sử dụng!</string>
+    <string name="autotune_percent">%</string>
+    <string name="autotune_copy_local_profile_message">Tạo hồ sơ cục bộ mới từ Hồ sơ Autotune này?</string>
+    <string name="autotune_update_local_profile_message">Cập nhật hồ sơ %1$s bằng Hồ sơ Autotune?</string>
+    <string name="autotune_revert_local_profile_message">Hoàn nguyên hồ sơ %1$s về Hồ sơ Đầu vào không?</string>
     <!--    autoISF -->
+    <string name="half_basal_exercise_target_summary">Đặt thành một số, ví dụ 160, có nghĩa là khi mục tiêu tạm thời (temp target) là 160 mg/dL và tùy chọn \'High temptarget raises sensitivity=true\' được bật, Aaps sẽ chạy 50% basal ở mức này (120 = 75%; 140 = 60%).</string>
+    <string name="autoISF_settings_summary">AutoISF cho phép điều chỉnh Hệ số độ nhạy insulin (ISF) trong nhiều tình huống thay đổi đường huyết. \n\nNó cũng có thể điều chỉnh cài đặt phân phối SMB</string>
+    <string name="smb_delivery_settings_summary">Bộ tùy chọn để tăng kích thước SMB hiện tại có thể được phân phối trong những tình huống ISF được tăng cường, tức là khi hệ số ISF tương đối thấp. \n\nSỬ DỤNG CẨN THẬN</string>
+    <string name="openapsama_autoISF_max_summary">Tương tự như autosens_max, thiết lập này xác định mức độ mạnh tối đa mà ISF có thể đạt được.\n\nGiá trị mặc định 1,0 về cơ bản tắt hiệu ứng này.\n\nCẢNH BÁO: Hãy cực kỳ thận trọng khi sử dụng giá trị trên 2,5</string>
+    <string name="openapsama_autoISF_min_summary">Tương tự như autosens_min, thiết lập này xác định mức yếu tối đa mà ISF có thể đạt được.\n\nGiá trị mặc định 1,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_dura_ISF_weight_summary">Đây là trọng số được áp dụng trong các giai đoạn đường huyết cao kéo dài, giúp tăng cường ISF và do đó có thể làm tăng lượng insulin được phân phối.\n\nGiá trị mặc định 0,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_lower_ISFrange_weight_summary">Đây là trọng số được áp dụng khi đường huyết thấp hơn mục tiêu, giúp làm yếu ISF và do đó có thể làm giảm lượng insulin được phân phối.\n\nGiá trị mặc định 0,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_higher_ISFrange_weight_summary">Đây là trọng số được áp dụng khi đường huyết cao hơn mục tiêu, giúp tăng cường ISF và do đó có thể làm tăng lượng insulin được phân phối.\n\nGiá trị mặc định 0,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_pp_ISF_weight_summary">Đây là trọng số được áp dụng khi đường huyết đang tăng, giúp tăng cường ISF và do đó có thể làm tăng lượng insulin được phân phối.\n\nGiá trị mặc định 0,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_bgAccel_ISF_weight_summary">Đây là trọng số được áp dụng khi đường huyết tăng nhanh, giúp tăng cường ISF và do đó có thể làm tăng lượng insulin được phân phối.\n\nGiá trị mặc định 0,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_bgBrake_ISF_weight_summary">Đây là trọng số được áp dụng khi đường huyết giảm tốc, giúp làm yếu ISF và do đó có thể làm giảm lượng insulin được phân phối.\n\nGiá trị mặc định 0,0 về cơ bản tắt hiệu ứng này.</string>
+    <string name="openapsama_smb_delivery_ratio_summary">Giá trị mặc định: 0,5. Đây là một giới hạn an toàn quan trọng khác của OpenAPS, quy định tỷ lệ insulin cần thiết có thể được bơm dưới dạng SMB. Mục đích là để ngăn tình trạng nguy hiểm khi có yêu cầu SMB được gửi đồng thời từ điện thoại của người chăm sóc. Hãy tăng giá trị thử nghiệm này từ từ và thận trọng.</string>
+    <string name="openapsama_smb_delivery_ratio_min_summary">Giá trị mặc định: 0,5. Đây là giới hạn thấp của một tỷ lệ tăng tuyến tính, thay vì giá trị cố định ở trên.</string>
+    <string name="openapsama_smb_delivery_ratio_max_summary">Giá trị mặc định: 0,5. Đây là giới hạn cao của một tỷ lệ tăng tuyến tính, thay vì giá trị cố định ở trên.</string>
+    <string name="openapsama_smb_delivery_ratio_bg_range_summary">Giá trị mặc định: 0. Tỷ lệ phân phối SMB tăng tuyến tính được ánh xạ theo khoảng đường huyết [target_bg, target_bg + bg_range].\nTại mức target_bg, tỷ lệ SMB là smb_delivery_ratio_min, và tại target_bg + bg_range, tỷ lệ SMB là smb_delivery_ratio_max.\nKhi đặt 0, tỷ lệ SMB tăng tuyến tính sẽ bị tắt và thay vào đó dùng tỷ lệ SMB cố định (smb_delivery_ratio).</string>
+    <string name="openapsama_smb_max_range_extension_summary">Giá trị mặc định: 1. Đây là một giới hạn an toàn quan trọng khác của OpenAPS, quy định hệ số cho phép bạn vượt quá giới hạn thông thường 120 phút maxSMB/maxUAM. Hãy tăng giá trị thử nghiệm này từ từ và thận trọng.</string>
+    <string name="enableSMB_EvenOn_OddOff_always">Bật kích hoạt SMB thay thế, dựa vào việc mục tiêu đang hoạt động là số chẵn</string>
+    <string name="enableSMB_EvenOn_OddOff_always_summary">\nBật ...\n nếu mục tiêu đang hoạt động (mmol/L) có phần thập phân chẵn\n
+hoặc mục tiêu đang hoạt động (mg/dL) là số chẵn.\n\nNgược lại sẽ tắt</string>
+    <string name="openapsama_iob_threshold_percent_summary" formatted="false">Phần trăm của maxIOB mà trên mức đó SMB sẽ bị tắt.\nGiá trị mặc định: 100%\nVới 100%, tính năng này sẽ bị tắt hoàn toàn.</string>
 </resources>
