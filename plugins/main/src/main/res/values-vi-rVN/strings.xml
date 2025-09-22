@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- SMS Communicator & OTP Authenticator -->
+    <string name="smscommunicator">Giao tiếp SMS</string>
     <string name="description_sms_communicator">Điều khiển AAPS từ xa bằng lệnh SMS.</string>
     <string name="smscommunicator_code_from_authenticator_for" comment="This is continuation of sentence: To [ACTION] reply with code">từ ứng dụng Authenticator cho: %1$s kèm theo mã PIN</string>
     <string name="smscommunicator_otp_pin">Mã PIN bắt buộc bổ sung ở cuối token</string>
     <string name="smscommunicator_otp_pin_summary">Các chữ số bổ sung cần được ghi nhớ và gắn vào cuối mỗi mật khẩu dùng một lần (OTP) được tạo</string>
+    <string name="smscommunicator_code_verify_hint">OTP + PIN</string>
     <string name="smscommunicator_code_verify_info">Mã xác minh gồm 6 chữ số hiển thị trong ứng dụng Authenticator (gọi là OTP) kèm theo 3 chữ số hoặc nhiều hơn của mã PIN bắt buộc.</string>
     <string name="smscommunicator_otp_reset_btn">Đặt lại Xác thực (Authenticator)</string>
     <string name="smscommunicator_otp_reset_title">Đặt lại khóa Xác thực</string>
@@ -95,9 +97,14 @@
     <string name="disabled_loop">Vòng lặp đã tắt</string>
     <!-- Food-->
     <string name="description_food">Hiển thị các thiết lập sẵn về thực phẩm được định nghĩa trong Nightscout</string>
+    <string name="short_kilo_joul">kJ</string>
+    <string name="short_energy">En</string>
+    <string name="short_protein">Pr</string>
+    <string name="short_fat">Chất béo</string>
     <!-- Theme switcher dark and light mode-->
     <string name="theme_switcher_summary">Chọn chế độ tối, sáng hoặc theo giao diện hệ thống</string>
     <!-- Profile -->
+    <string name="localprofile_shortname">LP</string>
     <string name="description_profile_local">Xác định hồ sơ có thể sử dụng ngoại tuyến.</string>
     <string name="do_you_want_switch_profile">Bạn có muốn chuyển sang profile khác và hủy các thay đổi đã thực hiện trên profile hiện tại không?</string>
     <string name="save_or_reset_changes_first">Lưu hoặc đặt lại các thay đổi hiện tại trước</string>
