@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Autotune-->
+    <string name="dynisf_adjust_sensitivity">Kích hoạt hệ số nhạy cảm insulin dựa trên tổng liều hằng ngày (TDD) để điều chỉnh liều basal và mục tiêu đường huyết</string>
+    <string name="dynisf_adjust_sensitivity_summary">Sử dụng TDD 24 giờ gần nhất hoặc TDD trung bình 7 ngày để tính độ nhạy insulin, từ đó tăng hoặc giảm tốc độ basal, đồng thời điều chỉnh mục tiêu đường huyết nếu các tùy chọn này được bật, tương tự như cách Autosens hoạt động. Khuyến nghị nên bắt đầu với tùy chọn này ở trạng thái tắt</string>
+    <string name="dyn_isf_adjust_summary" formatted="false">Hệ số điều chỉnh cho DynamicISF. Đặt lớn hơn 100% để có liều hiệu chỉnh mạnh hơn, và nhỏ hơn 100% để có liều hiệu chỉnh nhẹ hơn.</string>
+    <string name="resistance_lowers_target_summary">Khi phát hiện kháng insulin, hãy hạ thấp mức đường huyết mục tiêu</string>
+    <string name="sensitivity_raises_target_summary">Khi phát hiện độ nhạy insulin, hãy tăng mức đường huyết mục tiêu</string>
+    <string name="openapsma_disabled">Plugin đã bị tắt</string>
+    <string name="openapsma_no_glucose_data">Không có dữ liệu đường huyết</string>
+    <string name="openaps_no_as_data">Không có dữ liệu Autosens</string>
+    <string name="description_ama">Trạng thái thuật toán năm 2017</string>
+    <string name="description_smb">Thuật toán tiên tiến nhất cho người dùng có kinh nghiệm</string>
+    <string name="description_smb_dynamic_isf">Thuật toán mới nhất dành cho người dùng nâng cao với dynamic/automatic ISF</string>
+    <string name="description_auto_isf">Thuật toán mới nhất dành cho người dùng nâng cao với các tiện ích mở rộng AutoISF</string>
+    <string name="openapsma_max_iob_summary">Giá trị này trong OpenAPS được gọi là Max IOB.\n Đây là lượng insulin tối đa [U] mà APS có thể đưa vào cùng một lúc.</string>
+    <string name="openapsama_autosens_adjust_targets_summary">Mặc định: true.\n Tùy chọn này cho phép Autosens điều chỉnh mục tiêu đường huyết (BG), ngoài việc điều chỉnh ISF và basal.</string>
+    <string name="openapsama_min_5m_carb_impact_summary">Mặc định: 3 (AMA) hoặc 8 (SMB). Đây là thiết lập cho tác động mặc định của hấp thụ carb trong 5 phút. Giá trị mặc định tương ứng với 3 mg/dl/5 phút. Tham số này ảnh hưởng đến tốc độ giảm COB, cũng như lượng carb hấp thụ được giả định khi tính toán đường huyết dự đoán trong tương lai, trong trường hợp đường huyết giảm nhanh hơn dự kiến hoặc tăng ít hơn dự kiến.</string>
+    <string name="openapsama_max_daily_safety_multiplier_summary">Mặc định: 3. Đây là một giới hạn an toàn quan trọng của OpenAPS. Nó giới hạn liều basal tối đa của bạn bằng 3 lần liều basal lớn nhất của bạn (áp dụng cho người này). Thông thường bạn không cần thay đổi, nhưng bạn nên biết rằng đây là những gì được nói đến khi nhắc đến ‘3x max daily; 4x current’ cho giới hạn an toàn.</string>
+    <string name="openapsama_current_basal_safety_multiplier_summary">Giá trị mặc định: 4. Đây là nửa còn lại của các giới hạn an toàn chính của OpenAPS, và là nửa còn lại của ‘3x max daily; 4x current’ trong các giới hạn an toàn. Điều này có nghĩa là liều basal của bạn, bất kể liều basal tối đa được thiết lập trên bơm, không thể cao hơn con số này nhân với mức basal hiện tại. Điều này nhằm ngăn người dùng rơi vào tình huống nguy hiểm khi thiết lập liều basal tối đa quá cao trước khi hiểu cách thuật toán hoạt động. Giá trị mặc định là 4x; hầu hết người dùng sẽ không cần điều chỉnh, và thay vào đó có thể cần điều chỉnh các cài đặt khác nếu cảm thấy “đang chạm” vào giới hạn an toàn này.</string>
+    <string name="openapsama_bolus_snooze_dia_divisor_summary">Giá trị mặc định: 2\nBolus snooze được kích hoạt sau khi bạn thực hiện một bolus bữa ăn, để vòng lặp không điều chỉnh bằng các temp thấp khi bạn vừa ăn. Ví dụ ở đây và giá trị mặc định là 2; nghĩa là với DIA 3 giờ, bolus snooze sẽ được loại bỏ dần trong 1,5 giờ (3DIA/2).</string>
+    <string name="openapsama_link_to_preference_json_doc_txt">Chú ý!\nThông thường bạn không cần thay đổi các giá trị bên dưới. Vui lòng BẤM VÀO ĐÂY và ĐỌC kỹ nội dung, đảm bảo bạn HIỂU trước khi thay đổi bất kỳ giá trị nào.</string>
+    <string name="always_use_short_avg_summary">Hữu ích khi dữ liệu từ các nguồn chưa lọc, như xDrip+, bị nhiễu.</string>
+    <string name="openapssmb_max_iob_summary">Giá trị này trong OpenAPS được gọi là Max IOB. \nOpenAPS sẽ không đưa thêm insulin nếu IOB hiện tại lớn hơn giá trị này</string>
+    <string name="enable_smb_summary">Sử dụng Super Micro Boluses (SMB) thay cho basal tạm thời để có tác dụng nhanh hơn</string>
+    <string name="enable_smb_always_summary">Bật SMB mọi lúc, không phụ thuộc vào COB, mục tiêu tạm thời hoặc bolus. Chỉ khả dụng khi sử dụng nguồn BG có bộ lọc dữ liệu nâng cao</string>
+    <string name="enable_smb_after_carbs_summary">Bật SMB trong 6 giờ sau khi nạp carb, ngay cả khi COB bằng 0. Chỉ khả dụng khi sử dụng nguồn BG có bộ lọc dữ liệu nâng cao</string>
     <!--    Verify if needed in safety-->
     <!--    Autotune   -->
     <!--    Loop -->
