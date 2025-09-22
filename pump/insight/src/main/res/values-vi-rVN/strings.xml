@@ -41,6 +41,7 @@
     <string name="short_status_extended">Mở rộng: %1$.2f / %2$.2f U trong %3$d phút</string>
     <string name="short_status_tdd">Tổng liều hàng ngày (TDD): %1$.2f</string>
     <string name="short_status_reservoir">Reser.: %1$.2f U</string>
+    <string name="short_status_battery">Pin: %1$d%%</string>
     <string name="release_software_version">Phiên bản phần mềm</string>
     <string name="ui_processor_software_version">Phiên bản phần mềm xử lý giao diện</string>
     <string name="pc_processor_software_version">Phiên bản phần mềm bộ xử lý PC</string>
