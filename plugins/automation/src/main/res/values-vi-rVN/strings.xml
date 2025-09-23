@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="automation_description">Các tác vụ tự động do người dùng định nghĩa</string>
     <string name="triggerInsulinAgeLabel">Thời gian insulin</string>
     <string name="triggerInsulinAgeDesc">Insulin đã dùng %1$s được %2$.1f giờ</string>
     <!--    Reminders-->
