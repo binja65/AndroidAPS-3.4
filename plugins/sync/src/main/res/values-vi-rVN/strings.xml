@@ -2,6 +2,9 @@
 <resources>
     <!-- AAPSClient -->
     <!-- AAPSClient -->
+    <string name="ns_receive_insulin">Nhận insulin</string>
+    <string name="ns_receive_insulin_summary">Chấp nhận insulin được nhập qua NS hoặc AAPSClient (không được bơm, chỉ tính vào IOB)</string>
+    <string name="ns_receive_therapy_events_summary">Chấp nhận các sự kiện điều trị (thay cannula, insulin, pin, v.v.) được nhập qua NS hoặc AAPSClient</string>
     <!-- Tidepool -->
     <!-- Xdrip StatusLine -->
     <!--    DataBroadcast-->
