@@ -130,6 +130,7 @@
     <string name="tools">Công cụ</string>
     <string name="nav_history_browser">Lịch sử trình duyệt</string>
     <string name="sensor_label">Cảm biến</string>
+    <string name="insulin_label">Insulin</string>
     <string name="ebstopsloop">Việc sử dụng tính năng bolus mở rộng sẽ tạm dừng chế độ vòng lặp kín trong thời gian bolus mở rộng chạy. Bạn có thực sự muốn tiếp tục không?</string>
     <!-- Overview -->
     <string name="show_statuslights">Hiển thị đèn trạng thái trên màn hình</string>
@@ -153,6 +154,7 @@
     <string name="a11y_graph_scale_12h">biểu đồ 12 giờ</string>
     <string name="a11y_graph_scale_18h">biểu đồ 18 giờ</string>
     <string name="a11y_graph_scale_24h">biểu đồ 24 giờ</string>
+    <string name="a11y_insulin_label">insulin</string>
     <string name="chart_menu">Tùy chọn biểu đồ</string>
     <string name="description_overview">Hiển thị trạng thái hiện tại của vòng lặp và các nút cho những thao tác thường dùng nhất</string>
     <string name="show_calibration_button_summary">Gửi hiệu chuẩn đến xDrip+ (hãy đảm bảo rằng tùy chọn \'Accept Calibrations\' đã được bật trong phần Cài đặt liên ứng dụng của xDrip+).</string>
@@ -160,6 +162,10 @@
     <string name="keep_screen_on_summary">Ngăn Android tắt màn hình. Tính năng này sẽ tiêu thụ rất nhiều năng lượng khi không cắm nguồn.</string>
     <string name="carb_increment_button_message">Số lượng carb sẽ được thêm khi nhấn nút</string>
     <string name="insulin_increment_button_message">Lượng insulin sẽ được thêm khi nhấn nút</string>
+    <string name="firstinsulinincrement">Liều insulin ban đầu</string>
+    <string name="secondinsulinincrement">Liều insulin thứ hai</string>
+    <string name="thirdinsulinincrement">Liều insulin thứ ba</string>
+    <string name="fill_bolus_title">Bơm/đẩy lượng insulin tiêu chuẩn</string>
     <string name="prefs_range_summary">Giới hạn cao và thấp cho biểu đồ trong phần Tổng quan và trên đồng hồ thông minh</string>
     <string name="low_mark">Mức THẤP</string>
     <string name="high_mark">Mức CAO</string>
@@ -168,6 +174,9 @@
     <string name="enablesuperbolus_summary">Bật chức năng superbolus trong Bolus Wizard. Không nên bật cho đến khi bạn hiểu rõ chức năng này. VIỆC SỬ DỤNG MÀ KHÔNG HIỂU CÓ THỂ GÂY QUÁ LIỀU INSULIN!</string>
     <string name="enablebolusreminder_summary">Dùng nhắc nhở tiêm bolus sau (post-bolus) qua Bolus Wizard</string>
     <!--    OverviewMenu-->
+    <string name="overview_show_iob">Insulin đang còn tác dụng</string>
+    <string name="overview_show_abs_insulin">Insulin tuyệt đối”</string>
+    <string name="abs_insulin_shortname">ABS</string>
     <!-- Skins -->
     <string name="buttonson_description">Các nút luôn được hiển thị ở phía dưới màn hình</string>
     <!--    Iob-->
