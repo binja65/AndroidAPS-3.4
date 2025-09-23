@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- AAPSClient -->
+    <string name="ns_malfunction">AAPSClient gặp sự cố. Hãy thử khởi động lại NS và AAPSClient.</string>
     <!-- AAPSClient -->
+    <string name="nsclient_token_dialog_message">Nhập mã thông báo truy cập cấp quản trị được tạo trong công cụ quản trị Nightscout (tối thiểu 17 ký tự, không phải API secret!)</string>
     <string name="ns_receive_insulin">Nhận insulin</string>
     <string name="ns_receive_insulin_summary">Chấp nhận insulin được nhập qua NS hoặc AAPSClient (không được bơm, chỉ tính vào IOB)</string>
     <string name="ns_receive_therapy_events_summary">Chấp nhận các sự kiện điều trị (thay cannula, insulin, pin, v.v.) được nhập qua NS hoặc AAPSClient</string>
