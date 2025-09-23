@@ -10,7 +10,7 @@
     <string name="insulin_oref_peak">Thời gian đạt đỉnh IOB</string>
     <string name="insulin_peak_time">Thời gian đạt đỉnh [phút]</string>
     <string name="free_peak_oref">Đỉnh Oref tùy chỉnh</string>
-    <string name="rapid_acting_oref">Insulin tác dụng nhanh Oref</string>
+    <string name="rapid_acting_oref">Rapid-Acting Oref</string>
     <string name="ultra_rapid_oref">Insulin siêu nhanh Oref</string>
     <string name="dia_too_short">Thời gian tác dụng insulin (DIA) là %1$f quá ngắn – sử dụng %2$f thay thế!</string>
     <string name="fast_acting_insulin_comment">Novorapid, Novolog, Humalog</string>
