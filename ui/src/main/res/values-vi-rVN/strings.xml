@@ -35,7 +35,6 @@
     <string name="record_pump_site_change">Ghi lại việc thay vị trí tiêm</string>
     <string name="record_insulin_cartridge_change">Ghi lại việc thay ống insulin</string>
     <!-- InsulinDialog -->
-    <string name="do_not_bolus_record_only">Không tiêm insulin, chỉ ghi lại</string>
     <!-- ProfileSwitchDialog -->
     <string name="reuse_profile_pct_hours">Tái sử dụng %1$d%% %2$dh</string>
     <string name="timeshift_label">Dịch chuyển thời gian</string>
