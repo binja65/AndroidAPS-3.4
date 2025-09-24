@@ -62,8 +62,8 @@ Nếu sau khoảng 5 phút vẫn chưa thiết lập được kết nối:\n\n
     <string name="combov2_suspended">Bị tạm dừng</string>
     <string name="combov2_pump_is_suspended">Bơm đã tạm dừng</string>
     <string name="combov2_executing_command">Đang thực thi lệnh</string>
-    <string name="combov2_getting_basal_profile_cmddesc">Đang lấy hồ sơ basal</string>
-    <string name="combov2_setting_basal_profile_cmddesc">Đang cài đặt hồ sơ basal</string>
+    <string name="combov2_getting_basal_profile_cmddesc">Đang lấy cấu hình basal</string>
+    <string name="combov2_setting_basal_profile_cmddesc">Đang cài đặt cấu hình basal</string>
     <string name="combov2_setting_tbr_cmddesc">Đang cài đặt TBR %1$d%% trong %2$d phút</string>
     <string name="combov2_cancelling_tbr">Đang hủy TBR hiện tại</string>
     <string name="combov2_delivering_bolus_cmddesc">Đang tiêm bolus %1$.1f U</string>
@@ -73,6 +73,8 @@ Nếu sau khoảng 5 phút vẫn chưa thiết lập được kết nối:\n\n
     <string name="combov2_pairing_pin_failure">Mã PIN không hợp lệ. Kiểm tra xem có nhập sai không. Nếu tình trạng này tiếp diễn, hãy hủy và thử ghép nối lại.</string>
     <string name="combov2_discovery_duration">Thời gian quét (tính bằng giây)</string>
     <string name="combov2_verbose_logging">Bật ghi nhật ký chi tiết Combo</string>
+    <string name="combov2_getting_basal_profile">Đang lấy cấu hình basal; đã đọc %1$d hệ số</string>
+    <string name="combov2_setting_basal_profile">Đang thiết lập cấu hình basal; đã ghi %1$d hệ số</string>
     <string name="combov2_delivering_bolus">Đang tiêm bolus (%1$.1f trong %2$.1f U đã tiêm)</string>
     <string name="combov2_cannot_deliver_pump_suspended">Không thể tiêm – bơm đang bị tạm ngưng</string>
     <string name="combov2_insufficient_insulin_in_reservoir">Insulin trong bình chứa không đủ</string>
