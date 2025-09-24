@@ -101,6 +101,7 @@
     <string name="sensitivity_time">Một số tùy chọn plugin có phạm vi thời gian có thể cấu hình, và người dùng có thể tự thiết lập chúng.</string>
     <string name="sensitivity_hint1">https://wiki.aaps.app/en/latest/DailyLifeWithAaps/SensitivityDetectionAndCob.html</string>
     <string name="sensitivity_hint2">https://wiki.aaps.app/en/latest/DailyLifeWithAaps/KeyAapsFeatures.html#autosens</string>
+    <string name="wrongcarbs_label">Lỗi khi nhập lượng carb</string>
     <string name="wrongcarbs_whattodo">Bạn nên làm gì nếu đã nhập sai lượng carb?</string>
     <string name="wrongcarbs_treatmentstab">Xóa mục nhập sai trong phần Treatments và nhập lại giá trị carb đúng.</string>
     <string name="wrongcarbs_addinsulin">Tiêm bolus insulin bằng menu mồi dây truyền (infusion set prime).</string>
@@ -135,6 +136,7 @@
     <string name="breadgrams_calc">Nếu mức đường huyết nằm ngoài giá trị chấp nhận được (quá thấp hoặc quá cao), bộ tính bolus có thể được sử dụng để đưa ra gợi ý điều chỉnh bằng carbohydrate hoặc insulin.</string>
     <string name="breadgrams_hint1">https://wiki.aaps.app/en/latest/DailyLifeWithAaps/AapsScreens.html#bolus-wizard</string>
     <string name="breadgrams_hint2">https://wiki.aaps.app/en/latest/SettingUpAaps/YourAapsProfile.html</string>
+    <string name="extendedcarbs_label">e-carbs</string>
     <string name="extendedcarbs_handling">Bạn có thể sử dụng e-carbs (carb mở rộng) cho mục đích gì?</string>
     <string name="extendedcarbs_future">Để lên lịch nạp carbs trong tương lai, có thể phân bổ theo khoảng thời gian (tương tự như bolus mở rộng phân phối insulin trong một khoảng thời gian).</string>
     <string name="extendedcarbs_free">Để ghi lại lượng carb dùng cho vận động ‘carbs tự do’ mà bạn muốn ẩn khỏi AAPS.</string>
