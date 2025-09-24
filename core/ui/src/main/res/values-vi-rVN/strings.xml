@@ -116,7 +116,6 @@
     <string name="alarminxmin">Báo động sau %1$d phút</string>
     <string name="treatmentdeliveryerror">Bolus gặp lỗi. Hãy kiểm tra thủ công lượng insulin và carb đã bơm</string>
     <string name="bolus_reminder">Nhắc nhở bolus</string>
-    <string name="duration_label">Thời lượng</string>
     <string name="shortgramm">g</string>
     <string name="pumpsuspended">Bơm đã tạm dừng</string>
     <string name="pump_running">Pump đang chạy</string>
@@ -201,7 +200,6 @@
     <string name="cancel_temp">Huỷ liều basal tạm</string>
     <string name="let_temp_basal_run">Cho basal tạm thời tiếp tục</string>
     <string name="rate">Rate</string>
-    <string name="duration">Thời lượng</string>
     <string name="reason">Lý do</string>
     <string name="nochangerequested">Không có thay đổi nào được yêu cầu</string>
     <!--    ProfileSwitch-->
@@ -461,7 +459,6 @@
     <string name="you_are_on_allowed_limit">Đã đạt giới hạn cho phép</string>
     <string name="format_hour_minute">%1$dh %2$dm</string>
     <!-- datetime layout -->
-    <string name="event_time_label">Thời gian sự kiện</string>
     <!-- BluetoothDevicePreference -->
     <string name="need_connect_permission">Ứng dụng yêu cầu quyền Bluetooth</string>
     <!--    Combo-->
