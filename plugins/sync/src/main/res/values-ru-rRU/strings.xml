@@ -49,12 +49,19 @@
     <string name="ns_receive_profile_store">Принимать хранилище профилей</string>
     <string name="ns_receive_profile_store_summary">Синхронизировать профили из редактора NS профиля в локальный профиль</string>
     <string name="ns_receive_temp_target">Получить временные цели</string>
+    <string name="ns_receive_temp_target_summary">Принимать временные цели, введенные через NS или AAPSClient</string>
     <string name="ns_receive_profile_switch">Получать переключения профиля</string>
+    <string name="ns_receive_profile_switch_summary">Принимать переключения профиля, введенные через NS или AAPSClient</string>
+    <string name="ns_receive_running_mode">Принимать режимы работы</string>
+    <string name="ns_receive_running_mode_summary">Принимать режимы работы, вводимые через NS или AAPSClient</string>
     <string name="ns_receive_tbr_eb">Получать временную базальную скорость TBR и пролонгированный болюс EB</string>
     <string name="ns_receive_tbr_eb_summary">Принять TBR и EB введеные с другого устройства</string>
     <string name="ns_receive_insulin">Принимать инсулин</string>
+    <string name="ns_receive_insulin_summary">Принимать инсулин, вводимый через NS или AAPSClient (не подается, только рассчитывается как активный IOB)</string>
     <string name="ns_receive_carbs">Принимать углеводы</string>
+    <string name="ns_receive_carbs_summary">Принимать углеводы, вводимые через NS или AAPSClient</string>
     <string name="ns_receive_therapy_events">Принимать события терапии</string>
+    <string name="ns_receive_therapy_events_summary">Принимать события терапии (замену катетера, инсулина, батареи и т. д.) вводимые через NS или AAPSClient</string>
     <string name="ns_receive_cgm">Получать/заполнять данные мониторинга CGM</string>
     <string name="ns_receive_cgm_summary">Принимать данные мониторинга CGM из NS</string>
     <string name="ns_sync_slow">Замедлить выгрузку</string>
@@ -68,6 +75,7 @@
     <string name="ns_use_ws_title">Подключаться к веб-сокету</string>
     <string name="ns_use_ws_summary">Активация означает: более быстрое обновление, получение оповещений и объявлений, более высокое потребление заряда батареи по аналогии с v1. Все остальные загрузчики NS будут использовать протокол v3.</string>
     <!-- Tidepool -->
+    <string name="summary_tidepool_dev_servers">Если включено, выгрузка будет направлена на тестовые серверы вместо обычных</string>
     <string name="title_tidepool_dev_servers">Использовать серверы интеграции (тест)</string>
     <string name="tidepool">Tidepool</string>
     <string name="tidepool_shortname">TDP</string>
@@ -110,6 +118,7 @@
     <string name="quick_wizard_not_available">Выбранный мастер быстрого доступа больше недоступен, обновите плитку</string>
     <string name="quick_wizard_message">Мастер: %1$s\nИнсулин: %2$.2fЕд\nУгл: %3$dg</string>
     <string name="user_action_not_available">Выбранное пользовательское действие %1$s более недоступно, пожалуйста, обновите плитку</string>
+    <string name="wear_action_tempt_cancel_message">Отменить действие ВЦ?</string>
     <string name="wear_action_tempt_unit_error">На часах и телефоне различные единицы измерения!</string>
     <string name="wear_action_tempt_min_bg_error">Мин ГК вне диапазона!</string>
     <string name="wear_action_tempt_max_bg_error">Макс ГК вне диапазона!</string>
