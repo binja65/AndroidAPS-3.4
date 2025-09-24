@@ -62,7 +62,7 @@
     <string name="stop">Dừng lại</string>
     <string name="carbs">Lượng Carbs</string>
     <string name="invalid_profile">Hồ sơ(proffle) không hợp lệ!</string>
-    <string name="no_profile_set">CHƯA THIẾT LẬP HỒ SƠ INSULIN</string>
+    <string name="no_profile_set">KHÔNG CÓ PROFILE</string>
     <string name="active"><![CDATA[<Active>]]></string>
     <string name="date">Ngày</string>
     <string name="units_label">Đơn vị</string>
@@ -229,16 +229,21 @@
     <string name="running_mode">Chế độ hoạt động</string>
     <string name="careportal_temporarytargetvalue">Giá trị mục tiêu tạm thời</string>
     <string name="careportal_temporarytargetcancel">Huỷ mục tiêu tạm thời</string>
+    <string name="boluswizard">Bolus wizard</string>
     <string name="glucosetype_finger">Ngón tay</string>
     <string name="glucosetype_sensor">Cảm biến</string>
     <string name="manual">Thủ công</string>
     <string name="unknown">không xác định</string>
     <string name="eatingsoon">Chuẩn bị ăn</string>
+    <string name="hypo">Hypo</string>
     <string name="activity">Hoạt động</string>
+    <string name="wear">Wear</string>
+    <string name="automation">Automation</string>
     <string name="settingsexport">Xuất cài đặt</string>
     <string name="custom">Tuỳ chỉnh</string>
-    <string name="loop">Vòng lặp</string>
+    <string name="loop">Loop</string>
     <string name="ns">NS</string>
+    <string name="record">Record</string>
     <!--    Command-->
     <string name="connectiontimedout">Hết thời gian chờ kết nối</string>
     <!--    PumpEnactResult-->
@@ -253,6 +258,11 @@
     <!--    TDDStatsActivity-->
     <string name="cumulative_tdd">Tổng liều hằng ngày</string>
     <string name="expweight">Tổng liều hằng ngày theo trọng số mũ</string>
+    <string name="basalrate">Basal</string>
+    <string name="bolus">Bolus</string>
+    <string name="tdd">TDD</string>
+    <string name="ratio">Ratio</string>
+    <string name="weight">Cân nặng</string>
     <string name="warning_Message">Kết quả có thể sai lệch nếu tính cả bolus dùng để mồi/đổ đầy ống!</string>
     <string name="olddata_Message">Dữ liệu cũ, vui lòng nhấn \'RELOAD\'</string>
     <string name="tbb">Tổng basal nền</string>
@@ -260,10 +270,27 @@
     <!--    Ntp-->
     <string name="timedetection">Nhận diện thời gian</string>
     <!-- User Entry -->
+    <string name="uel_bolus">BOLUS</string>
+    <string name="uel_pump_running">BƠM ĐANG CHẠY</string>
+    <string name="uel_disconnect">NGẮT KẾT NỐI</string>
     <string name="uel_resume">TIẾP TỤC</string>
     <string name="uel_suspend">TẠM NGƯNG</string>
     <string name="uel_ns_resume">TIẾP TỤC NS</string>
     <string name="delete_future_treatments">Xoá liệu trình sắp tới</string>
+    <string name="uel_reset_databases">ĐẶT LẠI DỮ LIỆU</string>
+    <string name="uel_reset_aps_results">ĐẶT LẠI KẾT QUẢ APS</string>
+    <string name="uel_cleanup_databases">DỌN DẸP DỮ LIỆU</string>
+    <string name="uel_export_databases">XUẤT DỮ LIỆU</string>
+    <string name="uel_import_databases">NHẬP DỮ LIỆU</string>
+    <string name="uel_otp_export">XUẤT OTP</string>
+    <string name="uel_otp_reset">ĐẶT LẠI OTP</string>
+    <string name="uel_stop_sms">DỪNG SMS</string>
+    <string name="uel_export_csv">XUẤT DỮ LIỆU NGƯỜI DÙNG</string>
+    <string name="uel_start_aaps">BẮT ĐẦU AAPS</string>
+    <string name="uel_exit_aaps">THOÁT AAPS</string>
+    <string name="uel_plugin_enabled">PLUGIN ĐÃ BẬT</string>
+    <string name="uel_plugin_disabled">PLUGIN ĐÃ TẮT</string>
+    <string name="uel_unknown">KHÔNG XÁC ĐỊNH</string>
     <string name="ue_string">Chuỗi</string>
     <string name="ue_source">Nguồn</string>
     <string name="ue_timestamp">Mốc thời gian</string>
