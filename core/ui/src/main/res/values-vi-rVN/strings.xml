@@ -62,7 +62,7 @@
     <string name="objectives">Objectives</string>
     <string name="please_wait">Vui lòng chờ…</string>
     <string name="stop">Dừng lại</string>
-    <string name="carbs">Lượng Carbs</string>
+    <string name="carbs">Carbs</string>
     <string name="invalid_profile">Cấu hình không hợp lệ!</string>
     <string name="no_profile_set">KHÔNG CÓ PROFILE</string>
     <string name="active"><![CDATA[<Active>]]></string>
@@ -336,9 +336,11 @@
     <string name="temp_basal_absolute">LIỀU BASAL TẠM THỜI %1$.2f U/h %2$d min</string>
     <string name="temp_basal_percent">LIỀU BASAL TẠM THỜI %1$d%% %2$d min</string>
     <string name="read_status" comment="10 characters max for READSTATUS translation">TRẠNG THÁI %1$s</string>
+    <string name="keepalive_status_outdated" comment="26 characters max for translation">KeepAlive: Trạng thái lỗi thời.</string>
     <string name="sms" comment="26 characters max for translation">SMS</string>
     <string name="formatPercent">%1$.0f%%</string>
     <string name="basalpct">Liều Basal %</string>
+    <string name="isf_for_carbs">ISF dùng cho tính toán và hấp thụ carb: %1$.1f</string>
     <string name="autosens_long">Giá trị Autosens: %.0f%%</string>
     <string name="autosens_short">AS: %.0f%%</string>
     <string name="algorithm_long">Autosens trong thuật toán: %.0f%%</string>
