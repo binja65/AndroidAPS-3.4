@@ -130,6 +130,8 @@ class RemoraPlugin @Inject constructor(
     override suspend fun CommandHandler.ExecutionScope.executeBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> =
         coroutineScope {
             if (bolusData.bolusAmount == 0f) return@coroutineScope wrapError(RemoraCommandError.INVALID_VALUE)
+            if (commandQueue.bolusInQueue()) return@coroutineScope wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
+            if (loop.runningMode.isSuspended()) return@coroutineScope wrapError(RemoraCommandError.PUMP_SUSPENDED)
             val detailedBolusInfo = DetailedBolusInfo()
             detailedBolusInfo.insulin = bolusData.bolusAmount.toDouble()
             val resultJob = async {
