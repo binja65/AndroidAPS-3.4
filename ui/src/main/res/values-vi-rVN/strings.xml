@@ -18,8 +18,8 @@
     <string name="submit">Áp dụng</string>
     <string name="age">Tuổi</string>
     <string name="weight_label">Cân nặng</string>
-    <string name="most_common_profile">Profile phổ biến:</string>
-    <string name="survey_comment">Lưu ý: Chỉ những dữ liệu trên màn hình này sẽ được tải lên ẩn danh. Mỗi cài đặt AAPS sẽ có một ID riêng. Bạn có thể gửi lại dữ liệu nếu thay đổi hồ sơ chính, nhưng hãy để ứng dụng chạy ít nhất một tuần để kết quả về thời gian trong phạm vi được hiển thị. Cảm ơn bạn đã đóng góp dữ liệu.</string>
+    <string name="most_common_profile">Cấu hình phổ biến:</string>
+    <string name="survey_comment">Lưu ý: Chỉ những dữ liệu trên màn hình này sẽ được tải lên ẩn danh. Mỗi cài đặt AAPS sẽ có một ID riêng. Bạn có thể gửi lại dữ liệu nếu thay đổi Cấu hình chính, nhưng hãy để ứng dụng chạy ít nhất một tuần để kết quả về thời gian trong phạm vi được hiển thị. Cảm ơn bạn đã đóng góp dữ liệu.</string>
     <string name="glucose_type">Loại đường huyết</string>
     <string name="bg_other">Khác</string>
     <string name="bg_meter">Máy đo</string>
@@ -82,11 +82,11 @@
     <!-- ProfileHelperActivity -->
     <string name="basal_pct_from_tdd_label">% của liều nền</string>
     <string name="selected_profile">Chọn:</string>
-    <string name="compare_profile">So sánh các Profile</string>
+    <string name="compare_profile">So sánh các Cấu hình</string>
     <string name="nav_profile_helper">Hỗ trợ cấu hình</string>
-    <string name="motol_default_profile">Profile mặc định</string>
-    <string name="current_profile">Profile hiện tại</string>
-    <string name="available_profile">Profile có sẵn</string>
+    <string name="motol_default_profile">Cấu hình mặc định</string>
+    <string name="current_profile">Cấu hình hiện tại</string>
+    <string name="available_profile">Cấu hình có sẵn</string>
     <string name="format_with_tdd">Age: %1$d TDD: %2$.0f U</string>
     <string name="format_with_tdd_and_pct">Age: %1$d TDD: %2$.0f U %3$d%%</string>
     <string name="format_with_weight">Age: %1$d Weight: %2$.0f kg</string>
