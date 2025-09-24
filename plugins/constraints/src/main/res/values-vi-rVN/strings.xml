@@ -25,6 +25,7 @@
     <string name="smbalwaysdisabled">SMB luôn bật và SMB sau khi ăn đã bị vô hiệu hóa vì nguồn BG hiện tại không hỗ trợ lọc nâng cao</string>
     <string name="smbnotallowedinopenloopmode">SMB không được phép trong chế độ vòng lặp mở</string>
     <string name="maxvalueinpreferences">giá trị tối đa trong phần Tùy chọn(preferences)</string>
+    <string name="hardlimit">giới hạn cứng</string>
     <string name="treatmentssafety_title">An toàn trong điều trị</string>
     <!-- Objectives -->
     <string name="completed_well_done">Đã hoàn thành, làm tốt lắm!</string>
