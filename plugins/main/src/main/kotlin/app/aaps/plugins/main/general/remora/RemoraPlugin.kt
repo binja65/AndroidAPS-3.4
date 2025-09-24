@@ -119,6 +119,7 @@ class RemoraPlugin @Inject constructor(
     override suspend fun prepareBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> = when {
         commandQueue.bolusInQueue()    -> wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
         loop.runningMode.isSuspended() -> wrapError(RemoraCommandError.PUMP_SUSPENDED)
+        bolusData.bolusAmount == 0f    -> wrapError(RemoraCommandError.INVALID_VALUE)
 
         else                           -> {
             val constrained = constraintsChecker.applyBolusConstraints(ConstraintObject(bolusData.bolusAmount.toDouble(), aapsLogger)).value()
@@ -128,7 +129,7 @@ class RemoraPlugin @Inject constructor(
 
     override suspend fun CommandHandler.ExecutionScope.executeBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> =
         coroutineScope {
-            aapsLogger.info(LTag.EVENTS, "executeBolus ${bolusData.bolusAmount}U, startEatingSoonTT=${bolusData.startEatingSoonTT}")
+            if (bolusData.bolusAmount == 0f) return@coroutineScope wrapError(RemoraCommandError.INVALID_VALUE)
             val detailedBolusInfo = DetailedBolusInfo()
             detailedBolusInfo.insulin = bolusData.bolusAmount.toDouble()
             val resultJob = async {
