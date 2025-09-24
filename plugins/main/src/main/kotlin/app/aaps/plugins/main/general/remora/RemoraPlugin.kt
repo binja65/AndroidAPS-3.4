@@ -150,6 +150,9 @@ class RemoraPlugin @Inject constructor(
             val result = resultJob.await()
             progressJob.cancel()
             if (!result.success) {
+                if (!activePlugin.activePump.isConnected()) {
+                    return@coroutineScope wrapError(RemoraCommandError.PUMP_TIMEOUT)
+                }
                 return@coroutineScope wrapError(RemoraCommandError.UNKNOWN)
             }
             if (bolusData.startEatingSoonTT) {
