@@ -39,7 +39,7 @@
     <string name="openapsma_profile_label">Profile</string>
     <string name="openapsma_meal_data_label">Dữ liệu bữa ăn</string>
     <string name="openapsma_request_label">Yêu cầu</string>
-    <string name="constraints">Giới hạn</string>
+    <string name="constraints">Constraints</string>
     <string name="openapsma_autosensdata_label">Dữ liệu Autosens</string>
     <string name="openapsma_script_debug_data_label">Gỡ lỗi script</string>
     <string name="openapsama_use_autosens">Sử dụng tính năng Autosens</string>
