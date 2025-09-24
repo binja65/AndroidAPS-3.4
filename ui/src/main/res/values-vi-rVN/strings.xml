@@ -4,6 +4,7 @@
     <string name="carbs_constraint_applied">Giới hạn Carbs đã bật</string>
     <string name="temp_target_short">TT</string>
     <string name="dialog_canceled">Đã hủy hộp thoại</string>
+    <string name="time_offset">Bù trừ thời gian</string>
     <string name="remind_to_bolus_later">Nhắc tiêm bolus sau</string>
     <!--    Widget-->
     <string name="widget_description">AAPS widget</string>
@@ -37,6 +38,7 @@
     <string name="do_not_bolus_record_only">Không tiêm insulin, chỉ ghi lại</string>
     <!-- ProfileSwitchDialog -->
     <string name="reuse_profile_pct_hours">Tái sử dụng %1$d%% %2$dh</string>
+    <string name="timeshift_label">Dịch chuyển thời gian</string>
     <!-- LoopDialog -->
     <string name="suspendloopfor1h">Tạm dừng vòng lặp 1 giờ</string>
     <string name="suspendloopfor2h">Tạm dừng vòng lặp 2 giờ</string>
@@ -56,6 +58,7 @@
     <string name="result_insulin_carbs">Kết quả: %1$s %2$s</string>
     <string name="missing_carbs">Còn thiếu %1$d g</string>
     <string name="a11y_current_bg">đường huyết hiện tại</string>
+    <string name="carb_time_label">Thời gian Carb</string>
     <string name="a11y_set_carb_timer">đặt nhắc nhở carb</string>
     <string name="show_calculation">Xem chi tiết tính toán</string>
     <!-- Treatments -->
@@ -103,7 +106,7 @@
     <string name="overview_edit_quickwizard_use_positive_iob_only">Chỉ tính IOB > 0</string>
     <string name="overview_edit_quickwizard_percentage_too_high">Tỷ lệ phần trăm quá cao!</string>
     <string name="a11y_drag_and_drop_handle">nút kéo–thả</string>
-    <string name="additional_ecarbs">Thêm carb kéo dài (eCarbs)</string>
+    <string name="additional_ecarbs">Thêm eCarbs</string>
     <string name="overview_edit_quickwizard_useforcalculation">Sử dụng để tính toán:</string>
     <string name="constraints_violation">Vượt giới hạn cho phép</string>
     <string name="change_your_input">Nhập lại dữ liệu!</string>
