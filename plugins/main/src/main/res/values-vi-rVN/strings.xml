@@ -171,6 +171,9 @@
     <string name="firstinsulinincrement">Liều insulin ban đầu</string>
     <string name="secondinsulinincrement">Liều insulin thứ hai</string>
     <string name="thirdinsulinincrement">Liều insulin thứ ba</string>
+    <string name="firstcarbsincrement">Liều carb đầu tiên</string>
+    <string name="secondcarbsincrement">Liều carb thứ hai</string>
+    <string name="thirdcarbsincrement">Liều carb thứ ba</string>
     <string name="fill_bolus_title">Bơm/đẩy lượng insulin tiêu chuẩn</string>
     <string name="prefs_range_summary">Giới hạn cao và thấp cho biểu đồ trong phần Tổng quan và trên đồng hồ thông minh</string>
     <string name="low_mark">Mức THẤP</string>
