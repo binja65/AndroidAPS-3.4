@@ -3,7 +3,7 @@
     <!--    General-->
     <string name="refresh">Làm tươi</string>
     <string name="error">Lỗi</string>
-    <string name="profile_set_ok">Đã cập nhật Basal trong bơm</string>
+    <string name="profile_set_ok">Đã cập nhật cấu hình Basal trong bơm</string>
     <string name="invalid_input">Dữ liệu đầu vào không hợp lệ</string>
     <string name="bolus_delivering">Đang tiêm %1$.2f U</string>
     <string name="constraint_applied">Đã áp dụng giới hạn!</string>
@@ -12,8 +12,8 @@
     <string name="pump_unreachable">Không thể kết nối với bơm</string>
     <string name="insulin_unit_shortname">U</string>
     <string name="pump_base_basal_rate">%1$.2f U/h</string>
-    <string name="pump_not_initialized_profile_not_set">Bơm chưa được khởi tạo, hồ sơ (profile) chưa được thiết lập!</string>
-    <string name="failed_update_basal_profile">Cập nhật basal profile thất bại</string>
+    <string name="pump_not_initialized_profile_not_set">Bơm chưa được khởi tạo, cấu hình (profile) chưa được thiết lập!</string>
+    <string name="failed_update_basal_profile">Cập nhật cấu hình basal profile thất bại</string>
     <string name="bolus_delivered_successfully">Đã tiêm Bolus thành công %1$.2f U</string>
     <string name="no_valid_basal_rate">Không đọc được liều basal hợp lệ từ bơm</string>
     <string name="limiting_iob">Giới hạn IOB: %1$.1f U – Lý do: %2$s.</string>
@@ -63,7 +63,7 @@
     <string name="please_wait">Vui lòng chờ…</string>
     <string name="stop">Dừng lại</string>
     <string name="carbs">Lượng Carbs</string>
-    <string name="invalid_profile">Hồ sơ(proffle) không hợp lệ!</string>
+    <string name="invalid_profile">Cấu hình không hợp lệ!</string>
     <string name="no_profile_set">KHÔNG CÓ PROFILE</string>
     <string name="active"><![CDATA[<Active>]]></string>
     <string name="date">Ngày</string>
@@ -96,7 +96,7 @@
     <string name="suspendloop">Tạm dừng vòng lặp</string>
     <string name="duration_min_label">Thời lượng [phút]</string>
     <string name="notification">Thông báo</string>
-    <string name="noprofile">Chưa tải hồ sơ nào nạp từ NS</string>
+    <string name="noprofile">Chưa tải cấu hình nào từ NS</string>
     <string name="exists">tồn tại</string>
     <string name="notexists">không tồn tại</string>
     <string name="glucose">Đường huyết</string>
@@ -141,14 +141,14 @@
     <string name="tir">TIR</string>
     <string name="none"><![CDATA[<không>]]></string>
     <string name="remove_label">XÓA</string>
-    <string name="activate_profile">Activate profile</string>
+    <string name="activate_profile">Kích hoạt cấu hình</string>
     <string name="reset">đặt lại</string>
-    <string name="profileswitch_ismissing">Thiếu ProfileSwitch. Vui lòng thực hiện chuyển hồ sơ (profile switch) hoặc nhấn ‘Kích hoạt hồ sơ’ (Activate Profile) trong LocalProfile.</string>
-    <string name="profile">Profile</string>
+    <string name="profileswitch_ismissing">Thiếu ProfileSwitch. Vui lòng thực hiện chuyển cấu hình (profile switch) hoặc nhấn ‘Kích hoạt cấu hình’ (Activate Profile) trong LocalProfile.</string>
+    <string name="profile">Cấu hình</string>
     <string name="select_for_removal">Chọn để xóa</string>
     <string name="confirm_remove_multiple_items">Bạn có chắc chắn muốn xóa %1$d mục không</string>
     <string name="overview_treatment_label">Điều trị (Treatment)</string>
-    <string name="copytolocalprofile">Tạo hồ sơ mới từ hồ sơ này không?</string>
+    <string name="copytolocalprofile">Tạo cấu hình mới từ cấu hình này không?</string>
     <string name="wear_wizard_settings">Wizard Settings</string>
     <string name="bg_trend_label">Xu hướng 15 phút</string>
     <string name="treatments_wizard_cob_label">COB</string>
@@ -196,7 +196,7 @@
     <string name="profile_ins_units_per_hour">U/h</string>
     <string name="profile_carbs_per_unit">g/U</string>
     <!--    ProfileFunction-->
-    <string name="startprofile">Bắt đầu hồ sơ %1$d%% trong %2$d phút</string>
+    <string name="startprofile">Bắt đầu cấu hình %1$d%% trong %2$d phút</string>
     <!--    APSResult-->
     <string name="cancel_temp">Huỷ liều basal tạm</string>
     <string name="let_temp_basal_run">Cho basal tạm thời tiếp tục</string>
@@ -205,7 +205,7 @@
     <string name="reason">Lý do</string>
     <string name="nochangerequested">Không có thay đổi nào được yêu cầu</string>
     <!--    ProfileSwitch-->
-    <string name="zerovalueinprofile">Hồ sơ không hợp lệ: %1$s</string>
+    <string name="zerovalueinprofile">Cấu hình không hợp lệ: %1$s</string>
     <!--    Temptarget-->
     <string name="mins">%1$d phút</string>
     <!--    Translator-->
@@ -225,6 +225,7 @@
     <string name="careportal_cgm_sensor_stop">Dừng cảm biến CGM</string>
     <string name="careportal_dad_alert">Cảnh báo D.A.D</string>
     <string name="careportal_insulin_cartridge_change">Thay ống chứa insulin</string>
+    <string name="careportal_profileswitch">Chuyển cấu hình</string>
     <string name="careportal_snackbolus">Bolus bữa ăn nhẹ</string>
     <string name="careportal_mealbolus">Bolus cho bữa ăn</string>
     <string name="careportal_correctionbolus">Bolus hiệu chỉnh</string>
@@ -285,7 +286,12 @@
     <string name="uel_resume">TIẾP TỤC</string>
     <string name="uel_suspend">TẠM NGƯNG</string>
     <string name="uel_ns_resume">TIẾP TỤC NS</string>
+    <string name="uel_stat_reset">ĐẶT LẠI THỐNG KÊ</string>
+    <string name="uel_delete_logs">XOÁ NHẬT KÝ</string>
     <string name="delete_future_treatments">Xoá liệu trình sắp tới</string>
+    <string name="uel_export_settings">XUẤT CÀI ĐẶT</string>
+    <string name="uel_import_settings">NHẬP CÀI ĐẶT</string>
+    <string name="uel_select_directory">CHỌN THƯ MỤC</string>
     <string name="uel_reset_databases">ĐẶT LẠI DỮ LIỆU</string>
     <string name="uel_reset_aps_results">ĐẶT LẠI KẾT QUẢ APS</string>
     <string name="uel_cleanup_databases">DỌN DẸP DỮ LIỆU</string>
@@ -306,6 +312,12 @@
     <string name="ue_none">Không có đơn vị</string>
     <string name="uel_other">KHÁC</string>
     <!-- HardLimits -->
+    <string name="profile_low_target">Mục tiêu thấp của cấu hình</string>
+    <string name="profile_high_target">Cấu hình Mục tiêu cao</string>
+    <string name="profile_dia">Giá trị DIA của cấu hình</string>
+    <string name="profile_sensitivity_value">Giá trị độ nhạy của cấu hình</string>
+    <string name="profile_max_daily_basal_value">Giá trị basal tối đa của cấu hình</string>
+    <string name="profile_carbs_ratio_value">Giá trị tỷ lệ carb của cấu hình</string>
     <string name="valuelimitedto">%1$.2f bị giới hạn ở %2$.2f</string>
     <string name="valueoutofrange">»%1$s« nằm ngoài giới hạn an toàn</string>
     <string name="value_out_of_hard_limits">»%1$s« %2$.2f nằm ngoài giới hạn an toàn</string>
@@ -318,6 +330,7 @@
     <string name="deactivate">HUỶ KÍCH HOẠT</string>
     <string name="load_history">TẢI LỊCH SỬ %1$d</string>
     <string name="load_tdds">TẢI TDDs</string>
+    <string name="set_profile">THIẾT LẬP CẤU HÌNH</string>
     <string name="start_pump">KHỞI ĐỘNG PUMP</string>
     <string name="stop_pump">DỪNG PUMP</string>
     <string name="temp_basal_absolute">LIỀU BASAL TẠM THỜI %1$.2f U/h %2$d min</string>
@@ -335,6 +348,7 @@
     <!-- Autotune -->
     <string name="autotune">Autotune</string>
     <string name="autotune_tune_days">Tune days :</string>
+    <string name="autotune_select_profile">Chọn cấu hình để điều chỉnh</string>
     <!-- Alerts -->
     <string name="raise_notifications_as_android_notifications">Hiển thị cảnh báo qua thông báo hệ thống</string>
     <string name="urgent_alarm">Cảnh báo khẩn cấp</string>
@@ -352,6 +366,7 @@
     <string name="carb_equal_zero_no_action">Carb = 0. Không thực hiện hành động nào!</string>
     <string name="wizard_no_insulin_required">Không cần insulin!</string>
     <string name="wizard_no_actual_bg">Chưa có BG gần đây để tính toán!</string>
+    <string name="wizard_no_active_profile">Chưa có cấu hình nào hoạt động!</string>
     <string name="wizard_no_cob">COB không xác định! Thiếu dữ liệu BG hoặc ứng dụng vừa khởi động lại?</string>
     <string name="wizard_carbs_constraint">Vi phạm giới hạn carb!</string>
     <string name="wizard_explain_calc">Calc (IC: %1$.1f, ISF: %2$.1f)</string>
@@ -393,7 +408,7 @@
     <string name="reservoir_value">%1$.0f / %2$d U</string>
     <string name="daily_units">Tổng đơn vị trong ngày</string>
     <string name="pump_icon">Biểu tượng pump</string>
-    <string name="view_profile">Xem hồ sơ(profile)</string>
+    <string name="view_profile">Xem cấu hình</string>
     <string name="pump_history">Lịch sử pump</string>
     <string name="stats">Thống kê</string>
     <string name="pump_driver_change" comment="26 characters max for translation">Thay trình điều khiển bơm.</string>
