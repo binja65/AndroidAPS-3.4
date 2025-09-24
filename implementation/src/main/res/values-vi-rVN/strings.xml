@@ -15,5 +15,5 @@
     <string name="detailed_14_days">Chi tiết 14 ngày</string>
     <string name="day_tir">TIR trong ngày</string>
     <string name="night_tir">TIR ban đêm</string>
-    <string name="carbs_short" comment="max 6 characters">Lượng Carbs</string>
+    <string name="carbs_short" comment="max 6 characters">Carbs</string>
 </resources>
