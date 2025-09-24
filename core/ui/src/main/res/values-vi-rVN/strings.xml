@@ -26,6 +26,7 @@
     <string name="snooze">Nhắc lại</string>
     <string name="virtual_pump">Virtual Pump</string>
     <string name="constraints">Giới hạn</string>
+    <string name="superbolus">Superbolus</string>
     <string name="pump_paused">Pump đã tạm dừng</string>
     <string name="and">Và</string>
     <string name="patient_name_default" comment="This is default patient display name, when user does not provide real one">Người dùng</string>
@@ -58,6 +59,7 @@
     <string name="format_carbs">%1$d g</string>
     <string name="format_hours">%1$.2f h</string>
     <string name="format_mins">%1$d mins</string>
+    <string name="objectives">Objectives</string>
     <string name="please_wait">Vui lòng chờ…</string>
     <string name="stop">Dừng lại</string>
     <string name="carbs">Lượng Carbs</string>
@@ -69,6 +71,7 @@
     <string name="dia_label">DIA</string>
     <string name="ic_label">IC</string>
     <string name="isf_label">ISF</string>
+    <string name="basal_label">Basal</string>
     <string name="target_label">Mục tiêu</string>
     <string name="dia_long_label">Thời gian hoạt động của Insulin</string>
     <string name="ic_long_label">Tỉ lệ Insulin–Carb (ICR)</string>
@@ -120,6 +123,7 @@
     <string name="notconfigured">Chưa được thiết lập</string>
     <string name="loopsuspended">Vòng lặp đã tạm dừng</string>
     <string name="trend_arrow">Mũi tên xu hướng</string>
+    <string name="a11y_autosens_label">Auto sens</string>
     <string name="required">req</string>
     <string name="a11y_arrow_double_down">giảm nhanh</string>
     <string name="a11y_arrow_single_down">giảm</string>
@@ -137,12 +141,15 @@
     <string name="tir">TIR</string>
     <string name="none"><![CDATA[<không>]]></string>
     <string name="remove_label">XÓA</string>
+    <string name="activate_profile">Activate profile</string>
     <string name="reset">đặt lại</string>
     <string name="profileswitch_ismissing">Thiếu ProfileSwitch. Vui lòng thực hiện chuyển hồ sơ (profile switch) hoặc nhấn ‘Kích hoạt hồ sơ’ (Activate Profile) trong LocalProfile.</string>
+    <string name="profile">Profile</string>
     <string name="select_for_removal">Chọn để xóa</string>
     <string name="confirm_remove_multiple_items">Bạn có chắc chắn muốn xóa %1$d mục không</string>
     <string name="overview_treatment_label">Điều trị (Treatment)</string>
     <string name="copytolocalprofile">Tạo hồ sơ mới từ hồ sơ này không?</string>
+    <string name="wear_wizard_settings">Wizard Settings</string>
     <string name="bg_trend_label">Xu hướng 15 phút</string>
     <string name="treatments_wizard_cob_label">COB</string>
     <string name="bolus_iob_label">Bolus IOB</string>
@@ -150,6 +157,7 @@
     <string name="invalid">KHÔNG HỢP LỆ</string>
     <string name="login">Đăng nhập</string>
     <string name="logout">Đăng xuất</string>
+    <string name="prime_fill">Prime/Fill</string>
     <string name="overview_insulin_label">Insulin</string>
     <string name="stoptemptarget">Dừng mục tiêu tạm thời</string>
     <string name="closedloop">Vòng lặp kín</string>
@@ -192,6 +200,7 @@
     <!--    APSResult-->
     <string name="cancel_temp">Huỷ liều basal tạm</string>
     <string name="let_temp_basal_run">Cho basal tạm thời tiếp tục</string>
+    <string name="rate">Rate</string>
     <string name="duration">Thời lượng</string>
     <string name="reason">Lý do</string>
     <string name="nochangerequested">Không có thay đổi nào được yêu cầu</string>
@@ -314,13 +323,18 @@
     <string name="temp_basal_absolute">LIỀU BASAL TẠM THỜI %1$.2f U/h %2$d min</string>
     <string name="temp_basal_percent">LIỀU BASAL TẠM THỜI %1$d%% %2$d min</string>
     <string name="read_status" comment="10 characters max for READSTATUS translation">TRẠNG THÁI %1$s</string>
+    <string name="sms" comment="26 characters max for translation">SMS</string>
     <string name="formatPercent">%1$.0f%%</string>
+    <string name="basalpct">Liều Basal %</string>
+    <string name="autosens_long">Giá trị Autosens: %.0f%%</string>
     <string name="autosens_short">AS: %.0f%%</string>
     <string name="algorithm_long">Autosens trong thuật toán: %.0f%%</string>
     <string name="algorithm_short">Alg: %.0f%%</string>
     <string name="a11y_file">tập tin</string>
     <string name="a11y_user">người dùng</string>
     <!-- Autotune -->
+    <string name="autotune">Autotune</string>
+    <string name="autotune_tune_days">Tune days :</string>
     <!-- Alerts -->
     <string name="raise_notifications_as_android_notifications">Hiển thị cảnh báo qua thông báo hệ thống</string>
     <string name="urgent_alarm">Cảnh báo khẩn cấp</string>
@@ -351,6 +365,7 @@
     <string name="wizard_explain_tt">TempT: %1$s</string>
     <string name="wizard_explain_tt_to">%1$s to %2$s</string>
     <string name="wizard_pump_not_available">Không có bơm khả dụng!</string>
+    <string name="quickwizard">QuickWizard</string>
     <!--    Preferences-->
     <string name="child">Trẻ em</string>
     <string name="teenage">Thanh thiếu niên</string>
