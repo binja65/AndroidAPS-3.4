@@ -120,8 +120,13 @@
     <string name="user_action_not_available">Выбранное пользовательское действие %1$s более недоступно, пожалуйста, обновите плитку</string>
     <string name="wear_action_tempt_cancel_message">Отменить действие ВЦ?</string>
     <string name="wear_action_tempt_unit_error">На часах и телефоне различные единицы измерения!</string>
+    <string name="wear_action_tempt_zero_message">Нулевая ВЦ - отменить выполнение Временной Цели?</string>
     <string name="wear_action_tempt_min_bg_error">Мин ГК вне диапазона!</string>
     <string name="wear_action_tempt_max_bg_error">Макс ГК вне диапазона!</string>
+    <string name="wear_action_tempt_range_error">Недопустимый диапазон: значение Низкой цели (%1$s) не может быть больше Высокой цели (%2$s)</string>
+    <string name="wear_action_tempt_manual_range_message">ВЦ\n\nМин:%1$s\nМакс:%2$sПродолжительность:%3$d мин</string>
+    <string name="wear_action_tempt_manual_message">ВЦ \n\n Цель: %1$s Продолжительность: %2$d мин</string>
+    <string name="wear_action_tempt_preset_message">ВЦ \n\n Причина: %1$s\n Цель: %2$s\n Продолжительность: %3$d мин</string>
     <string name="no_success">неуспешно - проверьте телефон</string>
     <string name="wear_settings">Настройки смарт-часов на Wear OS</string>
     <string name="wearcontrol_title">Контроль с часов</string>
@@ -152,6 +157,7 @@
     <string name="grams_short">г</string>
     <string name="hour_short">ч</string>
     <string name="no_active_profile">Активный профиль не установлен!</string>
+    <string name="profile_message">Профиль: %1$s\nСдвиг по времени: %2$d h\n Процент: %3$d%%\n Продолжительность: %4$d мин</string>
     <string name="target_only_aps_mode">Цели применяются только в режиме APS!</string>
     <string name="no_history">Нет данных истории!</string>
     <string name="temp_target">Врем. цель</string>
@@ -164,6 +170,7 @@
     <string name="last_aps_result_na">Последний результат недоступен!</string>
     <string name="loop_status_closed">ЗАМКНУТЫЙ ЦИКЛ</string>
     <string name="loop_status_open">ОТКРЫТЫЙ ЦИКЛ</string>
+    <string name="loop_status_lgs">Приостановка на Низких</string>
     <string name="loop_status_disabled">ЦИКЛ ВЫКЛЮЧЕН</string>
     <string name="aps">APS</string>
     <string name="last_run">Предыдущее выполнение</string>
@@ -172,4 +179,24 @@
     <string name="today">Сегодня</string>
     <string name="weighted">взвешенный</string>
     <string name="full_xdrip_sync_comment">Полная синхронизация? Это может занять длительное время и до завершения вы не увидите новые данные в xDrip+.</string>
+    <string name="wear_action_loop_state_no_nsclient">AAPSClient не выполняет такие запросы</string>
+    <string name="wear_action_loop_state_requires_duration">Для этого требуется указать продолжительность</string>
+    <string name="wear_action_loop_state_pump_suspended">Помпа остановлена!</string>
+    <string name="wear_action_loop_state_profile_invalid">Недопустимый профиль!</string>
+    <string name="wear_action_loop_state_unauthorized">Повторите попытку.</string>
+    <string name="wear_action_loop_state_invalid">Запрошено неверное состояние цикла</string>
+    <string name="wear_action_loop_state_title">СОСТОЯНИЕ ЦИКЛА</string>
+    <string name="wear_action_loop_state_changed_with_duration">%1$s\n Продолжительность: %2$d мин</string>
+    <string name="wear_action_loop_state_now_closed">Закрыто</string>
+    <string name="wear_action_loop_state_now_lgs">Приостановка на Низких</string>
+    <string name="wear_action_loop_state_now_open">Открыто</string>
+    <string name="wear_action_loop_state_now_suspended">Приостановлено</string>
+    <string name="wear_action_loop_state_now_resumed">Возобновлено</string>
+    <string name="wear_action_loop_state_now_disabled">Неактивно</string>
+    <string name="wear_action_loop_state_now_pump_suspended">Работа помпы приостановлена</string>
+    <string name="wear_action_loop_state_now_superbolus">Суперболюс</string>
+    <string name="wear_action_loop_state_now_invalid">Недопустимое состояние</string>
+    <string name="wear_action_loop_state_now_pump_disconnected">Помпа отключена</string>
+    <string name="garmin_request_key">Ключ запроса</string>
+    <string name="garmin_request_key_summary">Дополнительный ключ для безопасности соединения HTTP между устройством Garmin и AAPS.</string>
 </resources>
