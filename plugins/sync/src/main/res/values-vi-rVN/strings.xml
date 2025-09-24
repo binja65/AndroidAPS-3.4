@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- AAPSClient -->
+    <string name="ns_allow_roaming">Cho phép kết nối khi chuyển vùng</string>
+    <string name="ns_create_announcements_from_errors_title">Tạo thông báo từ lỗi</string>
+    <string name="ns_create_announcements_from_carbs_req_title">Tạo thông báo từ cảnh báo cần nạp carb</string>
+    <string name="ns_create_announcements_from_errors_summary">Tạo thông báo Nightscout cho hộp thoại lỗi và cảnh báo cục bộ (cũng có thể xem trong Careportal, Treatments)</string>
+    <string name="ns_create_announcements_from_carbs_req_summary">Tạo thông báo Nightscout cho cảnh báo cần bổ sung carb</string>
+    <string name="description_ns_client">Đồng bộ dữ liệu của bạn với Nightscout bằng API v1</string>
+    <string name="description_ns_client_v3">Đồng bộ dữ liệu của bạn với Nightscout bằng API v3</string>
+    <string name="no_connectivity">Không có kết nối</string>
+    <string name="unsupported_ns_version">Phiên bản Nightscout này không được hỗ trợ</string>
+    <string name="openaps_short">OAPS</string>
+    <string name="uploader_short">UPLD</string>
     <string name="ns_malfunction">AAPSClient gặp sự cố. Hãy thử khởi động lại NS và AAPSClient.</string>
     <!-- AAPSClient -->
+    <string name="no_write_permission">NSCLIENT không có quyền ghi. Sai API secret?</string>
+    <string name="ns_client_v3_short_name">NSv3</string>
+    <string name="ns_client">AAPSClient</string>
+    <string name="ns_client_short_name">NSv1</string>
+    <string name="ns_client_url">URL:</string>
+    <string name="restart">Khởi động lại</string>
+    <string name="ns_client_title">AAPSClientV1</string>
+    <string name="ns_client_v3_title">AAPSClientV3</string>
+    <string name="ns_client_url_title">Nightscout URL</string>
+    <string name="ns_client_url_dialog_message">Nhập URL Nightscout của bạn (ví dụ: https://yoursitename.yourplatform.dom)</string>
+    <string name="ns_client_secret_title">Nightscout API secret</string>
+    <string name="ns_client_secret_dialog_message">Nhập API secret của Nightscout (mật khẩu tối thiểu 12 ký tự được lưu trong Nightscout của bạn)</string>
+    <string name="nsclient_token_title">Nightscout access token</string>
     <string name="nsclient_token_dialog_message">Nhập mã thông báo truy cập cấp quản trị được tạo trong công cụ quản trị Nightscout (tối thiểu 17 ký tự, không phải API secret!)</string>
+    <string name="deliver_now">Thực hiện ngay</string>
+    <string name="queue">Hàng đợi:</string>
+    <string name="status">Trạng thái:</string>
+    <string name="clear_log">Xóa nhật ký</string>
+    <string name="full_sync">Đồng bộ toàn bộ</string>
+    <string name="full_sync_comment">Đồng bộ toàn bộ? Quá trình này có thể mất nhiều giờ và cho đến khi hoàn tất, bạn sẽ không thấy dữ liệu mới trong NS.</string>
+    <string name="ns_sync_options">Synchronization</string>
     <string name="ns_receive_insulin">Nhận insulin</string>
     <string name="ns_receive_insulin_summary">Chấp nhận insulin được nhập qua NS hoặc AAPSClient (không được bơm, chỉ tính vào IOB)</string>
     <string name="ns_receive_therapy_events_summary">Chấp nhận các sự kiện điều trị (thay cannula, insulin, pin, v.v.) được nhập qua NS hoặc AAPSClient</string>
@@ -12,4 +43,5 @@
     <!--    DataBroadcast-->
     <!-- GarminPlugin -->
     <!--    Wear-->
+    <string name="wizard_result">Calc. Wizard:\nInsulin: %1$.2fU\nCarbs: %2$dg</string>
 </resources>
