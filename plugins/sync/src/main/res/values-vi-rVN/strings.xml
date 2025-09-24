@@ -42,13 +42,18 @@
     <string name="ns_receive_profile_switch_summary">Chấp nhận chuyển đổi cấu hình được nhập qua NS hoặc AAPSClient</string>
     <string name="ns_receive_insulin">Nhận insulin</string>
     <string name="ns_receive_insulin_summary">Chấp nhận insulin được nhập qua NS hoặc AAPSClient (không được bơm, chỉ tính vào IOB)</string>
+    <string name="ns_receive_carbs">Nhận carb</string>
+    <string name="ns_receive_carbs_summary">Chấp nhận carb được nhập qua NS hoặc AAPSClient</string>
     <string name="ns_receive_therapy_events_summary">Chấp nhận các sự kiện điều trị (thay cannula, insulin, pin, v.v.) được nhập qua NS hoặc AAPSClient</string>
+    <string name="ns_announcements">Tạo thông báo từ các thông báo NS</string>
+    <string name="ns_use_ws_summary">Bật tùy chọn này có nghĩa là: cập nhật nhanh hơn, nhận cảnh báo và thông báo, đồng thời tiêu thụ pin nhiều hơn tương tự như v1. Tất cả các bộ tải khác lên NS phải sử dụng giao thức v3.</string>
     <!-- Tidepool -->
     <!-- Xdrip StatusLine -->
     <!--    DataBroadcast-->
     <!-- GarminPlugin -->
     <!--    Wear-->
     <string name="wizard_result">Calc. Wizard:\nInsulin: %1$.2fU\nCarbs: %2$dg</string>
+    <string name="quick_wizard_message">QuickWizard: %1$s\nInsulin: %2$.2fU\nCarbs: %3$dg</string>
     <string name="no_active_profile">Không có chuyển đổi cấu hình nào hoạt động!</string>
     <string name="profile_message">Cấu hình: %1$s\nDịch chuyển thời gian: %2$d giờ\nPhần trăm: %3$d%%\nThời lượng: %4$d phút</string>
     <string name="no_profile">Không có cấu hình nào được tải</string>
