@@ -189,12 +189,9 @@ class RemoraPlugin @Inject constructor(
                     commandQueue.bolus(detailedBolusInfo, callback)
                 }
             }
-            var reportedConnecting = false
-            var reportedEnqueued = false
+            var reportConnectionProgress = true
             if (activePlugin.activePump.isConnected()) {
                 reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
-                reportedConnecting = true
-                reportedEnqueued = true
             }
             val progressJob = launch {
                 merge(pumpStatusProgressFlow, bolusProgressFlow)
@@ -204,18 +201,15 @@ class RemoraPlugin @Inject constructor(
                                 EventPumpStatusChanged.Status.CONNECTING,
                                 EventPumpStatusChanged.Status.HANDSHAKING,
                                      -> {
-                                    if (reportedConnecting) return@collect
-                                    reportIntermediateProgress(RemoraCommand.Progress.Connecting(Clock.System.now() - event.secondsElapsed.seconds))
-                                    reportedConnecting = true
+                                    if (reportConnectionProgress)
+                                        reportIntermediateProgress(RemoraCommand.Progress.Connecting(event.secondsElapsed))
                                 }
 
                                 EventPumpStatusChanged.Status.CONNECTED,
                                 EventPumpStatusChanged.Status.PERFORMING,
-                                    -> {
-                                    if (reportedEnqueued) return@collect
-                                    reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
-                                    reportedConnecting = true
-                                    reportedEnqueued = true
+                                     -> {
+                                    if (reportConnectionProgress)
+                                        reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
                                 }
 
                                 else -> Unit
@@ -223,8 +217,7 @@ class RemoraPlugin @Inject constructor(
 
                             is EventOverviewBolusProgress -> {
                                 reportIntermediateProgress(RemoraCommand.Progress.Percentage(event.percent))
-                                reportedConnecting = true
-                                reportedEnqueued = true
+                                reportConnectionProgress = false
                             }
                         }
                     }
