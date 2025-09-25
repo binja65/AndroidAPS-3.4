@@ -26,6 +26,7 @@ import app.aaps.core.interfaces.rx.events.EventDeviceStatusChange
 import app.aaps.core.interfaces.rx.events.EventNewHistoryData
 import app.aaps.core.interfaces.rx.events.EventOverviewBolusProgress
 import app.aaps.core.interfaces.rx.events.EventProfileSwitchChanged
+import app.aaps.core.interfaces.rx.events.EventPumpStatusChanged
 import app.aaps.core.interfaces.rx.events.EventRunningModeChange
 import app.aaps.core.interfaces.rx.events.EventTempTargetChange
 import app.aaps.core.interfaces.rx.events.EventTherapyEventChange
@@ -41,6 +42,7 @@ import de.tebbeubben.remora.lib.RemoraLib
 import de.tebbeubben.remora.lib.commands.CommandHandler
 import de.tebbeubben.remora.lib.commands.wrapError
 import de.tebbeubben.remora.lib.commands.wrapSuccess
+import de.tebbeubben.remora.lib.model.commands.RemoraCommand
 import de.tebbeubben.remora.lib.model.commands.RemoraCommandData
 import de.tebbeubben.remora.lib.model.commands.RemoraCommandError
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +67,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 
 @Singleton
 class RemoraPlugin @Inject constructor(
@@ -100,19 +105,22 @@ class RemoraPlugin @Inject constructor(
         remoraLib.setCommandHandler(this)
     }
 
-    private val commandQueueInfoFlow = workManager.getWorkInfosByTagFlow("CommandQueue")
-    private val calculationWorkflowInfoFlow = workManager.getWorkInfosByTagFlow("calculation")
+    private val bolusProgressFlow get() = rxBus.toObservable(EventOverviewBolusProgress::class.java).asFlow()
+    private val pumpStatusProgressFlow get() = rxBus.toObservable(EventPumpStatusChanged::class.java).asFlow()
+    private val commandQueueInfoFlow get() = workManager.getWorkInfosByTagFlow("CommandQueue")
+    private val calculationWorkflowInfoFlow get() = workManager.getWorkInfosByTagFlow("calculation")
 
     // These events will trigger re-sending the current status information to all followers
-    private val mergedEvents: Flow<Event> = merge(
-        rxBus.toObservable(EventNewHistoryData::class.java).asFlow(),
-        rxBus.toObservable(EventTempTargetChange::class.java).asFlow(),
-        rxBus.toObservable(EventTherapyEventChange::class.java).asFlow(),
-        rxBus.toObservable(EventProfileSwitchChanged::class.java).asFlow(),
-        rxBus.toObservable(EventRunningModeChange::class.java).asFlow(),
-        rxBus.toObservable(EventDeviceStatusChange::class.java).asFlow(),
-        rxBus.toObservable(EventUpdateOverviewGraph::class.java).asFlow()
-    )
+    private val mergedEvents: Flow<Event>
+        get() = merge(
+            rxBus.toObservable(EventNewHistoryData::class.java).asFlow(),
+            rxBus.toObservable(EventTempTargetChange::class.java).asFlow(),
+            rxBus.toObservable(EventTherapyEventChange::class.java).asFlow(),
+            rxBus.toObservable(EventProfileSwitchChanged::class.java).asFlow(),
+            rxBus.toObservable(EventRunningModeChange::class.java).asFlow(),
+            rxBus.toObservable(EventDeviceStatusChange::class.java).asFlow(),
+            rxBus.toObservable(EventUpdateOverviewGraph::class.java).asFlow()
+        )
 
     // This flow will be triggered by any of the events from `mergedEvents`,
     // but waits for the command queue and calculation workflow to finish before triggering the update.
@@ -163,6 +171,7 @@ class RemoraPlugin @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun CommandHandler.ExecutionScope.executeBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> =
         coroutineScope {
             if (bolusData.bolusAmount == 0f) return@coroutineScope wrapError(RemoraCommandError.INVALID_VALUE)
@@ -180,10 +189,45 @@ class RemoraPlugin @Inject constructor(
                     commandQueue.bolus(detailedBolusInfo, callback)
                 }
             }
-            reportIntermediateProgress(null)
+            var reportedConnecting = false
+            var reportedEnqueued = false
+            if (activePlugin.activePump.isConnected()) {
+                reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
+                reportedConnecting = true
+                reportedEnqueued = true
+            }
             val progressJob = launch {
-                val progressFlow = rxBus.toObservable(EventOverviewBolusProgress::class.java).asFlow().map { it.percent }
-                progressFlow.collectLatest(::reportIntermediateProgress)
+                merge(pumpStatusProgressFlow, bolusProgressFlow)
+                    .collect { event ->
+                        when (event) {
+                            is EventPumpStatusChanged     -> when (event.status) {
+                                EventPumpStatusChanged.Status.CONNECTING,
+                                EventPumpStatusChanged.Status.HANDSHAKING,
+                                     -> {
+                                    if (reportedConnecting) return@collect
+                                    reportIntermediateProgress(RemoraCommand.Progress.Connecting(Clock.System.now() - event.secondsElapsed.seconds))
+                                    reportedConnecting = true
+                                }
+
+                                EventPumpStatusChanged.Status.CONNECTED,
+                                EventPumpStatusChanged.Status.PERFORMING,
+                                    -> {
+                                    if (reportedEnqueued) return@collect
+                                    reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
+                                    reportedConnecting = true
+                                    reportedEnqueued = true
+                                }
+
+                                else -> Unit
+                            }
+
+                            is EventOverviewBolusProgress -> {
+                                reportIntermediateProgress(RemoraCommand.Progress.Percentage(event.percent))
+                                reportedConnecting = true
+                                reportedEnqueued = true
+                            }
+                        }
+                    }
             }
             val result = resultJob.await()
             progressJob.cancel()
