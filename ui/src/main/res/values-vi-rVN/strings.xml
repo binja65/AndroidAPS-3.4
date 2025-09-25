@@ -57,7 +57,7 @@
     <string name="result_insulin_carbs">Kết quả: %1$s %2$s</string>
     <string name="missing_carbs">Còn thiếu %1$d g</string>
     <string name="a11y_current_bg">đường huyết hiện tại</string>
-    <string name="carb_time_label">Thời gian Carb</string>
+    <string name="carb_time_label">Carb time</string>
     <string name="a11y_set_carb_timer">đặt nhắc nhở carb</string>
     <string name="show_calculation">Xem chi tiết tính toán</string>
     <!-- Treatments -->
