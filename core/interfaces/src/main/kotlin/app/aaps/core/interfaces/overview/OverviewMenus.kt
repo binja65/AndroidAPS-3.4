@@ -6,6 +6,7 @@ import android.widget.ImageButton
 interface OverviewMenus {
     enum class CharType {
         PRE,
+        BG_PARAB,
         TREAT,
         BAS,
         ABS,

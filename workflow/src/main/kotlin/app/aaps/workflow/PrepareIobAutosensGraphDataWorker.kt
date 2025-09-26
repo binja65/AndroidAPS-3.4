@@ -6,6 +6,8 @@ import android.graphics.Paint
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import app.aaps.core.data.aps.SMBDefaults
+import app.aaps.core.data.configuration.Constants
+import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.graph.data.BarGraphSeries
 import app.aaps.core.graph.data.DataPointWithLabelInterface
 import app.aaps.core.graph.data.DeviationDataPoint
@@ -16,9 +18,11 @@ import app.aaps.core.graph.data.ScaledDataPoint
 import app.aaps.core.graph.data.Shape
 import app.aaps.core.interfaces.aps.AutosensData
 import app.aaps.core.interfaces.aps.AutosensResult
+import app.aaps.core.interfaces.aps.GlucoseStatusAutoIsf
 import app.aaps.core.interfaces.aps.IobTotal
 import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.graph.Scale
+import app.aaps.core.interfaces.iob.GlucoseStatusProvider
 import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.overview.OverviewData
@@ -54,6 +58,7 @@ class PrepareIobAutosensGraphDataWorker(
     @Inject lateinit var persistenceLayer: PersistenceLayer
     @Inject lateinit var rxBus: RxBus
     @Inject lateinit var decimalFormatter: DecimalFormatter
+    @Inject lateinit var glucoseStatusProvider: GlucoseStatusProvider
     private var ctx: Context
 
     init {
@@ -145,6 +150,8 @@ class PrepareIobAutosensGraphDataWorker(
         data.overviewData.maxFromMinValueFound = Double.MIN_VALUE
 
         val adsData = data.iobCobCalculator.ads.clone()
+
+        val toUnits = if (profileUtil.units == GlucoseUnit.MGDL) 1.0 else Constants.MGDL_TO_MMOLL
 
         while (time <= endTime) {
             if (isStopped) return Result.failure(workDataOf("Error" to "stopped"))
@@ -282,6 +289,43 @@ class PrepareIobAutosensGraphDataWorker(
                 paint.strokeWidth = 3f
                 paint.pathEffect = DashPathEffect(floatArrayOf(4f, 4f), 0f)
                 paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.activityColor)
+            })
+        }
+
+        // BG PARABOLA
+        val bgParabolaArrayHist: MutableList<ScaledDataPoint> = ArrayList()
+        val bgParabolaArrayPrediction: MutableList<ScaledDataPoint> = ArrayList()
+        val glucoseStatus = glucoseStatusProvider.glucoseStatusData  as GlucoseStatusAutoIsf?
+        val corr = glucoseStatus?.corrSqu ?: 0.0
+        if ( corr > 0.0) {
+            val a0 = glucoseStatus!!.a0
+            val a1 = glucoseStatus.a1
+            val a2 = glucoseStatus.a2
+            // parabola extrapolation
+            for (i in 0 until 21 step 5) {
+                val timestamp = now + (i * 60 * 1000).toLong()
+                val value = a0 + a1*i/5 +a2*i*i/25
+                bgParabolaArrayPrediction.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
+            }
+            // fitted parabola
+            val dur = (glucoseStatus.parabolaMinutes).toInt()
+            for (i in -dur until 1 step 5) {
+                val timestamp = now + (i * 60 * 1000).toLong()
+                val value = a0 + a1*i/5 +a2*i*i/25
+                bgParabolaArrayHist.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
+            }
+        }
+        data.overviewData.bgParabolaSeries = FixedLineGraphSeries(Array(bgParabolaArrayHist.size) { i -> bgParabolaArrayHist[i] }).also {
+            it.isDrawBackground = false
+            it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
+            it.thickness = 8
+        }
+        data.overviewData.bgParabolaPredictionSeries = FixedLineGraphSeries(Array(bgParabolaArrayPrediction.size) { i ->  bgParabolaArrayPrediction[i] }).also {
+            it.setCustomPaint(Paint().also { paint ->
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = 8f
+                paint.pathEffect = DashPathEffect(floatArrayOf(6f, 6f), 0f)
+                paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
             })
         }
 

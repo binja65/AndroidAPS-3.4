@@ -289,6 +289,7 @@
     <string name="overview_show_basals">Basals</string>
     <string name="overview_show_abs_insulin">Absolute insulin</string>
     <string name="overview_show_variable_sens">Variable sensitivity</string>
+    <string name="overview_show_bgParabola">BG parabola</string>
     <string name="prediction_shortname">PRED</string>
     <string name="basal_shortname">BAS</string>
     <string name="deviation_shortname">DEV</string>
@@ -300,6 +301,7 @@
     <string name="heartRate_shortname">HR</string>
     <string name="sensitivity_shortname">SENS%</string>
     <string name="variable_sensitivity_shortname">VSENS</string>
+    <string name="bgParabola_shortname">BG_PARAB</string>
     <string name="graph_scale">Graph scale</string>
     <string name="graph_menu_divider_header">Graph</string>
     <string name="temp_basal_overview_short_name">T:</string>

@@ -67,6 +67,11 @@ interface OverviewData {
     var activitySeries: SeriesData
     var activityPredictionSeries: SeriesData
 
+    var maxBgParabolaValue: Double
+    val bgParabolaScale: Scale
+    var bgParabolaSeries: SeriesData
+    var bgParabolaPredictionSeries: SeriesData
+
     var maxEpsValue: Double
     val epsScale: Scale
     var epsSeries: SeriesData

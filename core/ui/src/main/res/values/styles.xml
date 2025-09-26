@@ -234,6 +234,8 @@
         <item name="activityColor">@color/activity</item>
         <item name="baseBasalColor">@color/baseBasal</item>
         <item name="dotLineColor">@color/black</item>
+        <!-- AutoISf specific colors  -->
+        <item name="bgParabolaColor">@color/bgParabolaColor</item>
         <!---Popupmenu TextColor -->
         <item name="menuTextColor">@color/black</item>
         <item name="menuTextColorInverse">@color/white</item>

@@ -191,6 +191,8 @@
     <attr name="therapyEvent_EXERCISE" format="reference|color" />
     <attr name="therapyEvent_APS_OFFLINE" format="reference|color" />
     <attr name="therapyEvent_Default" format="reference|color" />
+    <!-- AutoISF specific colors  -->
+    <attr name="bgParabolaColor" format="reference|color"/>
     <!-- Graph specific colors  -->
     <attr name="graphHorizontalLabelText" format="reference|color" />
     <attr name="graphVerticalLabelText" format="reference|color" />
