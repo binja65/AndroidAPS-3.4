@@ -2,6 +2,7 @@ package app.aaps.plugins.main.general.remora
 
 import android.content.Context
 import androidx.work.WorkManager
+import app.aaps.core.data.model.BS
 import app.aaps.core.data.model.TT
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.data.ue.Action
@@ -10,7 +11,9 @@ import app.aaps.core.data.ue.ValueWithUnit
 import app.aaps.core.interfaces.aps.Loop
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.db.PersistenceLayer
+import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.logging.AAPSLogger
+import app.aaps.core.interfaces.overview.LastBgData
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.interfaces.plugin.PluginDescription
@@ -31,7 +34,9 @@ import app.aaps.core.interfaces.rx.events.EventRunningModeChange
 import app.aaps.core.interfaces.rx.events.EventTempTargetChange
 import app.aaps.core.interfaces.rx.events.EventTherapyEventChange
 import app.aaps.core.interfaces.rx.events.EventUpdateOverviewGraph
+import app.aaps.core.interfaces.smsCommunicator.SmsCommunicator
 import app.aaps.core.interfaces.utils.DateUtil
+import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
@@ -45,6 +50,7 @@ import de.tebbeubben.remora.lib.commands.wrapSuccess
 import de.tebbeubben.remora.lib.model.commands.RemoraCommand
 import de.tebbeubben.remora.lib.model.commands.RemoraCommandData
 import de.tebbeubben.remora.lib.model.commands.RemoraCommandError
+import de.tebbeubben.remora.lib.model.commands.RemoraStatusSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -67,9 +73,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.seconds
+import kotlin.math.abs
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Singleton
 class RemoraPlugin @Inject constructor(
@@ -88,6 +96,10 @@ class RemoraPlugin @Inject constructor(
     context: Context,
     private val rxBus: RxBus,
     private val workManager: WorkManager,
+    private val iobCobCalculator: IobCobCalculator,
+    private val lastBgData: LastBgData,
+    private val hardLimits: HardLimits,
+    private val smsCommunicator: dagger.Lazy<SmsCommunicator>,
 ) : PluginBase(
     PluginDescription()
         .mainType(PluginType.GENERAL)
@@ -160,6 +172,52 @@ class RemoraPlugin @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
+    override suspend fun validateStatusSnapshot(snapshot: RemoraStatusSnapshot): RemoraCommandError? {
+        val currentCob = iobCobCalculator.getCobInfo("Remora").displayCob
+        if (currentCob == null && !snapshot.cob.isNaN()) return RemoraCommandError.COB_MISMATCH
+        if (currentCob != null && snapshot.cob.isNaN()) return RemoraCommandError.COB_MISMATCH
+
+        if (
+            currentCob != null &&
+            !snapshot.cob.isNaN() &&
+            abs(currentCob - snapshot.cob) >= 20
+        ) {
+            return RemoraCommandError.COB_MISMATCH
+        }
+
+        val bolusIob = iobCobCalculator.calculateIobFromBolus().iob.toFloat()
+        val basalIob = iobCobCalculator.calculateIobFromTempBasalsIncludingConvertedExtended().basaliob
+        val totalIob = bolusIob + basalIob
+
+        if (abs(totalIob - snapshot.iob) >= hardLimits.maxBolus() / 10) return RemoraCommandError.IOB_MISMATCH
+
+        val lastBg = lastBgData.lastBg()
+        val bg = lastBg?.let { it.smoothed ?: it.value } ?: Double.NaN
+
+        if (!bg.isNaN()) {
+            if (snapshot.bg.isNaN()) return RemoraCommandError.BG_MISMATCH
+            if (abs(bg - snapshot.bg) >= 20) return RemoraCommandError.BG_MISMATCH
+        }
+        if (!bg.isNaN() && abs(bg - snapshot.bg) >= 20) return RemoraCommandError.IOB_MISMATCH
+
+        val lastBolus = persistenceLayer.getNewestBolusOfType(BS.Type.NORMAL)
+        Duration.ZERO.absoluteValue
+        if (
+            lastBolus != null &&
+            (snapshot.lastBolusTime - Instant.fromEpochMilliseconds(lastBolus.timestamp)).absoluteValue >= 1.minutes &&
+            abs(snapshot.lastBolusAmount - lastBolus.amount) > 0.1
+        ) {
+            return RemoraCommandError.LAST_BOLUS_MISMATCH
+        }
+
+        return null
+    }
+
+    fun invalidateCommand() {
+        scope.launch { remoraLib.invalidateCurrentCommand() }
+    }
+
     override suspend fun prepareBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> = when {
         commandQueue.bolusInQueue()    -> wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
         loop.runningMode.isSuspended() -> wrapError(RemoraCommandError.PUMP_SUSPENDED)
@@ -167,6 +225,7 @@ class RemoraPlugin @Inject constructor(
 
         else                           -> {
             val constrained = constraintsChecker.applyBolusConstraints(ConstraintObject(bolusData.bolusAmount.toDouble(), aapsLogger)).value()
+            smsCommunicator.get().invalidateMessage()
             wrapSuccess(bolusData.copy(bolusAmount = constrained.toFloat()))
         }
     }
