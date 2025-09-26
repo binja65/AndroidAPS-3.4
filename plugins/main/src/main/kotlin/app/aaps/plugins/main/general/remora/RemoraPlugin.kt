@@ -76,6 +76,7 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.math.abs
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -205,7 +206,7 @@ class RemoraPlugin @Inject constructor(
         Duration.ZERO.absoluteValue
         if (
             lastBolus != null &&
-            (snapshot.lastBolusTime - Instant.fromEpochMilliseconds(lastBolus.timestamp)).absoluteValue >= 1.minutes &&
+            (snapshot.lastBolusTime - Instant.fromEpochMilliseconds(lastBolus.timestamp)).absoluteValue >= 30.seconds &&
             abs(snapshot.lastBolusAmount - lastBolus.amount) > 0.1
         ) {
             return RemoraCommandError.LAST_BOLUS_MISMATCH
