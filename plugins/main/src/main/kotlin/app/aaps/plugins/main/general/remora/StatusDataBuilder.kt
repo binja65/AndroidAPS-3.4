@@ -24,6 +24,7 @@ import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.interfaces.utils.TrendCalculator
+import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.extensions.combine
@@ -48,6 +49,7 @@ import de.tebbeubben.remora.lib.model.status.RemoraStatusData.TherapyEvent
 import de.tebbeubben.remora.lib.model.status.RemoraStatusData.TherapyEventType
 import org.joda.time.DateTimeZone
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -71,7 +73,7 @@ class StatusDataBuilder @Inject constructor(
     private val preferences: Preferences,
     private val trendCalculator: TrendCalculator,
     private val receiverStatusStore: ReceiverStatusStore,
-    private val profileUtil: ProfileUtil
+    private val profileUtil: ProfileUtil,
 ) {
 
     fun constructStatusData(): RemoraStatusData? {
@@ -87,19 +89,31 @@ class StatusDataBuilder @Inject constructor(
 
         val tempTarget = persistenceLayer.getTemporaryTargetActiveAt(nowMillis)
 
+        val activePump = activePlugin.activePump
+
         val shortStatus = RemoraStatusData.Short(
             timestamp = nowInstant,
             timezone = DateTimeZone.getDefault().id,
-            displayCob = iobCobCalculator.getCobInfo("Remora").displayCob?.toFloat(),
-            futureCarbs = iobCobCalculator.getCobInfo("Remora").futureCarbs.toFloat(),
-            activeProfile = profileSwitch.originalProfileName,
-            activeProfilePercentage = profileSwitch.originalPercentage,
-            activeProfileShift = profileSwitch.originalTimeshift.milliseconds.inWholeHours.toInt(),
-            activeProfileStart = Instant.fromEpochMilliseconds(profileSwitch.timestamp),
-            activeProfileDuration = if (profileSwitch.originalDuration != 0L) profileSwitch.originalDuration.milliseconds else null,
-            usesMgdl = profileFunction.getUnits() == GlucoseUnit.MGDL,
-            lowBgThreshold = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewLowMark), profileUtil.units).toFloat(),
-            highBgThreshold = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewHighMark), profileUtil.units).toFloat(),
+
+            cob = RemoraStatusData.Cob(
+                display = iobCobCalculator.getCobInfo("Remora").displayCob?.toFloat(),
+                futureCarbs = iobCobCalculator.getCobInfo("Remora").futureCarbs.toFloat(),
+            ),
+
+            activeProfile = RemoraStatusData.ActiveProfile(
+                name = profileSwitch.originalProfileName,
+                percentage = profileSwitch.originalPercentage,
+                timeShift = profileSwitch.originalTimeshift.milliseconds.inWholeHours.toInt(),
+                start = Instant.fromEpochMilliseconds(profileSwitch.timestamp),
+                duration = if (profileSwitch.originalDuration != 0L) profileSwitch.originalDuration.milliseconds else null,
+            ),
+
+            bgConfig = RemoraStatusData.BgConfig(
+                usesMgdl = profileFunction.getUnits() == GlucoseUnit.MGDL,
+                lowBgThreshold = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewLowMark), profileUtil.units).toFloat(),
+                highBgThreshold = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewHighMark), profileUtil.units).toFloat(),
+            ),
+
             displayBg = lastBgData.lastBg()?.let { bg ->
                 DisplayBg(
                     timestamp = Instant.fromEpochMilliseconds(bg.timestamp),
@@ -115,32 +129,87 @@ class StatusDataBuilder @Inject constructor(
                     }
                 )
             },
-            bolusIob = iobCobCalculator.calculateIobFromBolus().iob.toFloat(),
-            basalIob = iobCobCalculator.calculateIobFromTempBasalsIncludingConvertedExtended().basaliob.toFloat(),
-            reservoirLevel = activePlugin.activePump.reservoirLevel.let { if (it >= 0) it.toFloat() else null }, // Assuming -1 or similar for unknown
-            isReservoirLevelMax = activePlugin.activePump.let { pump ->
-                pump.reservoirLevel >= pump.pumpDescription.maxResorvoirReading && pump.pumpDescription.isPatchPump
-            },
-            sensorChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.SENSOR_CHANGE)?.timestamp?.let { Instant.fromEpochMilliseconds(it) },
-            sensorBatteryLevel = activePlugin.activeBgSource.sensorBatteryLevel.let { if (it >= 0) it else null },
-            batteryChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.PUMP_BATTERY_CHANGE)?.timestamp?.let { Instant.fromEpochMilliseconds(it) },
-            batteryLevel = activePlugin.activePump.batteryLevel.let { if (it >= 0) it else null },
-            cannulaChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.CANNULA_CHANGE)?.timestamp?.let { Instant.fromEpochMilliseconds(it) },
-            podChangedAt = if (activePlugin.activePump.pumpDescription.isPatchPump) {
-                persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.CANNULA_CHANGE)?.timestamp?.let { Instant.fromEpochMilliseconds(it) }
-            } else null,
-            insulinChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.INSULIN_CHANGE)?.timestamp?.let { Instant.fromEpochMilliseconds(it) },
-            runningMode = convertAapsRmModeToRemoraMode(loop.runningMode),
-            runningModeStart = Instant.fromEpochMilliseconds(loop.runningModeRecord.timestamp),
-            runningModeDuration = if (loop.runningModeRecord.duration == 0L) null else loop.runningModeRecord.duration.milliseconds,
-            baseBasal = basalData.basal.toFloat(),
-            tempBasalAbsolute = if (basalData.isTempBasalRunning) basalData.tempBasalAbsolute.toFloat() else null,
-            target = tempTarget?.target()?.toFloat() ?: profile.getTargetMgdl().toFloat(),
-            tempTargetStart = tempTarget?.timestamp?.let { Instant.fromEpochMilliseconds(it) },
-            tempTargetDuration = tempTarget?.duration?.milliseconds,
+
+            iob = RemoraStatusData.Iob(
+                bolus = iobCobCalculator.calculateIobFromBolus().iob.toFloat(),
+                basal = iobCobCalculator.calculateIobFromTempBasalsIncludingConvertedExtended().basaliob.toFloat(),
+            ),
+
+            activeRunningMode = RemoraStatusData.ActiveRunningMode(
+                mode = convertAapsRmModeToRemoraMode(loop.runningMode),
+                start = Instant.fromEpochMilliseconds(loop.runningModeRecord.timestamp),
+                duration = if (loop.runningModeRecord.duration == 0L) null else loop.runningModeRecord.duration.milliseconds,
+            ),
+
+            currentTarget = RemoraStatusData.CurrentTarget(
+                target = tempTarget?.target()?.toFloat() ?: profile.getTargetMgdl().toFloat(),
+                tempTargetStart = tempTarget?.timestamp?.let { Instant.fromEpochMilliseconds(it) },
+                tempTargetDuration = tempTarget?.duration?.milliseconds,
+            ),
+
+            deviceBattery = RemoraStatusData.DeviceBattery(
+                level = receiverStatusStore.batteryLevel,
+                isCharging = receiverStatusStore.isCharging
+            ),
+
             autosensRatio = iobCobCalculator.ads.getAutosensDataAtTime(nowMillis)?.autosensResult?.ratio?.toFloat() ?: 1f,
-            deviceBattery = receiverStatusStore.batteryLevel,
-            isCharging = receiverStatusStore.isCharging
+
+            basalStatus = RemoraStatusData.BasalStatus(
+                baseBasal = basalData.basal.toFloat(),
+                tempBasalAbsolute = if (basalData.isTempBasalRunning) basalData.tempBasalAbsolute.toFloat() else null,
+            ),
+
+            reservoirLevel = activePump.reservoirLevel.let { level ->
+                if (level < 0) return@let null
+                val warnThreshold = preferences.get(IntKey.OverviewResWarning)
+                val criticalThreshold = preferences.get(IntKey.OverviewResCritical)
+                val isMax = level >= activePump.pumpDescription.maxResorvoirReading && activePump.pumpDescription.isPatchPump
+                RemoraStatusData.StatusLightElement(level.roundToInt(), warnThreshold, criticalThreshold, isMax)
+            },
+
+            reservoirChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.INSULIN_CHANGE)?.timestamp?.let { changedAt ->
+                val warnThreshold = preferences.get(IntKey.OverviewIageWarning).hours
+                val criticalThreshold = preferences.get(IntKey.OverviewIageCritical).hours
+                RemoraStatusData.StatusLightElement(Instant.fromEpochMilliseconds(changedAt), warnThreshold, criticalThreshold)
+            },
+
+            sensorChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.SENSOR_CHANGE)?.timestamp?.let { changedAt ->
+                val warnThreshold = preferences.get(IntKey.OverviewSageWarning).hours
+                val criticalThreshold = preferences.get(IntKey.OverviewSageCritical).hours
+                RemoraStatusData.StatusLightElement(Instant.fromEpochMilliseconds(changedAt), warnThreshold, criticalThreshold)
+            },
+
+            sensorBatteryLevel = activePlugin.activeBgSource.sensorBatteryLevel.let { level ->
+                if (level < 0) return@let null
+                val warnThreshold = preferences.get(IntKey.OverviewSbatWarning)
+                val criticalThreshold = preferences.get(IntKey.OverviewSbatCritical)
+                RemoraStatusData.StatusLightElement(level, warnThreshold, criticalThreshold)
+            },
+
+            pumpBatteryChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.PUMP_BATTERY_CHANGE)?.timestamp?.let { changedAt ->
+                val warnThreshold = preferences.get(IntKey.OverviewBageWarning).hours
+                val criticalThreshold = preferences.get(IntKey.OverviewBageCritical).hours
+                RemoraStatusData.StatusLightElement(Instant.fromEpochMilliseconds(changedAt), warnThreshold, criticalThreshold)
+            },
+
+            pumpBatteryLevel = activePlugin.activePump.batteryLevel.let { level ->
+                if (level < 0) return@let null
+                val warnThreshold = preferences.get(IntKey.OverviewBattWarning)
+                val criticalThreshold = preferences.get(IntKey.OverviewBattCritical)
+                RemoraStatusData.StatusLightElement(level, warnThreshold, criticalThreshold)
+            },
+
+            cannulaChangedAt = persistenceLayer.getLastTherapyRecordUpToNow(TE.Type.CANNULA_CHANGE)?.timestamp?.let { changedAt ->
+                val warnThreshold = preferences.get(IntKey.OverviewCageWarning).hours
+                val criticalThreshold = preferences.get(IntKey.OverviewBageCritical).hours
+                RemoraStatusData.StatusLightElement(Instant.fromEpochMilliseconds(changedAt), warnThreshold, criticalThreshold)
+            },
+
+            usesPatchPump = activePump.pumpDescription.isPatchPump,
+
+            lastBolus = persistenceLayer.getNewestBolusOfType(BS.Type.NORMAL)?.let { bolus ->
+                RemoraStatusData.LastBolus(Instant.fromEpochMilliseconds(bolus.timestamp), bolus.amount.toFloat())
+            }
         )
 
         return RemoraStatusData(
@@ -332,14 +401,15 @@ class StatusDataBuilder @Inject constructor(
                 deviation = it.deviation.toFloat(),
                 type = when (it.type) {
                     "", "non-meal" -> when (it.pastSensitivity) {
-                        "C" -> RemoraStatusData.AutosensType.CSF
-                        "+" -> RemoraStatusData.AutosensType.POSITIVE
-                        "-" -> RemoraStatusData.AutosensType.NEGATIVE
+                        "C"  -> RemoraStatusData.AutosensType.CSF
+                        "+"  -> RemoraStatusData.AutosensType.POSITIVE
+                        "-"  -> RemoraStatusData.AutosensType.NEGATIVE
                         else -> RemoraStatusData.AutosensType.NEUTRAL
                     }
-                    "uam" -> RemoraStatusData.AutosensType.UAM
-                    "csf" -> RemoraStatusData.AutosensType.CSF
-                    else -> RemoraStatusData.AutosensType.NEUTRAL
+
+                    "uam"          -> RemoraStatusData.AutosensType.UAM
+                    "csf"          -> RemoraStatusData.AutosensType.CSF
+                    else           -> RemoraStatusData.AutosensType.NEUTRAL
                 }
             )
         }
