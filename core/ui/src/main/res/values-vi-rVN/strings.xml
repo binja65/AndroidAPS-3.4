@@ -286,6 +286,7 @@
     <string name="uel_bolus_advisor">GỌI Ý BOLUS</string>
     <string name="uel_extended_bolus">BOLUS MỞ RỘNG</string>
     <string name="uel_superbolus_tbr">SUPERBOLUS TBR</string>
+    <string name="uel_carbs">CARBS</string>
     <string name="uel_extended_carbs">CARBS MỞ RỘNG</string>
     <string name="uel_new_profile">CẤU HÌNH MỚI</string>
     <string name="uel_clone_profile">NHÂN BẢN CẤU HÌNH</string>
@@ -303,8 +304,12 @@
     <string name="uel_resume">TIẾP TỤC</string>
     <string name="uel_suspend">TẠM NGƯNG</string>
     <string name="uel_clear_pairing_keys">XÓA KHÓA GHÉP NỐI</string>
+    <string name="uel_cancel_temp_basal">HỦY TEMP BASAL</string>
     <string name="uel_cancel_bolus">HỦY BOLUS</string>
     <string name="uel_cancel_extended_bolus">HỦY BOLUS MỞ RỘNG</string>
+    <string name="uel_cancel_tt">CANCEL TEMP TARGET</string>
+    <string name="uel_site_change">THAY ĐIỂM GẮN</string>
+    <string name="uel_reservoir_change">THAY RESERVOIR</string>
     <string name="uel_prime_bolus">BOLUS MỒI</string>
     <string name="uel_treatment">ĐIỀU TRỊ</string>
     <string name="uel_careportal_ns_refresh">CẬP NHẬT CAREPORTAL TỪ NS</string>
@@ -321,10 +326,13 @@
     <string name="uel_food">BỮA ĂN</string>
     <string name="uel_food_removed">ĐÃ XÓA BỮA ĂN</string>
     <string name="uel_profile_removed">ĐÃ XÓA CẤU HÌNH</string>
+    <string name="uel_treatment_removed">ĐÃ XÓA ĐIỀU TRỊ</string>
+    <string name="uel_tt_removed">ĐÃ XÓA TEMP TARGET</string>
     <string name="uel_ns_paused">NS TẠM DỪNG</string>
     <string name="uel_ns_resume">TIẾP TỤC NS</string>
     <string name="uel_ns_queue_cleared">DÃ XOÁ HÀNG ĐỢI NS</string>
     <string name="uel_ns_settings_copied">ĐÃ SAO CHÉP CÀI ĐẶT NS</string>
+    <string name="uel_error_dialog_ok">ĐỒNG Ý (HỘP THOẠI LỖI)</string>
     <string name="uel_error_dialog_mute">TẮT TIẾNG (HỘP THOẠI LỖI) </string>
     <string name="uel_error_dialog_mute_5min">TẮT TIẾNG 5 PHÚT (HỘP THOẠI LỖI)</string>
     <string name="uel_objective_started">MỤC TIÊU ĐÃ BẮT ĐẦU</string>
@@ -332,6 +340,7 @@
     <string name="uel_objectives_skipped">CÁC MỤC TIÊU ĐÃ BỎ QUA</string>
     <string name="uel_stat_reset">ĐẶT LẠI THỐNG KÊ</string>
     <string name="uel_delete_logs">XOÁ NHẬT KÝ</string>
+    <string name="uel_delete_future_treatments">XOÁ LIỆU TRÌNH SẮP TỚI</string>
     <string name="delete_future_treatments">Xoá liệu trình sắp tới</string>
     <string name="uel_export_settings">XUẤT CÀI ĐẶT</string>
     <string name="uel_import_settings">NHẬP CÀI ĐẶT</string>
@@ -354,10 +363,14 @@
     <string name="ue_source">Nguồn</string>
     <string name="ue_timestamp">Mốc thời gian</string>
     <string name="ue_none">Không có đơn vị</string>
+    <string name="uel_loop_change">VÒNG LẶP ĐÃ THAY ĐỔI</string>
+    <string name="uel_loop_removed">VÒNG LẶP ĐÃ BỊ XOÁ</string>
     <string name="uel_other">KHÁC</string>
     <!-- HardLimits -->
     <string name="profile_low_target">Mục tiêu thấp của cấu hình</string>
     <string name="profile_high_target">Cấu hình Mục tiêu cao</string>
+    <string name="temp_target_low_target">Giá trị thấp nhất của mục tiêu tạm thời</string>
+    <string name="temp_target_high_target">Giá trị cao nhất của mục tiêu tạm thời</string>
     <string name="temp_target_value">Giá trị mục tiêu tạm thời</string>
     <string name="profile_dia">Giá trị DIA của cấu hình</string>
     <string name="profile_sensitivity_value">Giá trị độ nhạy của cấu hình</string>
