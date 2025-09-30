@@ -10,7 +10,6 @@
     <string name="equil_date_device">Última conexión</string>
     <string name="equil_dressing">Cambiar reservorio</string>
     <string name="equil_dressing_onkey_msg">Desplazamiento automático del émbolo hasta el fondo del depósito. Se detendrá automáticamente al llegar al fondo. Haga clic en \"Detener\" para interrumpir si es necesario.</string>
-    <string name="equil_finish">Completado</string>
     <string name="equil_next">Siguiente</string>
     <string name="equil_hint_dressing">Esta operación detendrá la infusión de insulina y hará que el émbolo de la bomba se retraiga hasta el fondo</string>
     <string name="equil_history">Historial</string>
