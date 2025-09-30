@@ -10,7 +10,6 @@
     <string name="equil_date_device">最後連線</string>
     <string name="equil_dressing">更換儲液盒</string>
     <string name="equil_dressing_onkey_msg">自動將活塞移動到儲液盒底部。到達底部後會自動停止。如有需要，點擊“停止”以中斷。</string>
-    <string name="equil_finish">完成</string>
     <string name="equil_next">下一步</string>
     <string name="equil_hint_dressing">此操作將停止胰島素輸送並使幫浦的活塞回縮到底部！</string>
     <string name="equil_history">歷史紀錄</string>
