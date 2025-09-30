@@ -209,7 +209,22 @@ class StatusDataBuilder @Inject constructor(
 
             lastBolus = persistenceLayer.getNewestBolusOfType(BS.Type.NORMAL)?.let { bolus ->
                 RemoraStatusData.LastBolus(Instant.fromEpochMilliseconds(bolus.timestamp), bolus.amount.toFloat())
-            }
+            },
+
+            tempTargetTemplates = RemoraStatusData.TempTargetTemplates(
+                eatingSoon = RemoraStatusData.TempTargetTemplate(
+                    target = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewEatingSoonTarget), profileUtil.units).toFloat(),
+                    duration = preferences.get(IntKey.OverviewEatingSoonDuration).minutes
+                ),
+                hypo = RemoraStatusData.TempTargetTemplate(
+                    target = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewHypoTarget), profileUtil.units).toFloat(),
+                    duration = preferences.get(IntKey.OverviewHypoDuration).minutes
+                ),
+                activity = RemoraStatusData.TempTargetTemplate(
+                    target = profileUtil.convertToMgdl(preferences.get(UnitDoubleKey.OverviewActivityTarget), profileUtil.units).toFloat(),
+                    duration = preferences.get(IntKey.OverviewActivityDuration).minutes
+                )
+            )
         )
 
         return RemoraStatusData(
