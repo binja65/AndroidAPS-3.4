@@ -10,7 +10,6 @@
     <string name="equil_date_device">Ultima connessione</string>
     <string name="equil_dressing">Cambia Serbatoio</string>
     <string name="equil_dressing_onkey_msg">Spostare automaticamente lo stantuffo verso il fondo del serbatoio. Si fermerà automaticamente al raggiungimento del fondo. Fare clic su \'Ferma\' per interrompere se necessario.</string>
-    <string name="equil_finish">Completato</string>
     <string name="equil_next">Successivo</string>
     <string name="equil_hint_dressing">Questa operazione interromperà l’infusione di insulina e causerà il ritiro dello stantuffo della pompa verso il fondo!</string>
     <string name="equil_history">Storico</string>
