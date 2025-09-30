@@ -10,7 +10,6 @@
     <string name="equil_date_device">Siste tilkobling</string>
     <string name="equil_dressing">Bytt reservoar</string>
     <string name="equil_dressing_onkey_msg">Beveger automatisk stempel til bunnen av reservoaret. Den stopper automatisk når bunnen nås. Klikk \"Stopp\" for å avbryte om nødvendig.</string>
-    <string name="equil_finish">Fullført</string>
     <string name="equil_next">Neste</string>
     <string name="equil_hint_dressing">Denne operasjonen stopper insulininfusjonen og fører til at pumpestempelet trekker seg tilbake til bunnen!</string>
     <string name="equil_history">Historikk</string>
