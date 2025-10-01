@@ -148,7 +148,7 @@
     <string name="omnipod_common_cmd_unknown_entry">Mục nhập không xác định</string>
     <string name="omnipod_common_cmd_initialize_pod">Khởi tạo Pod</string>
     <string name="omnipod_common_cmd_insert_cannula">Gắn kim truyền</string>
-    <string name="omnipod_common_cmd_read_pulse_log">Đọc nhật ký do xung</string>
+    <string name="omnipod_common_cmd_read_pulse_log">Đọc nhật ký Pulse</string>
     <string name="omnipod_common_cmd_set_fake_suspended_tbr">Thiết lập basal tạm thời giả vì Pod đang bị tạm dừng</string>
     <string name="omnipod_common_cmd_cancel_fake_suspended_tbr">Hủy basal tạm thời giả đã được tạo khi Pod bị tạm dừng</string>
     <string name="omnipod_common_cmd_split_tbr">Chia basal tạm thời do không chắc chắn về việc hủy thành công</string>
