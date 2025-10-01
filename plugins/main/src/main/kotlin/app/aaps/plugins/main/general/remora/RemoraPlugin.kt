@@ -2,7 +2,10 @@ package app.aaps.plugins.main.general.remora
 
 import android.content.Context
 import androidx.work.WorkManager
+import app.aaps.core.data.configuration.Constants
 import app.aaps.core.data.model.BS
+import app.aaps.core.data.model.CA
+import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.data.model.TT
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.data.ue.Action
@@ -37,11 +40,10 @@ import app.aaps.core.interfaces.rx.events.EventUpdateOverviewGraph
 import app.aaps.core.interfaces.smsCommunicator.SmsCommunicator
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.HardLimits
-import app.aaps.core.keys.IntKey
-import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.constraints.ConstraintObject
 import app.aaps.plugins.main.R
+import dagger.Lazy
 import de.tebbeubben.remora.lib.LibraryMode
 import de.tebbeubben.remora.lib.RemoraLib
 import de.tebbeubben.remora.lib.commands.CommandHandler
@@ -68,18 +70,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.rx3.asFlow
 import kotlinx.coroutines.rx3.await
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.abs
+import kotlin.math.roundToInt
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 @Singleton
 class RemoraPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
@@ -100,12 +104,12 @@ class RemoraPlugin @Inject constructor(
     private val iobCobCalculator: IobCobCalculator,
     private val lastBgData: LastBgData,
     private val hardLimits: HardLimits,
-    private val smsCommunicator: dagger.Lazy<SmsCommunicator>,
+    private val smsCommunicator: Lazy<SmsCommunicator>,
 ) : PluginBase(
     PluginDescription()
         .mainType(PluginType.GENERAL)
         .fragmentClass(RemoraFragment::class.java.name)
-        .pluginIcon(de.tebbeubben.remora.lib.R.drawable.remora_logo)
+        .pluginIcon(app.aaps.core.objects.R.drawable.ic_remora)
         .pluginName(R.string.remora)
         .shortName(R.string.remora_shortname)
         .description(R.string.description_remora),
@@ -215,102 +219,211 @@ class RemoraPlugin @Inject constructor(
         return null
     }
 
+    override suspend fun prepareTreatment(data: RemoraCommandData.Treatment): CommandHandler.Result<RemoraCommandData.Treatment> {
+        val tt = data.temporaryTarget
+        when {
+            data.carbsAmount < 0f                           -> return wrapError(RemoraCommandError.INVALID_VALUE)
+            data.bolusAmount < 0f                           -> return wrapError(RemoraCommandError.INVALID_VALUE)
+            tt is RemoraCommandData.Treatment.TemporaryTarget.Set &&
+                tt.duration <= Duration.ZERO                -> return wrapError(RemoraCommandError.INVALID_VALUE)
+
+            data.bolusAmount > 0f && data.timestamp == null -> when {
+                commandQueue.bolusInQueue()    -> return wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
+                loop.runningMode.isSuspended() -> return wrapError(RemoraCommandError.PUMP_SUSPENDED)
+            }
+        }
+
+        val constrainedBolusAmount = if (data.bolusAmount > 0f) {
+            constraintsChecker.applyBolusConstraints(ConstraintObject(data.bolusAmount.toDouble(), aapsLogger)).value().toFloat()
+        } else {
+            0f
+        }
+
+        val constrainedCarbsAmount = if (data.carbsAmount > 0f) {
+            constraintsChecker.applyCarbsConstraints(ConstraintObject(data.carbsAmount.roundToInt(), aapsLogger)).value().toFloat()
+        } else {
+            0f
+        }
+
+        var constrainedTempTarget = when (val tt = data.temporaryTarget) {
+            RemoraCommandData.Treatment.TemporaryTarget.Cancel -> tt
+            is RemoraCommandData.Treatment.TemporaryTarget.Set -> tt.copy(
+                target = tt.target.coerceIn(Constants.MIN_TT_MGDL.toFloat(), Constants.MAX_TT_MGDL.toFloat()),
+                duration = tt.duration.coerceAtMost(Constants.MAX_PROFILE_SWITCH_DURATION.minutes)
+            )
+
+            null                                               -> null
+        }
+
+        if (constrainedTempTarget is RemoraCommandData.Treatment.TemporaryTarget.Set && constrainedTempTarget.duration <= 0.minutes)
+            constrainedTempTarget = null
+
+        if (constrainedTempTarget == null && constrainedBolusAmount == 0f && constrainedCarbsAmount == 0f) {
+            return wrapError(RemoraCommandError.INVALID_VALUE)
+        }
+
+        smsCommunicator.get().invalidateMessage()
+
+        return wrapSuccess(
+            data.copy(
+                temporaryTarget = constrainedTempTarget,
+                bolusAmount = constrainedBolusAmount,
+                carbsAmount = constrainedCarbsAmount
+            )
+        )
+    }
+
+    override suspend fun CommandHandler.ExecutionScope.executeTreatment(data: RemoraCommandData.Treatment): CommandHandler.Result<RemoraCommandData.Treatment> = coroutineScope {
+        val finalBolusAmount = if (data.bolusAmount > 0f && data.timestamp == null) {
+            when (val result = deliverBolus(data.bolusAmount)) {
+                is CommandHandler.Result.Error<*>       -> return@coroutineScope wrapError(result.error)
+                is CommandHandler.Result.Success<Float> -> result.data
+            }
+        } else {
+            data.bolusAmount
+        }
+
+        val timestamp = data.timestamp ?: Clock.System.now()
+
+        val carbsJob = async {
+            if (data.carbsAmount > 0f) {
+                persistenceLayer.insertOrUpdateCarbs(
+                    carbs = CA(
+                        timestamp = (timestamp + data.carbsOffset).toEpochMilliseconds(),
+                        amount = data.carbsAmount.toDouble(),
+                        duration = data.carbsDuration.inWholeMilliseconds
+                    ),
+                    action = Action.CARBS,
+                    source = Sources.Remora
+                ).await()
+            }
+        }
+
+        val bolusJob = async {
+            if (data.bolusAmount > 0f && data.timestamp != null) {
+                persistenceLayer.insertOrUpdateBolus(
+                    bolus = BS(
+                        timestamp = timestamp.toEpochMilliseconds(),
+                        amount = data.bolusAmount.toDouble(),
+                        type = BS.Type.NORMAL
+                    ),
+                    action = Action.CARBS,
+                    source = Sources.Remora
+                ).await()
+            }
+        }
+
+        val ttJob = async {
+            when (val tt = data.temporaryTarget) {
+                RemoraCommandData.Treatment.TemporaryTarget.Cancel -> {
+                    persistenceLayer.cancelCurrentTemporaryTargetIfAny(
+                        timestamp = timestamp.toEpochMilliseconds(),
+                        action = Action.TT,
+                        source = Sources.Remora,
+                        note = null,
+                        listValues = listOf()
+                    ).await()
+                }
+
+                is RemoraCommandData.Treatment.TemporaryTarget.Set -> {
+                    val reason = when (tt.ttType) {
+                        RemoraCommandData.Treatment.TemporaryTargetType.EATING_SOON -> TT.Reason.EATING_SOON
+                        RemoraCommandData.Treatment.TemporaryTargetType.ACTIVITY    -> TT.Reason.ACTIVITY
+                        RemoraCommandData.Treatment.TemporaryTargetType.HYPO        -> TT.Reason.HYPOGLYCEMIA
+                        RemoraCommandData.Treatment.TemporaryTargetType.CUSTOM      -> TT.Reason.CUSTOM
+                    }
+                    persistenceLayer.insertAndCancelCurrentTemporaryTarget(
+                        TT(
+                            timestamp = timestamp.toEpochMilliseconds(),
+                            duration = tt.duration.inWholeMilliseconds,
+                            reason = reason,
+                            lowTarget = tt.target.toDouble(),
+                            highTarget = tt.target.toDouble()
+                        ),
+                        action = Action.TT,
+                        source = Sources.Remora,
+                        note = null,
+                        listValues = listOf(
+                            ValueWithUnit.Timestamp(timestamp.toEpochMilliseconds()),
+                            ValueWithUnit.TETTReason(reason),
+                            ValueWithUnit.fromGlucoseUnit(tt.target.toDouble(), GlucoseUnit.MGDL),
+                            ValueWithUnit.Minute(tt.duration.inWholeMinutes.toInt())
+                        )
+                    ).await()
+                }
+
+                null                                               -> Unit
+            }
+        }
+
+        carbsJob.await()
+        bolusJob.await()
+        ttJob.await()
+
+        wrapSuccess(data.copy(bolusAmount = finalBolusAmount))
+    }
+
     fun invalidateCommand() {
         scope.launch { remoraLib.invalidateCurrentCommand() }
     }
 
-    override suspend fun prepareBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> = when {
-        commandQueue.bolusInQueue()    -> wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
-        loop.runningMode.isSuspended() -> wrapError(RemoraCommandError.PUMP_SUSPENDED)
-        bolusData.bolusAmount == 0f    -> wrapError(RemoraCommandError.INVALID_VALUE)
-
-        else                           -> {
-            val constrained = constraintsChecker.applyBolusConstraints(ConstraintObject(bolusData.bolusAmount.toDouble(), aapsLogger)).value()
-            smsCommunicator.get().invalidateMessage()
-            wrapSuccess(bolusData.copy(bolusAmount = constrained.toFloat()))
+    private suspend fun CommandHandler.ExecutionScope.deliverBolus(amount: Float): CommandHandler.Result<Float> = coroutineScope {
+        if (amount <= 0f) return@coroutineScope wrapError(RemoraCommandError.INVALID_VALUE)
+        if (commandQueue.bolusInQueue()) return@coroutineScope wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
+        if (loop.runningMode.isSuspended()) return@coroutineScope wrapError(RemoraCommandError.PUMP_SUSPENDED)
+        val detailedBolusInfo = DetailedBolusInfo()
+        detailedBolusInfo.insulin = amount.toDouble()
+        val resultJob = async {
+            suspendCoroutine {
+                val callback = object : Callback() {
+                    override fun run() {
+                        it.resume(result)
+                    }
+                }
+                commandQueue.bolus(detailedBolusInfo, callback)
+            }
         }
+        var reportConnectionProgress = true
+        if (activePlugin.activePump.isConnected()) {
+            reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
+        }
+        val progressJob = launch {
+            merge(pumpStatusProgressFlow, bolusProgressFlow)
+                .collect { event ->
+                    when (event) {
+                        is EventPumpStatusChanged     -> when (event.status) {
+                            EventPumpStatusChanged.Status.CONNECTING,
+                            EventPumpStatusChanged.Status.HANDSHAKING,
+                                 -> {
+                                if (reportConnectionProgress)
+                                    reportIntermediateProgress(RemoraCommand.Progress.Connecting(event.secondsElapsed))
+                            }
+
+                            EventPumpStatusChanged.Status.CONNECTED,
+                            EventPumpStatusChanged.Status.PERFORMING,
+                                 -> {
+                                if (reportConnectionProgress)
+                                    reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
+                            }
+
+                            else -> Unit
+                        }
+
+                        is EventOverviewBolusProgress -> {
+                            reportIntermediateProgress(RemoraCommand.Progress.Percentage(event.percent))
+                            reportConnectionProgress = false
+                        }
+                    }
+                }
+        }
+        val result = resultJob.await()
+        progressJob.cancel()
+        if (!result.success) {
+            if (!activePlugin.activePump.isConnected()) {
+                return@coroutineScope wrapError(RemoraCommandError.PUMP_TIMEOUT)
+            }
+            return@coroutineScope wrapError(RemoraCommandError.UNKNOWN)
+        }
+        wrapSuccess(result.bolusDelivered.toFloat())
     }
-
-    @OptIn(ExperimentalTime::class)
-    override suspend fun CommandHandler.ExecutionScope.executeBolus(bolusData: RemoraCommandData.Bolus): CommandHandler.Result<RemoraCommandData.Bolus> =
-        coroutineScope {
-            if (bolusData.bolusAmount == 0f) return@coroutineScope wrapError(RemoraCommandError.INVALID_VALUE)
-            if (commandQueue.bolusInQueue()) return@coroutineScope wrapError(RemoraCommandError.BOLUS_IN_PROGRESS)
-            if (loop.runningMode.isSuspended()) return@coroutineScope wrapError(RemoraCommandError.PUMP_SUSPENDED)
-            val detailedBolusInfo = DetailedBolusInfo()
-            detailedBolusInfo.insulin = bolusData.bolusAmount.toDouble()
-            val resultJob = async {
-                suspendCoroutine {
-                    val callback = object : Callback() {
-                        override fun run() {
-                            it.resume(result)
-                        }
-                    }
-                    commandQueue.bolus(detailedBolusInfo, callback)
-                }
-            }
-            var reportConnectionProgress = true
-            if (activePlugin.activePump.isConnected()) {
-                reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
-            }
-            val progressJob = launch {
-                merge(pumpStatusProgressFlow, bolusProgressFlow)
-                    .collect { event ->
-                        when (event) {
-                            is EventPumpStatusChanged     -> when (event.status) {
-                                EventPumpStatusChanged.Status.CONNECTING,
-                                EventPumpStatusChanged.Status.HANDSHAKING,
-                                     -> {
-                                    if (reportConnectionProgress)
-                                        reportIntermediateProgress(RemoraCommand.Progress.Connecting(event.secondsElapsed))
-                                }
-
-                                EventPumpStatusChanged.Status.CONNECTED,
-                                EventPumpStatusChanged.Status.PERFORMING,
-                                     -> {
-                                    if (reportConnectionProgress)
-                                        reportIntermediateProgress(RemoraCommand.Progress.Enqueued)
-                                }
-
-                                else -> Unit
-                            }
-
-                            is EventOverviewBolusProgress -> {
-                                reportIntermediateProgress(RemoraCommand.Progress.Percentage(event.percent))
-                                reportConnectionProgress = false
-                            }
-                        }
-                    }
-            }
-            val result = resultJob.await()
-            progressJob.cancel()
-            if (!result.success) {
-                if (!activePlugin.activePump.isConnected()) {
-                    return@coroutineScope wrapError(RemoraCommandError.PUMP_TIMEOUT)
-                }
-                return@coroutineScope wrapError(RemoraCommandError.UNKNOWN)
-            }
-            if (bolusData.startEatingSoonTT) {
-                val eatingSoonTTDuration = preferences.get(IntKey.OverviewEatingSoonDuration)
-                val eatingSoonTT = preferences.get(UnitDoubleKey.OverviewEatingSoonTarget)
-                persistenceLayer.insertAndCancelCurrentTemporaryTarget(
-                    temporaryTarget = TT(
-                        timestamp = dateUtil.now(),
-                        duration = TimeUnit.MINUTES.toMillis(eatingSoonTTDuration.toLong()),
-                        reason = TT.Reason.EATING_SOON,
-                        lowTarget = profileUtil.convertToMgdl(eatingSoonTT, profileUtil.units),
-                        highTarget = profileUtil.convertToMgdl(eatingSoonTT, profileUtil.units)
-                    ),
-                    action = Action.TT,
-                    source = Sources.SMS,
-                    note = null,
-                    listValues = listOf(
-                        ValueWithUnit.TETTReason(TT.Reason.EATING_SOON),
-                        ValueWithUnit.Mgdl(profileUtil.convertToMgdl(eatingSoonTT, profileUtil.units)),
-                        ValueWithUnit.Minute(TimeUnit.MILLISECONDS.toMinutes(TimeUnit.MINUTES.toMillis(eatingSoonTTDuration.toLong())).toInt())
-                    )
-                ).await()
-            }
-            wrapSuccess(bolusData.copy(bolusAmount = result.bolusDelivered.toFloat()))
-        }
 }

@@ -194,6 +194,7 @@ data class UserEntry(
         Garmin,
         Database,           //for PersistenceLayer
         Unknown,            //if necessary
+        Remora
         ;
 
         companion object {
