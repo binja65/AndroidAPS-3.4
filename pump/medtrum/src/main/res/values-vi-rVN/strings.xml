@@ -1,9 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- MedtrumPump -->
+    <string name="medtrum">Medtrum</string>
+    <string name="medtrum_pump_shortname">MT</string>
+    <string name="medtrum_pump_description">Tích hợp Pump cho Medtrum Nano và Medtrum 300U</string>
+    <string name="medtrum_pump_setting">Cài đặt Pump Medtrum</string>
+    <string name="pump_error">Lỗi Pump: %1$s !! </string>
+    <string name="pump_warning">Cảnh báo Pump: %1$s </string>
+    <string name="pump_is_suspended">Pump đã tạm dừng</string>
+    <string name="pump_is_suspended_hour_max">Pump bị tạm dừng do vượt quá giới hạn insulin tối đa theo giờ</string>
+    <string name="pump_is_suspended_day_max">Pump bị tạm dừng do vượt quá giới hạn insulin tối đa trong ngày</string>
+    <string name="patch_not_active">Patch chưa được kích hoạt</string>
+    <string name="pump_setting_failed">Thiết lập cài đặt người dùng cho Pump thất bại!</string>
+    <string name="pump_sync_error">Lỗi khi đồng bộ lịch sử từ Pump, một bản ghi đã bị bỏ qua. Kiểm tra tab Treatment để xem bolus đã được đồng bộ chính xác chưa. Tạm bỏ qua, và nếu lỗi tiếp tục xuất hiện, hãy thay Patch hoặc PumpBase.</string>
     <!-- overview fragment -->
+    <string name="ble_status_label">Trạng thái BLE</string>
+    <string name="last_connection_label">Kết nối trước</string>
+    <string name="active_bolus_label">Đang tiêm Bolus</string>
+    <string name="pump_state_label">Trạng thái Pump</string>
+    <string name="active_alarms_label">Bật cảnh báo</string>
+    <string name="reservoir_level"> %.2f U</string>
+    <string name="battery_voltage"> %.2f V</string>
+    <string name="basal_type_label">Kiểu basal</string>
+    <string name="basal_rate_label">Tỷ lệ liều Basal</string>
+    <string name="current_basal_rate"> %.2f U/h</string>
+    <string name="pump_type_label">Loại Pump</string>
+    <string name="fw_version_label">Phiên bản FW</string>
+    <string name="patch_no_label">Patch no</string>
+    <string name="patch_expiry_label">Patch hết hạn</string>
+    <string name="refresh_label">Làm tươi</string>
+    <string name="reset_alarms_label">Đặt lại cảnh báo</string>
+    <string name="change_patch_label">Thay Patch</string>
+    <string name="requested_by_user" comment="26 characters max for translation">Người dùng yêu cầu</string>
+    <string name="expiry_not_enabled">Không kích hoạt</string>
     <!-- Alarm strings -->
+    <string name="alarm_none">Không</string>
+    <string name="alarm_pump_low_battery">Pin Pump yếu</string>
+    <string name="alarm_pump_low_reservoir">Pump sắp hết insulin</string>
+    <string name="alarm_pump_expires_soon">Pump sắp hết hạn</string>
+    <string name="alarm_low_bg_suspended">Tạm dừng do đường huyết thấp</string>
     <!-- wizard-->
+    <string name="press_next">Nhấn <b>Tiếp theo</b> để tiếp tục.</string>
     <!-- settings-->
     <!-- treatment state-->
     <!-- bolus-->
