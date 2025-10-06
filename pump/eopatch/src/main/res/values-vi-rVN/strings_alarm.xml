@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<resources></resources>
+<resources>
+    <string name="string_a002">Hết Insulin\nPatch đã bị hủy kích hoạt và việc truyền insulin đã dừng. Thay Patch ngay.</string>
+    <string name="string_a003">Patch hết hạn\nPatch đã bị hủy kích hoạt và việc truyền insulin đã dừng. Thay Patch ngay.</string>
+    <string name="string_a004">Tắc đường truyền\nPatch đã bị hủy kích hoạt và việc truyền insulin đã dừng. Thay Patch ngay.</string>
+    <string name="string_a005">Lỗi kiểm tra tự động khi bật nguồn\nPatch đã bị hủy kích hoạt. Thay Patch ngay.</string>
+    <string name="string_a007">Nhiệt độ không phù hợp\nViệc truyền insulin hoặc quá trình ‘Activate Patch’ đã dừng. Tránh nhiệt độ quá cao hoặc quá thấp ngay bây giờ.</string>
+    <string name="string_a016">Lỗi khi đưa kim vào\nKiểm tra vị trí núm điều khiển và nhấn ‘Thử lại’.</string>
+</resources>
