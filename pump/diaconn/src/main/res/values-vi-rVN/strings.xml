@@ -35,6 +35,8 @@
     <string name="bolusspeed">Tốc độ liều Bolus</string>
     <string name="selectedpump">Pump đã chọn</string>
     <string name="diaconn_g8_bluetooth_status">Trạng thái Bluetooth</string>
+    <string name="bolus_step">Bolus Step</string>
+    <string name="basal_step">Basal Step</string>
     <string name="pump_firmware_label">Phần mềm</string>
     <string name="diaconn_g8_user_options">TÙY CHỌN NGƯỜI DÙNG</string>
     <string name="pairfirst">Hãy kết nối pump với điện thoại của bạn!</string>
