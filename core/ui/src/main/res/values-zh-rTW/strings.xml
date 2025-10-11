@@ -105,7 +105,6 @@
     <string name="name_short">名稱：</string>
     <string name="time">時間</string>
     <string name="ns_wifi_ssids">WiFi SSID</string>
-    <string name="loading">載入中…</string>
     <string name="notes_label">備註</string>
     <string name="remove_button">移除</string>
     <string name="add_new">新增</string>
