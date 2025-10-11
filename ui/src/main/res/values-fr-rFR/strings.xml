@@ -37,6 +37,7 @@
     <string name="format_cob_ic">%1$.1fg G/I: %2$.1f</string>
     <string name="format_carbs_ic">%1$.0fg G/I: %2$.1f</string>
     <string name="treatments_wizard_total_label">Total</string>
+    <!-- SiteRotationDialog -->
     <!-- FillDialog -->
     <string name="fill_warning">Assurez-vous que le montant correspond à la spécification de votre ensemble de perfusions!</string>
     <string name="record_pump_site_change">Enregistrer le changement de site de la pompe</string>
