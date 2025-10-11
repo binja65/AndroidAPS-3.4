@@ -105,7 +105,6 @@
     <string name="name_short">Nombre:</string>
     <string name="time">Tiempo</string>
     <string name="ns_wifi_ssids">WiFi SSID</string>
-    <string name="loading">Cargando …</string>
     <string name="notes_label">Notas</string>
     <string name="remove_button">Eliminar</string>
     <string name="add_new">Añadir nuevo</string>
