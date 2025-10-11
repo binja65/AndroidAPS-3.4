@@ -129,7 +129,6 @@
     <!-- Profile -->
     <string name="localprofile">Perfil</string>
     <string name="localprofile_shortname">PERFIL</string>
-    <string name="description_profile_local">Define un perfil que esté disponible cuando tengas una desconexión</string>
     <string name="a11y_add_new_to_list">añadir nuevo a la lista</string>
     <string name="do_you_want_switch_profile">¿Desea cambiar el perfil y descartar los cambios realizados al perfil actual?</string>
     <string name="save_or_reset_changes_first">Guardar o restablecer los cambios actuales primero</string>
