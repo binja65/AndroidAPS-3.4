@@ -37,6 +37,7 @@
     <string name="format_cob_ic">%1$.1f g IC：%2$.1f</string>
     <string name="format_carbs_ic">%1$.0f g IC：%2$.1f</string>
     <string name="treatments_wizard_total_label">總計</string>
+    <!-- SiteRotationDialog -->
     <!-- FillDialog -->
     <string name="fill_warning">請確保數量符合您的輸液套件規範！</string>
     <string name="record_pump_site_change">紀錄幫浦位置更換</string>
