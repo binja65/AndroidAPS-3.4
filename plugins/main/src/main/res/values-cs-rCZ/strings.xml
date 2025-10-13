@@ -129,6 +129,7 @@
     <!-- Profile -->
     <string name="localprofile">Profil</string>
     <string name="localprofile_shortname">MPRF</string>
+    <string name="description_profile_local">Definujte profil popisující vaše potřeby inzulínu.</string>
     <string name="a11y_add_new_to_list">přidat nový do seznamu</string>
     <string name="do_you_want_switch_profile">Chcete přepnout profil a zahodit změny provedené v aktuálním profilu?</string>
     <string name="save_or_reset_changes_first">Nejprve uložte nebo resetujte aktuální změny</string>
