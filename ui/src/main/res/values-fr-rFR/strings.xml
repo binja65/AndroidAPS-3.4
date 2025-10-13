@@ -38,7 +38,6 @@
     <string name="format_carbs_ic">%1$.0fg G/I: %2$.1f</string>
     <string name="treatments_wizard_total_label">Total</string>
     <!-- SiteRotationDialog -->
-    <string name="site_synthesis">Synthèse</string>
     <string name="site_front">Face</string>
     <string name="site_back">Dos</string>
     <string name="site_man">Homme</string>
