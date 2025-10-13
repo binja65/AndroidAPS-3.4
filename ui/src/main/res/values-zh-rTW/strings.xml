@@ -38,7 +38,6 @@
     <string name="format_carbs_ic">%1$.0f g IC：%2$.1f</string>
     <string name="treatments_wizard_total_label">總計</string>
     <!-- SiteRotationDialog -->
-    <string name="site_synthesis">總覽</string>
     <string name="site_front">前面</string>
     <string name="site_back">後面</string>
     <string name="site_man">男性</string>
