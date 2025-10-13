@@ -38,7 +38,6 @@
     <string name="format_carbs_ic">%1$.0fg IC: %2$.1f</string>
     <string name="treatments_wizard_total_label">Totale</string>
     <!-- SiteRotationDialog -->
-    <string name="site_synthesis">Sintesi</string>
     <string name="site_front">Davanti</string>
     <string name="site_back">Dietro</string>
     <string name="site_man">Uomo</string>
