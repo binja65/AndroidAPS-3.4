@@ -54,7 +54,6 @@ import app.aaps.core.objects.extensions.round
 import app.aaps.core.ui.dialogs.OKDialog
 import app.aaps.core.utils.HtmlHelper
 import app.aaps.core.utils.JsonHelper
-import dagger.android.HasAndroidInjector
 import java.util.Calendar
 import java.util.LinkedList
 import javax.inject.Inject
@@ -63,37 +62,29 @@ import kotlin.math.max
 import kotlin.math.min
 
 class BolusWizard @Inject constructor(
-    val injector: HasAndroidInjector
+    private val smsCommunicator: SmsCommunicator,
+    private val aapsLogger: AAPSLogger,
+    private val rh: ResourceHelper,
+    private val rxBus: RxBus,
+    private val preferences: Preferences,
+    private val profileFunction: ProfileFunction,
+    private val profileUtil: ProfileUtil,
+    private val constraintChecker: ConstraintsChecker,
+    private val activePlugin: ActivePlugin,
+    private val commandQueue: CommandQueue,
+    private val loop: Loop,
+    private val iobCobCalculator: IobCobCalculator,
+    private val dateUtil: DateUtil,
+    private val config: Config,
+    private val uel: UserEntryLogger,
+    private val automation: Automation,
+    private val glucoseStatusProvider: GlucoseStatusProvider,
+    private val uiInteraction: UiInteraction,
+    private val persistenceLayer: PersistenceLayer,
+    private val decimalFormatter: DecimalFormatter,
+    private val processedDeviceStatusData: ProcessedDeviceStatusData
 ) {
-
-    @Inject lateinit var smsCommunicator: SmsCommunicator
-    @Inject lateinit var aapsLogger: AAPSLogger
-    @Inject lateinit var rh: ResourceHelper
-    @Inject lateinit var rxBus: RxBus
-    @Inject lateinit var preferences: Preferences
-    @Inject lateinit var profileFunction: ProfileFunction
-    @Inject lateinit var profileUtil: ProfileUtil
-    @Inject lateinit var constraintChecker: ConstraintsChecker
-    @Inject lateinit var activePlugin: ActivePlugin
-    @Inject lateinit var commandQueue: CommandQueue
-    @Inject lateinit var loop: Loop
-    @Inject lateinit var iobCobCalculator: IobCobCalculator
-    @Inject lateinit var dateUtil: DateUtil
-    @Inject lateinit var config: Config
-    @Inject lateinit var uel: UserEntryLogger
-    @Inject lateinit var automation: Automation
-    @Inject lateinit var glucoseStatusProvider: GlucoseStatusProvider
-    @Inject lateinit var uiInteraction: UiInteraction
-    @Inject lateinit var persistenceLayer: PersistenceLayer
-    @Inject lateinit var decimalFormatter: DecimalFormatter
-    @Inject lateinit var processedDeviceStatusData: ProcessedDeviceStatusData
-
-    var timeStamp: Long
-
-    init {
-        injector.androidInjector().inject(this)
-        timeStamp = dateUtil.now()
-    }
+    var timeStamp = dateUtil.now()
 
     // Intermediate
     var sens = 0.0
@@ -375,7 +366,7 @@ class BolusWizard @Inject constructor(
             )
         val bolusOrCarbs = (insulinAfterConstraints > 0 || carbs > 0)
         if (config.AAPSCLIENT && bolusOrCarbs)
-            if (preferences.get(BooleanKey.SmsAllowRemoteCommands) && !phoneNumber.isNullOrBlank() && bolusOrCarbs)
+            if (preferences.get(BooleanKey.SmsAllowRemoteCommands) && phoneNumber.isNotBlank())
                 actions.add(rh.gs(app.aaps.core.ui.R.string.sms_request_notification).formatColor(context, rh, app.aaps.core.ui.R.attr.warningColor))
             else
                 actions.add(rh.gs(app.aaps.core.ui.R.string.bolus_recorded_only).formatColor(context, rh, app.aaps.core.ui.R.attr.warningColor))
@@ -430,7 +421,7 @@ class BolusWizard @Inject constructor(
 
     private fun bolusAdvisorProcessing(ctx: Context) {
         val phoneNumber = preferences.get(StringKey.SmsReceiverNumber)
-        if (preferences.get(BooleanKey.SmsAllowRemoteCommands) && !phoneNumber.isNullOrBlank()) {
+        if (preferences.get(BooleanKey.SmsAllowRemoteCommands) && phoneNumber.isNotBlank()) {
             // Bolus advisor is not supported because automation.scheduleAutomationEventEatReminder() can't be set on AAPSClient phone.
             // In order to do so AAPSClient phone would need to wait in pooling for bolus confirmation message. I don't want to block app on that.
             OKDialog.show(ctx, rh.gs(app.aaps.core.ui.R.string.boluswizard), rh.gs(app.aaps.core.ui.R.string.bolus_advisor_not_supported))
@@ -562,7 +553,7 @@ class BolusWizard @Inject constructor(
                             )
                         )
                         val phoneNumber = preferences.get(StringKey.SmsReceiverNumber)
-                        if (preferences.get(BooleanKey.SmsAllowRemoteCommands) && !phoneNumber.isNullOrBlank()) {
+                        if (preferences.get(BooleanKey.SmsAllowRemoteCommands) && phoneNumber.isNotBlank()) {
                             rh.gs(app.aaps.core.ui.R.string.sms_request_notification).formatColor(context, rh, app.aaps.core.ui.R.attr.warningColor)
                             smsCommunicator.sendSMS(Sms(phoneNumber, formatBolusCarbsCommand(insulin, this@BolusWizard.carbs, this@BolusWizard.carbTime.toString(), useAlarm)))
                         } else {

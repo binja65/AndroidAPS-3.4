@@ -105,7 +105,6 @@
     <string name="name_short">Meno:</string>
     <string name="time">Čas</string>
     <string name="ns_wifi_ssids">WiFi SSID</string>
-    <string name="loading">Načítavanie...</string>
     <string name="notes_label">Poznámky</string>
     <string name="remove_button">Vymazať</string>
     <string name="add_new">Pridať nový</string>
@@ -156,6 +155,7 @@
     <string name="treatments_wizard_basaliob_label">Bazálny IOB</string>
     <string name="invalid">NEPLATNÝ</string>
     <string name="login">Prihlásenie</string>
+    <string name="logout">Odhlásiť</string>
     <string name="prime_fill">Plnenie/doplňovanie</string>
     <string name="overview_insulin_label">Inzulín</string>
     <string name="stoptemptarget">Koniec dočasného cieľa</string>
