@@ -349,6 +349,11 @@ class PersistenceLayerImpl @Inject constructor(
             .map { list -> list.asSequence().map { it.fromDb() }.toList() }
             .blockingGet()
 
+    override fun getCarbsFromTimeToTimeNotExpanded(startTime: Long, endTime: Long, ascending: Boolean): List<CA> =
+        repository.getCarbsDataFromTimeToTimeNotExpanded(startTime, endTime, ascending)
+            .map { list -> list.asSequence().map { it.fromDb() }.toList() }
+            .blockingGet()
+
     override fun getNextSyncElementCarbs(id: Long): Maybe<Pair<CA, CA>> =
         repository.getNextSyncElementCarbs(id)
             .map { pair -> Pair(pair.first.fromDb(), pair.second.fromDb()) }
@@ -1400,6 +1405,9 @@ class PersistenceLayerImpl @Inject constructor(
 
     override fun getTemporaryTargetDataFromTime(timestamp: Long, ascending: Boolean): Single<List<TT>> =
         repository.getTemporaryTargetDataFromTime(timestamp, ascending).map { list -> list.asSequence().map { it.fromDb() }.toList() }
+
+    override fun getTemporaryTargetDataFromTimeToTime(start: Long, end: Long, ascending: Boolean): Single<List<TT>> =
+        repository.getTemporaryTargetDataFromTimeToTime(start, end, ascending).map { list -> list.asSequence().map { it.fromDb() }.toList() }
 
     override fun getTemporaryTargetDataIncludingInvalidFromTime(timestamp: Long, ascending: Boolean): Single<List<TT>> =
         repository.getTemporaryTargetDataIncludingInvalidFromTime(timestamp, ascending).map { list -> list.asSequence().map { it.fromDb() }.toList() }

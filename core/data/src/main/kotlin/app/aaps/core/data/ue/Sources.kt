@@ -76,6 +76,7 @@ enum class Sources {
     Garmin,
     Database,           // for PersistenceLayer
     Unknown,             //if necessary
-    SyaiTag
+    SyaiTag,
+    Remora
     ;
 }

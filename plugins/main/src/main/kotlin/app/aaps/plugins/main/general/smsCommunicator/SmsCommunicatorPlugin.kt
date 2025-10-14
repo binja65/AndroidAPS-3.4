@@ -73,6 +73,7 @@ import app.aaps.core.validators.preferences.AdaptiveIntentPreference
 import app.aaps.core.validators.preferences.AdaptiveStringPreference
 import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 import app.aaps.plugins.main.R
+import app.aaps.plugins.main.general.remora.RemoraPlugin
 import app.aaps.plugins.main.general.smsCommunicator.activities.SmsCommunicatorOtpActivity
 import app.aaps.plugins.main.general.smsCommunicator.events.EventSmsCommunicatorUpdateGui
 import app.aaps.plugins.main.general.smsCommunicator.otp.OneTimePassword
@@ -116,7 +117,9 @@ class SmsCommunicatorPlugin @Inject constructor(
     private val glucoseStatusProvider: GlucoseStatusProvider,
     private val persistenceLayer: PersistenceLayer,
     private val decimalFormatter: DecimalFormatter,
-    private val configBuilder: ConfigBuilder
+    private val configBuilder: ConfigBuilder,
+    // TODO: Add interface
+    private val remora: dagger.Lazy<RemoraPlugin>
 ) : PluginBase(
     PluginDescription()
         .mainType(PluginType.GENERAL)
@@ -132,6 +135,12 @@ class SmsCommunicatorPlugin @Inject constructor(
     private val disposable = CompositeDisposable()
     var allowedNumbers: MutableList<String> = ArrayList()
     @Volatile var messageToConfirm: AuthRequest? = null
+        set(value) {
+            if (value != null) {
+                remora.get().invalidateCommand()
+            }
+            field = value
+        }
     @Volatile var lastRemoteBolusTime: Long = 0
     override var messages = ArrayList<Sms>()
 
@@ -362,6 +371,10 @@ class SmsCommunicatorPlugin @Inject constructor(
             }
         }
         rxBus.send(EventSmsCommunicatorUpdateGui())
+    }
+
+    override fun invalidateMessage() {
+        messageToConfirm = null
     }
 
     private fun processBG(receivedSms: Sms) {

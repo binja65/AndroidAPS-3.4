@@ -206,6 +206,11 @@ class AppRepository @Inject internal constructor(
             .map { if (!ascending) it.reversed() else it }
             .subscribeOn(Schedulers.io())
 
+    fun getTemporaryTargetDataFromTimeToTime(start: Long, end: Long, ascending: Boolean): Single<List<TemporaryTarget>> =
+        database.temporaryTargetDao.getTemporaryTargetDataFromTimeToTime(start, end)
+            .map { if (!ascending) it.reversed() else it }
+            .subscribeOn(Schedulers.io())
+
     fun getTemporaryTargetDataIncludingInvalidFromTime(timestamp: Long, ascending: Boolean): Single<List<TemporaryTarget>> =
         database.temporaryTargetDao.getTemporaryTargetDataIncludingInvalidFromTime(timestamp)
             .map { if (!ascending) it.reversed() else it }
@@ -589,6 +594,12 @@ class AppRepository @Inject internal constructor(
             .expand()
             .fromTo(from, to)
             .sort()
+            .map { if (!ascending) it.reversed() else it }
+            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+
+    fun getCarbsDataFromTimeToTimeNotExpanded(from: Long, to: Long, ascending: Boolean): Single<List<Carbs>> =
+        database.carbsDao.getCarbsFromTimeToTimeExpandable(from, to)
             .map { if (!ascending) it.reversed() else it }
             .subscribeOn(Schedulers.io())
 

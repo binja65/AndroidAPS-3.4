@@ -256,6 +256,16 @@ interface PersistenceLayer {
     fun getCarbsFromTimeToTimeExpanded(startTime: Long, endTime: Long, ascending: Boolean): List<CA>
 
     /**
+     * Get carbs in time interval (eCarbs as single records)
+     *
+     * @param startTime from
+     * @param endTime to
+     * @param ascending sort order
+     * @return List of carbs
+     */
+    fun getCarbsFromTimeToTimeNotExpanded(startTime: Long, endTime: Long, ascending: Boolean): List<CA>
+
+    /**
      * Get next changed record after id
      *
      * @param id record id
@@ -1054,6 +1064,7 @@ interface PersistenceLayer {
     fun getTemporaryTargetByNSId(nsId: String): TT?
 
     fun getTemporaryTargetDataFromTime(timestamp: Long, ascending: Boolean): Single<List<TT>>
+    fun getTemporaryTargetDataFromTimeToTime(start: Long, end: Long, ascending: Boolean): Single<List<TT>>
     fun getTemporaryTargetDataIncludingInvalidFromTime(timestamp: Long, ascending: Boolean): Single<List<TT>>
 
     /**

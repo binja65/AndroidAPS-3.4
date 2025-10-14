@@ -325,4 +325,10 @@
     <string name="steps_shortname">STEPS</string>
     <string name="simple_mode_enabled">Simple mode enabled</string>
 
+    <!-- Remora -->
+    <string name="remora">Remora</string>
+    <string name="remora_shortname">RM</string>"
+    <string name="description_remora">Remote control AAPS using the Remora companion app.</string>
+    <string name="launch_remora_settings">Launch Remora settings</string>
+
 </resources>
