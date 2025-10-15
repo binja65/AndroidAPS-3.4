@@ -157,6 +157,7 @@
     <string name="login">Đăng nhập</string>
     <string name="logout">Đăng xuất</string>
     <string name="prime_fill">Prime/Fill</string>
+    <string name="site_rotation">Thay vị trí tiêm</string>
     <string name="overview_insulin_label">Insulin</string>
     <string name="stoptemptarget">Dừng mục tiêu tạm thời</string>
     <string name="closedloop">Vòng lặp kín</string>
@@ -223,6 +224,8 @@
     <string name="careportal_exercise_message">Bài tập luyện : %1$s</string>
     <string name="careportal_pump_site_change">Thay vị trí kim truyền</string>
     <string name="cgm_sensor_insert">Gắn cảm biến CGM</string>
+    <string name="careportal_pump_site_management">Các vị trí tiêm</string>
+    <string name="careportal_cgm_site_management">Các vị trí CGM</string>
     <string name="careportal_cgmsensorstart">Khởi động cảm biến CGM</string>
     <string name="careportal_cgm_sensor_stop">Dừng cảm biến CGM</string>
     <string name="careportal_dad_alert">Cảnh báo D.A.D</string>
@@ -256,6 +259,24 @@
     <string name="loop">Loop</string>
     <string name="ns">NS</string>
     <string name="record">Record</string>
+    <string name="location_front_right_upper_chest">Ngực phải</string>
+    <string name="location_front_left_upper_chest">Ngực trái</string>
+    <string name="location_side_right_upper_arm">Phần ngoài cánh tay phải phía trên</string>
+    <string name="location_side_left_upper_arm">Phần ngoài cánh tay trái phía trên</string>
+    <string name="location_back_right_upper_arm">Phần sau cánh tay phải phía trên</string>
+    <string name="location_back_left_upper_arm">Phần sau cánh tay trái phía trên</string>
+    <string name="location_side_right_upper_abdomen">Vùng bụng phải phía trên, bên ngoài</string>
+    <string name="location_side_left_upper_abdomen">Vùng bụng trái phía trên, bên ngoài</string>
+    <string name="location_side_right_lower_abdomen">Vùng bụng phải phía dưới, bên ngoài</string>
+    <string name="location_side_left_lower_abdomen">Vùng bụng trái phía dưới, bên ngoài</string>
+    <string name="location_front_right_upper_abdomen">Vùng bụng phải phía trên, mặt trước</string>
+    <string name="location_front_left_upper_abdomen">Vùng bụng trái phía trên, mặt trước</string>
+    <string name="location_front_right_lower_abdomen">Vùng bụng phải phía dưới, mặt trước</string>
+    <string name="location_front_left_lower_abdomen">Vùng bụng trái phía dưới, mặt trước</string>
+    <string name="location_back_right_buttock">Mông phải</string>
+    <string name="location_back_left_buttock">Mông trái</string>
+    <string name="location_side_right_upper_thigh">Phần ngoài đùi phải phía trên</string>
+    <string name="location_side_right_lower_thigh">Phần ngoài đùi phải phía dưới</string>
     <!--    Command-->
     <string name="connectiontimedout">Hết thời gian chờ kết nối</string>
     <!--    PumpEnactResult-->
