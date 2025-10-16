@@ -1,0 +1,159 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Badge-style Sample ID — SAMPLE NOT A REAL ID</title>
+  <style>
+    /* Card dimensions: standard badge ~ 3.5in x 2.25in (landscape) */
+    :root{
+      --card-w: 350px; /* printable width */
+      --card-h: 225px; /* printable height */
+      --radius: 12px;
+      --accent: #2b6cb0;
+      --muted: #6b7280;
+    }
+    body{font-family: Inter, Arial, Helvetica, sans-serif; background:#f4f6fb; padding:26px;}.page{display:flex; gap:18px; flex-wrap:wrap; justify-content:center; align-items:flex-start}
+
+.card{
+  width:var(--card-w); height:var(--card-h); border-radius:var(--radius);
+  background:linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
+  box-shadow:0 8px 18px rgba(32,41,54,0.08);
+  padding:14px; position:relative; border:1px solid rgba(20,30,60,0.04);
+  box-sizing:border-box;
+}
+
+/* Large SAMPLE watermark */
+.watermark{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-20deg); font-weight:900; font-size:36px; color:rgba(255,20,20,0.06); letter-spacing:6px; pointer-events:none; user-select:none}
+
+.top{display:flex; gap:12px; align-items:center}
+.logo{width:64px; height:48px; border-radius:8px; background:linear-gradient(135deg,#ffd27a,#ff9a9a); display:flex; align-items:center; justify-content:center; font-weight:800; color:#3b2a0a}
+
+.stateblock{flex:1}
+.state{font-weight:800; font-size:13px; letter-spacing:0.6px}
+.dept{font-size:10px; color:var(--muted); margin-top:2px}
+
+.badgeleft{display:flex; gap:12px; margin-top:8px}
+.photo{width:110px; height:140px; background:#ddd; border-radius:8px; overflow:hidden; border:2px solid #fff}
+.photo img{width:100%; height:100%; object-fit:cover; display:block}
+
+.maininfo{flex:1; display:flex; flex-direction:column; gap:6px}
+.fullname{font-size:20px; font-weight:900; letter-spacing:0.4px}
+.role{font-size:12px; color:var(--muted)}
+
+.fields{display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-top:6px; font-size:12px}
+.label{font-size:9px; color:var(--muted); font-weight:700}
+.value{font-weight:800}
+
+.bottomrow{display:flex; justify-content:space-between; align-items:center; margin-top:8px}
+.barcode{width:170px; height:28px; border-radius:6px; background:repeating-linear-gradient(90deg,#111 0 2px, transparent 2px 6px)}
+.smallprint{font-size:9px; color:#a00; font-weight:700; text-transform:uppercase}
+
+.sideband{position:absolute; right:10px; top:12px; background:rgba(20,30,60,0.06); padding:6px 8px; border-radius:8px; font-weight:700; font-size:10px}
+
+.footer{position:absolute; left:12px; bottom:10px; font-size:9px; color:var(--muted)}
+
+/* Print rules */
+@media print{
+  body{background:white}
+  .card{box-shadow:none; border:1px solid #e6e6e6}
+  @page { size: A4; margin: 10mm }
+  .watermark{color:rgba(255,20,20,0.04)}
+}
+
+/* Lanyard punch hole guide (visual only) */
+.hole{position:absolute; left:calc(50% - 8px); top:-8px; width:16px; height:16px; border-radius:50%; border:1px dashed rgba(0,0,0,0.08); background:rgba(255,255,255,0.6)}
+
+  </style>
+</head>
+<body>
+  <h3 style="text-align:center; color:#1f2937; font-weight:800">Badge-style Sample — Prop ID (SAMPLE: NOT A REAL ID)</h3>  <div class="page"><!-- --- Card instance (duplicate to print multiple) --- -->
+<div class="card" role="region" aria-label="Badge style sample ID">
+  <div class="hole" aria-hidden="true"></div>
+  <div class="watermark">SAMPLE — NOT A REAL ID</div>
+  <div class="top">
+    <div class="logo">PX</div>
+    <div class="stateblock">
+      <div class="state">STATE OF PACIFICA</div>
+      <div class="dept">Department of Motor Vehicles — Driver License (Fictional)</div>
+    </div>
+    <div class="sideband">CLASS D</div>
+  </div>
+
+  <div class="badgeleft">
+    <div class="photo" aria-hidden="true">
+      <!-- Replace with a real photo file (keep aspect ratio 110x140px) -->
+      <img src="https://via.placeholder.com/220x280.png?text=Photo" alt="photo placeholder">
+    </div>
+
+    <div class="maininfo">
+      <div>
+        <div class="fullname">Dayo Example</div>
+        <div class="role">Citizen ID / Prop Use Only</div>
+      </div>
+
+      <div class="fields">
+        <div>
+          <div class="label">DOB</div>
+          <div class="value">2007-04-24</div>
+        </div>
+        <div>
+          <div class="label">SEX</div>
+          <div class="value">F</div>
+        </div>
+
+        <div>
+          <div class="label">HEIGHT</div>
+          <div class="value">163 cm</div>
+        </div>
+        <div>
+          <div class="label">LIC NO.</div>
+          <div class="value">PX-BADGE-0001</div>
+        </div>
+
+        <div>
+          <div class="label">ISSUE</div>
+          <div class="value">2025-10-01</div>
+        </div>
+        <div>
+          <div class="label">EXPIRY</div>
+          <div class="value">2029-10-01</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; font-size:11px; color:var(--muted)">Address: 1234 Fictional Rd · Kakamega · KE</div>
+
+    </div>
+  </div>
+
+  <div class="bottomrow">
+    <div class="barcode" aria-hidden="true"></div>
+    <div style="text-align:right">
+      <div class="smallprint">SAMPLE — FOR PROP ONLY</div>
+      <div style="font-size:8px; color:var(--muted); margin-top:6px">This is a fictional sample ID and must not be used for any identification purpose.</div>
+    </div>
+  </div>
+
+  <div class="footer">Print at 100% / Actual Size on cardstock. Cut, laminate, punch hole for lanyard if desired.</div>
+</div>
+
+<!-- You can duplicate the .card block to print multiples on one page -->
+
+  </div>  <hr style="margin-top:18px; opacity:0.06">
+  <div style="max-width:740px; margin:12px auto; font-size:13px; color:#374151">
+    <strong>How to customize:</strong>
+    <ol>
+      <li>Open this file in a text editor. Replace the <code>&lt;img src="..."&gt;</code> photo URL with a local filename (e.g., <code>img/photo.jpg</code>) or another image URL. Keep the dimensions/aspect ratio for best results.</li>
+      <li>Change the name, DOB, licence number, state name, or colors directly in the HTML/CSS.
+      <li>To print: open in Chrome, File → Print, set scale to <strong>100%</strong> (no fit to page), choose a cardstock paper, and print. Cut using the rounded rectangle outline.
+    </ol><p>If you want I can (pick one):</p>
+<ul>
+  <li>Change the fictional state name or card colors to something else.</li>
+  <li>Replace the placeholder photo with a specific image you upload here (I will not store it after generating).</li>
+  <li>Produce a single-page high-resolution PDF marked <em>SAMPLE — NOT A REAL ID</em> you can download and print.</li>
+</ul>
+
+  </div>
+</body>
+</html>
