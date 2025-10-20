@@ -239,7 +239,7 @@ class CommandQueueImplementation @Inject constructor(
     }
 
     fun waitForFinishedThread() {
-        while (workIsRunning() && waitingForDisconnect) {
+        while (workIsRunning() || waitingForDisconnect) {
             aapsLogger.debug(LTag.PUMPQUEUE, "Waiting for previous work finish")
             SystemClock.sleep(500)
         }
