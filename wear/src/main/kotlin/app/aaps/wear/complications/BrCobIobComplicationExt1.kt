@@ -10,6 +10,7 @@ import app.aaps.wear.data.RawDisplayData
 import app.aaps.wear.interaction.utils.DisplayFormat
 import app.aaps.wear.interaction.utils.SmallestDoubleString
 import dagger.android.AndroidInjection
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 /*
@@ -28,9 +29,27 @@ class BrCobIobComplicationExt1 : BaseComplicationProviderService() {
         if (dataType == ComplicationData.TYPE_SHORT_TEXT) {
             val cob = SmallestDoubleString(raw.status[1].cob, SmallestDoubleString.Units.USE).minimise(DisplayFormat.MIN_FIELD_LEN_COB)
             val iob = SmallestDoubleString(raw.status[1].iobSum, SmallestDoubleString.Units.USE).minimise(max(DisplayFormat.MIN_FIELD_LEN_IOB, DisplayFormat.MAX_FIELD_LEN_SHORT - 1 - cob.length))
+            val iobCob = ComplicationText.TimeDifferenceBuilder()
+                .setSurroundingText("$cob $iob")
+                .setReferencePeriodStart(raw.singleBg[1].timeStamp)
+                .setReferencePeriodEnd(raw.singleBg[1].timeStamp + 60000)
+                .setStyle(ComplicationText.DIFFERENCE_STYLE_SHORT_SINGLE_UNIT)
+                .setMinimumUnit(TimeUnit.MINUTES)
+                .setStyle(ComplicationText.DIFFERENCE_STYLE_STOPWATCH)
+                .setShowNowText(false)
+                .build()
+            val tbr = ComplicationText.TimeDifferenceBuilder()
+                .setSurroundingText(displayFormat.basalRateSymbol() + raw.status[1].currentBasal)
+                .setReferencePeriodStart(raw.singleBg[1].timeStamp)
+                .setReferencePeriodEnd(raw.singleBg[1].timeStamp + 60000)
+                .setStyle(ComplicationText.DIFFERENCE_STYLE_SHORT_SINGLE_UNIT)
+                .setMinimumUnit(TimeUnit.MINUTES)
+                .setStyle(ComplicationText.DIFFERENCE_STYLE_STOPWATCH)
+                .setShowNowText(false)
+                .build()
             val builder = ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT)
-                .setShortText(ComplicationText.plainText(displayFormat.basalRateSymbol() + raw.status[1].currentBasal))
-                .setShortTitle(ComplicationText.plainText("$cob $iob"))
+                .setShortText(tbr)
+                .setShortTitle(iobCob)
                 .setTapAction(complicationPendingIntent)
             complicationData = builder.build()
         } else {

@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.drawable.Icon
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.complications.ComplicationManager
@@ -21,7 +20,6 @@ import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventWearToMobile
 import app.aaps.core.interfaces.rx.weardata.EventData.ActionResendData
 import app.aaps.wear.R
-import app.aaps.wear.comm.DataLayerListenerServiceWear.Companion.INTENT_NEW_DATA
 import app.aaps.wear.complications.ComplicationTapBroadcastReceiver.Companion.getTapActionIntent
 import app.aaps.wear.complications.ComplicationTapBroadcastReceiver.Companion.getTapWarningSinceIntent
 import app.aaps.wear.data.RawDisplayData
@@ -63,6 +61,8 @@ abstract class BaseComplicationProviderService : ComplicationProviderService() {
     //==============================================================================================
     enum class ListComplications(val cls: Class<*>) {
         BRCOBIOBCOMPLICATION(BrCobIobComplication::class.java),
+        BRCOBIOBCOMPLICATIONEXT1(BrCobIobComplicationExt1::class.java),
+        BRCOBIOBCOMPLICATIONEXT2(BrCobIobComplicationExt2::class.java),
         BRCOMPLICATION(BrComplication::class.java),
         BRIOBCOMPLICATION(BrIobComplication::class.java),
         COBDETAILEDCOMPLICATION(CobDetailedComplication::class.java),
@@ -73,6 +73,8 @@ abstract class BaseComplicationProviderService : ComplicationProviderService() {
         LONGSTATUSCOMPLICATION(LongStatusComplication::class.java),
         LONGSTATUSFLIPPEDCOMPLICATION(LongStatusFlippedComplication::class.java),
         SGVCOMPLICATION(SgvComplication::class.java),
+        SGVCOMPLICATIONEXT1(SgvComplicationExt1::class.java),
+        SGVCOMPLICATIONEXT2(SgvComplicationExt2::class.java),
         UPLOADERBATTERYCOMPLICATION(UploaderBatteryComplication::class.java)
     }
 
