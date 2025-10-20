@@ -1,6 +1,9 @@
 package app.aaps.pump.eopatch
 
+import android.content.Context
 import android.os.SystemClock
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceScreen
 import app.aaps.core.data.model.BS
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.data.pump.defs.ManufacturerType
@@ -11,7 +14,6 @@ import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.notifications.Notification
-import app.aaps.core.interfaces.objects.Instantiator
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.profile.Profile
 import app.aaps.core.interfaces.profile.ProfileFunction
@@ -35,12 +37,17 @@ import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.Round
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
+import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.validators.preferences.AdaptiveListIntPreference
+import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 import app.aaps.pump.eopatch.alarm.IAlarmManager
 import app.aaps.pump.eopatch.ble.IPatchManager
 import app.aaps.pump.eopatch.ble.PatchManagerExecutor
 import app.aaps.pump.eopatch.ble.PreferenceManager
 import app.aaps.pump.eopatch.code.BolusExDuration
-import app.aaps.pump.eopatch.code.SettingKeys
+import app.aaps.pump.eopatch.keys.EopatchBooleanKey
+import app.aaps.pump.eopatch.keys.EopatchIntKey
+import app.aaps.pump.eopatch.keys.EopatchStringNonKey
 import app.aaps.pump.eopatch.ui.EopatchOverviewFragment
 import app.aaps.pump.eopatch.vo.NormalBasalManager
 import app.aaps.pump.eopatch.vo.PatchConfig
@@ -52,6 +59,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 import kotlin.math.abs
 import kotlin.math.min
@@ -61,6 +69,7 @@ import kotlin.math.roundToInt
 class EopatchPumpPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
+    preferences: Preferences,
     commandQueue: CommandQueue,
     private val aapsSchedulers: AapsSchedulers,
     private val rxBus: RxBus,
@@ -73,18 +82,22 @@ class EopatchPumpPlugin @Inject constructor(
     private val preferenceManager: PreferenceManager,
     private val uiInteraction: UiInteraction,
     private val profileFunction: ProfileFunction,
-    private val instantiator: Instantiator,
+    private val pumpEnactResultProvider: Provider<PumpEnactResult>,
     private val patchConfig: PatchConfig,
     private val normalBasalManager: NormalBasalManager
 ) : PumpPluginBase(
-    PluginDescription()
+    pluginDescription = PluginDescription()
         .mainType(PluginType.PUMP)
         .fragmentClass(EopatchOverviewFragment::class.java.name)
         .pluginIcon(app.aaps.core.ui.R.drawable.ic_eopatch2_128)
         .pluginName(R.string.eopatch)
         .shortName(R.string.eopatch_shortname)
-        .preferencesId(R.xml.pref_eopatch)
-        .description(R.string.eopatch_pump_description), aapsLogger, rh, commandQueue
+        .preferencesId(PluginDescription.PREFERENCE_SCREEN)
+        .description(R.string.eopatch_pump_description),
+    ownPreferences = listOf(
+        EopatchIntKey::class.java, EopatchBooleanKey::class.java, EopatchStringNonKey::class.java
+    ),
+    aapsLogger, rh, preferences, commandQueue
 ), Pump {
 
     private val mDisposables = CompositeDisposable()
@@ -98,10 +111,10 @@ class EopatchPumpPlugin @Inject constructor(
         mDisposables += rxBus
             .toObservable(EventPreferenceChange::class.java)
             .observeOn(aapsSchedulers.io)
-            .subscribe({ event: EventPreferenceChange ->
-                           if (event.isChanged(rh.gs(SettingKeys.LOW_RESERVOIR_REMINDERS)) || event.isChanged(rh.gs(SettingKeys.EXPIRATION_REMINDERS))) {
+            .subscribe({ event ->
+                           if (event.isChanged(EopatchIntKey.LowReservoirReminder.key) || event.isChanged(EopatchIntKey.ExpirationReminder.key)) {
                                patchManager.changeReminderSetting()
-                           } else if (event.isChanged(rh.gs(SettingKeys.BUZZER_REMINDERS))) {
+                           } else if (event.isChanged(EopatchBooleanKey.BuzzerReminder.key)) {
                                patchManager.changeBuzzerSetting()
                            }
                        }, fabricPrivacy::logException)
@@ -191,12 +204,12 @@ class EopatchPumpPlugin @Inject constructor(
         if (patchConfig.isActivated) {
             if (preferenceManager.patchState.isTempBasalActive) {
                 val cancelResult = cancelTempBasal(true)
-                if (!cancelResult.success) return instantiator.providePumpEnactResult().isTempCancel(true).comment(app.aaps.core.ui.R.string.canceling_tbr_failed)
+                if (!cancelResult.success) return pumpEnactResultProvider.get().isTempCancel(true).comment(app.aaps.core.ui.R.string.canceling_tbr_failed)
             }
 
             if (preferenceManager.patchState.isExtBolusActive) {
                 val cancelResult = cancelExtendedBolus()
-                if (!cancelResult.success) return instantiator.providePumpEnactResult().comment(app.aaps.core.ui.R.string.canceling_eb_failed)
+                if (!cancelResult.success) return pumpEnactResultProvider.get().comment(app.aaps.core.ui.R.string.canceling_eb_failed)
             }
             var isSuccess: Boolean? = null
             val result: BehaviorSubject<Boolean> = BehaviorSubject.create()
@@ -224,15 +237,15 @@ class EopatchPumpPlugin @Inject constructor(
             aapsLogger.info(LTag.PUMP, "Basal Profile was set: $isSuccess")
             return if (isSuccess == true) {
                 uiInteraction.addNotificationValidFor(Notification.PROFILE_SET_OK, rh.gs(app.aaps.core.ui.R.string.profile_set_ok), Notification.INFO, 60)
-                instantiator.providePumpEnactResult().success(true).enacted(true)
+                pumpEnactResultProvider.get().success(true).enacted(true)
             } else {
-                instantiator.providePumpEnactResult()
+                pumpEnactResultProvider.get()
             }
         } else {
             normalBasalManager.setNormalBasal(profile)
             preferenceManager.flushNormalBasalManager()
             uiInteraction.addNotificationValidFor(Notification.PROFILE_SET_OK, rh.gs(app.aaps.core.ui.R.string.profile_set_ok), Notification.INFO, 60)
-            return instantiator.providePumpEnactResult().success(true).enacted(true)
+            return pumpEnactResultProvider.get().success(true).enacted(true)
         }
     }
 
@@ -290,7 +303,8 @@ class EopatchPumpPlugin @Inject constructor(
                 isSuccess = it
             }
 
-        mDisposables.add(patchManagerExecutor.startCalculatorBolus(detailedBolusInfo)
+        mDisposables.add(
+            patchManagerExecutor.startCalculatorBolus(detailedBolusInfo)
                              .doOnSuccess { mLastDataTime = System.currentTimeMillis() }
                              .subscribe({ result.onNext(it.isSuccess) }, { result.onNext(false) })
         )
@@ -322,20 +336,21 @@ class EopatchPumpPlugin @Inject constructor(
         disposable.dispose()
 
         return if (isSuccess && abs(askedInsulin - detailedBolusInfo.insulin) < pumpDescription.bolusStep)
-            instantiator.providePumpEnactResult().success(true).enacted(true).bolusDelivered(askedInsulin)
+            pumpEnactResultProvider.get().success(true).enacted(true).bolusDelivered(askedInsulin)
         else
-            instantiator.providePumpEnactResult().success(false)/*.enacted(false)*/.bolusDelivered(Round.roundTo(detailedBolusInfo.insulin, 0.01))
+            pumpEnactResultProvider.get().success(false)/*.enacted(false)*/.bolusDelivered(Round.roundTo(detailedBolusInfo.insulin, 0.01))
     }
 
     override fun stopBolusDelivering() {
-        mDisposables.add(patchManagerExecutor.stopNowBolus()
-                             .subscribeOn(aapsSchedulers.io)
-                             .observeOn(aapsSchedulers.main)
-                             .subscribe {
-                                 rxBus.send(EventOverviewBolusProgress.apply {
-                                     status = rh.gs(app.aaps.core.ui.R.string.bolus_delivered_successfully, (it.injectedBolusAmount * 0.05f))
-                                 })
-                             }
+        mDisposables.add(
+            patchManagerExecutor.stopNowBolus()
+                .subscribeOn(aapsSchedulers.io)
+                .observeOn(aapsSchedulers.main)
+                .subscribe {
+                    rxBus.send(EventOverviewBolusProgress.apply {
+                        status = rh.gs(app.aaps.core.ui.R.string.bolus_delivered_successfully, (it.injectedBolusAmount * 0.05f))
+                    })
+                }
         )
     }
 
@@ -360,15 +375,15 @@ class EopatchPumpPlugin @Inject constructor(
                     )
                     aapsLogger.info(LTag.PUMP, "setTempBasalAbsolute - tbrCurrent:${readTBR()}")
                 }
-                .map { instantiator.providePumpEnactResult().success(true).enacted(true).duration(durationInMinutes).absolute(absoluteRate).isPercent(false).isTempCancel(false) }
+                .map { pumpEnactResultProvider.get().success(true).enacted(true).duration(durationInMinutes).absolute(absoluteRate).isPercent(false).isTempCancel(false) }
                 .onErrorReturnItem(
-                    instantiator.providePumpEnactResult().success(false).enacted(false)
+                    pumpEnactResultProvider.get().success(false).enacted(false)
                         .comment("Internal error")
                 )
                 .blockingGet()
         } else {
             aapsLogger.info(LTag.PUMP, "setTempBasalAbsolute - normal basal is not active")
-            return instantiator.providePumpEnactResult().success(false).enacted(false)
+            return pumpEnactResultProvider.get().success(false).enacted(false)
         }
     }
 
@@ -393,15 +408,15 @@ class EopatchPumpPlugin @Inject constructor(
                     )
                     aapsLogger.info(LTag.PUMP, "setTempBasalPercent - tbrCurrent:${readTBR()}")
                 }
-                .map { instantiator.providePumpEnactResult().success(true).enacted(true).duration(durationInMinutes).percent(percent).isPercent(true).isTempCancel(false) }
+                .map { pumpEnactResultProvider.get().success(true).enacted(true).duration(durationInMinutes).percent(percent).isPercent(true).isTempCancel(false) }
                 .onErrorReturnItem(
-                    instantiator.providePumpEnactResult().success(false).enacted(false)
+                    pumpEnactResultProvider.get().success(false).enacted(false)
                         .comment("Internal error")
                 )
                 .blockingGet()
         } else {
             aapsLogger.info(LTag.PUMP, "setTempBasalPercent - normal basal is not active")
-            return instantiator.providePumpEnactResult().success(false).enacted(false)
+            return pumpEnactResultProvider.get().success(false).enacted(false)
         }
     }
 
@@ -421,9 +436,9 @@ class EopatchPumpPlugin @Inject constructor(
                     pumpSerial = serialNumber()
                 )
             }
-            .map { instantiator.providePumpEnactResult().success(true).enacted(true) }
+            .map { pumpEnactResultProvider.get().success(true).enacted(true) }
             .onErrorReturnItem(
-                instantiator.providePumpEnactResult().success(false).enacted(false).bolusDelivered(0.0)
+                pumpEnactResultProvider.get().success(false).enacted(false).bolusDelivered(0.0)
                     .comment(rh.gs(app.aaps.core.ui.R.string.error))
             )
             .blockingGet()
@@ -434,14 +449,14 @@ class EopatchPumpPlugin @Inject constructor(
 
         if (tbrCurrent == null) {
             aapsLogger.debug(LTag.PUMP, "cancelTempBasal - TBR already false.")
-            return instantiator.providePumpEnactResult().success(true).enacted(false)
+            return pumpEnactResultProvider.get().success(true).enacted(false)
         }
 
         if (!preferenceManager.patchState.isTempBasalActive) {
             return if (pumpSync.expectedPumpState().temporaryBasal != null) {
-                instantiator.providePumpEnactResult().success(true).enacted(true).isTempCancel(true)
+                pumpEnactResultProvider.get().success(true).enacted(true).isTempCancel(true)
             } else
-                instantiator.providePumpEnactResult().success(true).isTempCancel(true)
+                pumpEnactResultProvider.get().success(true).isTempCancel(true)
         }
 
         return patchManagerExecutor.stopTempBasal()
@@ -458,9 +473,9 @@ class EopatchPumpPlugin @Inject constructor(
             .doOnError {
                 aapsLogger.error(LTag.PUMP, "cancelTempBasal() - $it")
             }
-            .map { instantiator.providePumpEnactResult().success(true).enacted(true).isTempCancel(true) }
+            .map { pumpEnactResultProvider.get().success(true).enacted(true).isTempCancel(true) }
             .onErrorReturnItem(
-                instantiator.providePumpEnactResult().success(false).enacted(false)
+                pumpEnactResultProvider.get().success(false).enacted(false)
                     .comment(rh.gs(app.aaps.core.ui.R.string.error))
             )
             .blockingGet()
@@ -479,9 +494,9 @@ class EopatchPumpPlugin @Inject constructor(
                         pumpSerial = serialNumber()
                     )
                 }
-                .map { instantiator.providePumpEnactResult().success(true).enacted(true).isTempCancel(true) }
+                .map { pumpEnactResultProvider.get().success(true).enacted(true).isTempCancel(true) }
                 .onErrorReturnItem(
-                    instantiator.providePumpEnactResult().success(false).enacted(false)
+                    pumpEnactResultProvider.get().success(false).enacted(false)
                         .comment(rh.gs(app.aaps.core.ui.R.string.canceling_eb_failed))
                 )
                 .blockingGet()
@@ -494,9 +509,9 @@ class EopatchPumpPlugin @Inject constructor(
                     pumpType = PumpType.EOFLOW_EOPATCH2,
                     pumpSerial = serialNumber()
                 )
-                instantiator.providePumpEnactResult().success(true).enacted(true).isTempCancel(true)
+                pumpEnactResultProvider.get().success(true).enacted(true).isTempCancel(true)
             } else
-                instantiator.providePumpEnactResult()
+                pumpEnactResultProvider.get()
         }
     }
 
@@ -585,7 +600,7 @@ class EopatchPumpPlugin @Inject constructor(
     override val isFakingTempsByExtendedBoluses: Boolean = false
 
     override fun loadTDDs(): PumpEnactResult {
-        return instantiator.providePumpEnactResult()
+        return pumpEnactResultProvider.get()
     }
 
     override fun canHandleDST(): Boolean {
@@ -610,5 +625,26 @@ class EopatchPumpPlugin @Inject constructor(
 
     private fun readTBR(): PumpSync.PumpState.TemporaryBasal? {
         return pumpSync.expectedPumpState().temporaryBasal
+    }
+
+    override fun addPreferenceScreen(preferenceManager: androidx.preference.PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
+        if (requiredKey != null) return
+
+        val lowReservoirEntries = arrayOf<CharSequence>("10 U", "15 U", "20 U", "25 U", "30 U", "35 U", "40 U", "45 U", "50 U")
+        val lowReservoirValues = arrayOf<CharSequence>("10", "15", "20", "25", "30", "35", "40", "45", "50")
+        val expirationRemindersEntries =
+            arrayOf<CharSequence>("1 hr", "2 hr", "3 hr", "4 hr", "5 hr", "6 hr", "7 hr", "8 hr", "9 hr", "10 hr", "11 hr", "12 hr", "13 hr", "14 hr", "15 hr", "16 hr", "17 hr", "18 hr", "19 hr", "20 hr", "21 hr", "22 hr", "23 hr", "24 hr")
+        val expirationRemindersValues = arrayOf<CharSequence>("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24")
+
+        val category = PreferenceCategory(context)
+        parent.addPreference(category)
+        category.apply {
+            key = "eopatch_settings"
+            title = rh.gs(R.string.eopatch)
+            initialExpandedChildrenCount = 0
+            addPreference(AdaptiveListIntPreference(ctx = context, intKey = EopatchIntKey.LowReservoirReminder, title = R.string.low_reservoir, entries = lowReservoirEntries, entryValues = lowReservoirValues))
+            addPreference(AdaptiveListIntPreference(ctx = context, intKey = EopatchIntKey.ExpirationReminder, title = R.string.patch_expiration_reminders, entries = expirationRemindersEntries, entryValues = expirationRemindersValues))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = EopatchBooleanKey.BuzzerReminder, title = R.string.patch_buzzer_reminders))
+        }
     }
 }

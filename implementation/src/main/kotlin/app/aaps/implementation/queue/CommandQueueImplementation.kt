@@ -23,7 +23,6 @@ import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.notifications.Notification
-import app.aaps.core.interfaces.objects.Instantiator
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.profile.Profile
 import app.aaps.core.interfaces.profile.ProfileFunction
@@ -44,12 +43,11 @@ import app.aaps.core.interfaces.rx.events.EventMobileToWear
 import app.aaps.core.interfaces.rx.events.EventNewNotification
 import app.aaps.core.interfaces.rx.events.EventProfileSwitchChanged
 import app.aaps.core.interfaces.rx.weardata.EventData
-import app.aaps.core.interfaces.sharedPreferences.SP
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
-import app.aaps.core.keys.Preferences
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.constraints.ConstraintObject
 import app.aaps.core.objects.extensions.getCustomizedName
 import app.aaps.core.objects.profile.ProfileSealed
@@ -81,6 +79,7 @@ import io.reactivex.rxjava3.kotlin.plusAssign
 import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @OpenForTesting
@@ -95,7 +94,6 @@ class CommandQueueImplementation @Inject constructor(
     private val profileFunction: ProfileFunction,
     private val activePlugin: ActivePlugin,
     private val context: Context,
-    private val sp: SP,
     private val preferences: Preferences,
     private val config: Config,
     private val dateUtil: DateUtil,
@@ -104,7 +102,7 @@ class CommandQueueImplementation @Inject constructor(
     private val uiInteraction: UiInteraction,
     private val persistenceLayer: PersistenceLayer,
     private val decimalFormatter: DecimalFormatter,
-    private val instantiator: Instantiator,
+    private val pumpEnactResultProvider: Provider<PumpEnactResult>,
     private val jobName: CommandQueueName,
     private val workManager: WorkManager
 ) : CommandQueue {
@@ -160,7 +158,7 @@ class CommandQueueImplementation @Inject constructor(
     }
 
     private fun executingNowError(): PumpEnactResult =
-        instantiator.providePumpEnactResult().success(false).enacted(false).comment(R.string.executing_right_now)
+        pumpEnactResultProvider.get().success(false).enacted(false).comment(R.string.executing_right_now)
 
     override fun isRunning(type: CommandType): Boolean = performing?.commandType == type
 
@@ -251,8 +249,8 @@ class CommandQueueImplementation @Inject constructor(
         aapsLogger.debug(LTag.PUMPQUEUE, "Starting new queue")
         val tempCommandQueue = CommandQueueImplementation(
             injector, aapsLogger, rxBus, aapsSchedulers, rh,
-            constraintChecker, profileFunction, activePlugin, context, sp, preferences,
-            config, dateUtil, fabricPrivacy, androidPermission, uiInteraction, persistenceLayer, decimalFormatter, instantiator, CommandQueueName("CommandQueueIndependentInstance"), workManager
+            constraintChecker, profileFunction, activePlugin, context, preferences,
+            config, dateUtil, fabricPrivacy, androidPermission, uiInteraction, persistenceLayer, decimalFormatter, pumpEnactResultProvider, CommandQueueName("CommandQueueIndependentInstance"), workManager
         )
         tempCommandQueue.readStatus(reason, callback)
         tempCommandQueue.disposable.clear()
@@ -293,8 +291,8 @@ class CommandQueueImplementation @Inject constructor(
                     action = Action.CARBS,
                     source = Sources.Database
                 ).subscribe(
-                    { callback?.result(instantiator.providePumpEnactResult().enacted(false).success(true))?.run() },
-                    { callback?.result(instantiator.providePumpEnactResult().enacted(false).success(false))?.run() }
+                    { callback?.result(pumpEnactResultProvider.get().enacted(false).success(true))?.run() },
+                    { callback?.result(pumpEnactResultProvider.get().enacted(false).success(false))?.run() }
                 )
             }
             // Do not process carbs anymore
@@ -310,13 +308,13 @@ class CommandQueueImplementation @Inject constructor(
         if (type == CommandType.SMB_BOLUS) {
             if (bolusInQueue()) {
                 aapsLogger.debug(LTag.PUMPQUEUE, "Rejecting SMB since a bolus is queue/running")
-                callback?.result(instantiator.providePumpEnactResult().enacted(false).success(false))?.run()
+                callback?.result(pumpEnactResultProvider.get().enacted(false).success(false))?.run()
                 return false
             }
             val lastBolusTime = persistenceLayer.getNewestBolus()?.timestamp ?: 0L
             if (detailedBolusInfo.lastKnownBolusTime < lastBolusTime) {
                 aapsLogger.debug(LTag.PUMPQUEUE, "Rejecting bolus, another bolus was issued since request time")
-                callback?.result(instantiator.providePumpEnactResult().enacted(false).success(false))?.run()
+                callback?.result(pumpEnactResultProvider.get().enacted(false).success(false))?.run()
                 return false
             }
             removeAll(CommandType.SMB_BOLUS)
@@ -418,7 +416,7 @@ class CommandQueueImplementation @Inject constructor(
     }
 
     // returns true if command is queued
-    override fun cancelTempBasal(enforceNew: Boolean, callback: Callback?): Boolean {
+    override fun cancelTempBasal(enforceNew: Boolean, autoForced: Boolean, callback: Callback?): Boolean {
         if (!enforceNew && isRunning(CommandType.TEMPBASAL)) {
             callback?.result(executingNowError())?.run()
             return false
@@ -426,7 +424,7 @@ class CommandQueueImplementation @Inject constructor(
         // remove all unfinished
         removeAll(CommandType.TEMPBASAL)
         // add new command to queue
-        add(CommandCancelTempBasal(injector, enforceNew, callback))
+        add(CommandCancelTempBasal(injector, enforceNew, autoForced = autoForced, callback))
         notifyAboutNewCommand()
         return true
     }
@@ -449,12 +447,12 @@ class CommandQueueImplementation @Inject constructor(
     fun setProfile(profile: ProfileSealed, hasNsId: Boolean, callback: Callback?): Boolean {
         if (isRunning(CommandType.BASAL_PROFILE)) {
             aapsLogger.debug(LTag.PUMPQUEUE, "Command is already executed")
-            callback?.result(instantiator.providePumpEnactResult().success(true).enacted(false))?.run()
+            callback?.result(pumpEnactResultProvider.get().success(true).enacted(false))?.run()
             return false
         }
         if (isThisProfileSet(profile) && persistenceLayer.getEffectiveProfileSwitchActiveAt(dateUtil.now()) != null) {
             aapsLogger.debug(LTag.PUMPQUEUE, "Correct profile already set")
-            callback?.result(instantiator.providePumpEnactResult().success(true).enacted(false))?.run()
+            callback?.result(pumpEnactResultProvider.get().success(true).enacted(false))?.run()
             return false
         }
         // Compare with pump limits
@@ -463,7 +461,7 @@ class CommandQueueImplementation @Inject constructor(
             if (basalValue.value < activePlugin.activePump.pumpDescription.basalMinimumRate) {
                 val notification = Notification(Notification.BASAL_VALUE_BELOW_MINIMUM, rh.gs(R.string.basal_value_below_minimum), Notification.URGENT)
                 rxBus.send(EventNewNotification(notification))
-                callback?.result(instantiator.providePumpEnactResult().success(false).enacted(false).comment(R.string.basal_value_below_minimum))?.run()
+                callback?.result(pumpEnactResultProvider.get().success(false).enacted(false).comment(R.string.basal_value_below_minimum))?.run()
                 return false
             }
         }

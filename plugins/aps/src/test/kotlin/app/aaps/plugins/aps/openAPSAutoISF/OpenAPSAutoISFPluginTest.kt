@@ -1,7 +1,7 @@
 package app.aaps.plugins.aps.openAPSAutoISF
 
-import android.content.SharedPreferences
 import app.aaps.core.data.aps.SMBDefaults
+import app.aaps.core.interfaces.aps.GlucoseStatusAutoIsf
 import app.aaps.core.interfaces.aps.OapsProfileAutoIsf
 import app.aaps.core.interfaces.bgQualityCheck.BgQualityCheck
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
@@ -13,11 +13,6 @@ import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
-import app.aaps.core.validators.preferences.AdaptiveDoublePreference
-import app.aaps.core.validators.preferences.AdaptiveIntPreference
-import app.aaps.core.validators.preferences.AdaptiveIntentPreference
-import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
-import app.aaps.core.validators.preferences.AdaptiveUnitPreference
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -31,47 +26,17 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
     @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var glucoseStatusProvider: GlucoseStatusProvider
     @Mock lateinit var determineBasalSMB: DetermineBasalAutoISF
-    @Mock lateinit var sharedPrefs: SharedPreferences
     @Mock lateinit var bgQualityCheck: BgQualityCheck
     @Mock lateinit var profiler: Profiler
     @Mock lateinit var uiInteraction: UiInteraction
     private lateinit var openAPSAutoISFPlugin: OpenAPSAutoISFPlugin
 
-    init {
-        addInjector {
-            if (it is AdaptiveDoublePreference) {
-                it.profileUtil = profileUtil
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-            }
-            if (it is AdaptiveIntPreference) {
-                it.profileUtil = profileUtil
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-                it.config = config
-            }
-            if (it is AdaptiveIntentPreference) {
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-            }
-            if (it is AdaptiveUnitPreference) {
-                it.profileUtil = profileUtil
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-            }
-            if (it is AdaptiveSwitchPreference) {
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-                it.config = config
-            }
-        }
-    }
-
     @BeforeEach fun prepare() {
         openAPSAutoISFPlugin = OpenAPSAutoISFPlugin(
-            injector, aapsLogger, rxBus, constraintChecker, rh, profileFunction, profileUtil, config, activePlugin,
+            aapsLogger, rxBus, constraintChecker, rh, profileFunction, profileUtil, config, activePlugin,
             iobCobCalculator, hardLimits, preferences, dateUtil, processedTbrEbData, persistenceLayer, glucoseStatusProvider,
-            bgQualityCheck, uiInteraction, determineBasalSMB, profiler
+            bgQualityCheck, uiInteraction, determineBasalSMB, profiler,
+            GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator), apsResultProvider
         )
     }
 
@@ -294,14 +259,14 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             iob_threshold_percent = 100,
             profile_percentage = 100
         )
-        assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11)                             // inactive
+        assertThat(openAPSAutoISFPlugin.autoISF(profile)).isEqualTo(47.11)                             // inactive
         `when`(oapsProfile.enable_autoISF).thenReturn(true)
-        val glucoseStatus = glucoseStatusProvider.glucoseStatusData!!
+        val glucoseStatus = glucoseStatusProvider.glucoseStatusData as GlucoseStatusAutoIsf
         `when`(glucoseStatus.corrSqu).thenReturn(0.4711)
-        assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11)                             // bad parabola
+        assertThat(openAPSAutoISFPlugin.autoISF(profile)).isEqualTo(47.11)                             // bad parabola
         `when`(preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)).thenReturn(true)
         `when`(preferences.get(IntKey.ApsAutoIsfHalfBasalExerciseTarget)).thenReturn(160)
-        assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0)                       // exercise mode w/o AutoISF
+        assertThat(openAPSAutoISFPlugin.autoISF(profile)).isEqualTo(47.11 * 2.0)                       // exercise mode w/o AutoISF
         `when`(glucoseStatus.corrSqu).thenReturn(0.95)
         `when`(glucoseStatus.glucose).thenReturn(90.0)
         `when`(glucoseStatus.a0).thenReturn(90.3)
@@ -309,11 +274,11 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         `when`(glucoseStatus.a2).thenReturn(3.0)
         `when`(glucoseStatus.bgAcceleration).thenReturn(2.0 * glucoseStatus.a2)
         `when`(preferences.get(DoubleKey.ApsAutoIsfBgAccelWeight)).thenReturn(2.0)
-        assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0 * 2.0)                 // acce_ISF + exercise mode
+        assertThat(openAPSAutoISFPlugin.autoISF(profile)).isEqualTo(47.11 * 2.0 * 2.0)                 // acce_ISF + exercise mode
         `when`(preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)).thenReturn(false)
-        assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0)                       // acce_ISF w/o exercise mode
+        assertThat(openAPSAutoISFPlugin.autoISF(profile)).isEqualTo(47.11 * 2.0)                       // acce_ISF w/o exercise mode
         `when`(preferences.get(DoubleKey.ApsAutoIsfLowBgWeight)).thenReturn(2.0)
-        assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 1.0)                       // bg_ISF strengthened by acce_ISF
+        assertThat(openAPSAutoISFPlugin.autoISF(profile)).isEqualTo(47.11 * 1.0)                       // bg_ISF strengthened by acce_ISF
 
     }
 }

@@ -14,10 +14,10 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.logging.AAPSLogger
-import app.aaps.core.interfaces.objects.Instantiator
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.profile.ProfileFunction
 import app.aaps.core.interfaces.pump.DetailedBolusInfo
+import app.aaps.core.interfaces.pump.PumpEnactResult
 import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.queue.Callback
 import app.aaps.core.interfaces.queue.Command
@@ -25,12 +25,11 @@ import app.aaps.core.interfaces.queue.CustomCommand
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.AapsSchedulers
 import app.aaps.core.interfaces.rx.bus.RxBus
-import app.aaps.core.interfaces.sharedPreferences.SP
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
-import app.aaps.core.keys.Preferences
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.constraints.ConstraintObject
 import app.aaps.implementation.queue.commands.CommandBolus
 import app.aaps.implementation.queue.commands.CommandCancelExtendedBolus
@@ -60,6 +59,7 @@ import org.mockito.Mockito.mock
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import java.util.Calendar
+import javax.inject.Provider
 
 class CommandQueueImplementationTest : TestBaseWithProfile() {
 
@@ -82,7 +82,6 @@ class CommandQueueImplementationTest : TestBaseWithProfile() {
         profileFunction: ProfileFunction,
         activePlugin: ActivePlugin,
         context: Context,
-        sp: SP,
         preferences: Preferences,
         config: Config,
         dateUtil: DateUtil,
@@ -91,13 +90,13 @@ class CommandQueueImplementationTest : TestBaseWithProfile() {
         uiInteraction: UiInteraction,
         persistenceLayer: PersistenceLayer,
         decimalFormatter: DecimalFormatter,
-        instantiator: Instantiator,
+        pumpEnactResultProvider: Provider<PumpEnactResult>,
         jobName: CommandQueueName,
         workManager: WorkManager
     ) : CommandQueueImplementation(
         injector, aapsLogger, rxBus, aapsSchedulers, rh, constraintChecker, profileFunction,
-        activePlugin, context, sp, preferences, config, dateUtil, fabricPrivacy, androidPermission,
-        uiInteraction, persistenceLayer, decimalFormatter, instantiator, jobName, workManager
+        activePlugin, context, preferences, config, dateUtil, fabricPrivacy, androidPermission,
+        uiInteraction, persistenceLayer, decimalFormatter, pumpEnactResultProvider, jobName, workManager
     ) {
 
         override fun notifyAboutNewCommand(): Boolean = true
@@ -179,7 +178,6 @@ class CommandQueueImplementationTest : TestBaseWithProfile() {
                 it.rxBus = rxBus
                 it.activePlugin = activePlugin
                 it.rh = rh
-                it.sp = sp
                 it.preferences = preferences
                 it.androidPermission = androidPermission
                 it.config = config
@@ -193,7 +191,7 @@ class CommandQueueImplementationTest : TestBaseWithProfile() {
     fun prepare() {
         commandQueue = CommandQueueMocked(
             injector, aapsLogger, rxBus, aapsSchedulers, rh, constraintChecker, profileFunction, activePlugin, context,
-            sp, preferences, config, dateUtil, fabricPrivacy, androidPermission, uiInteraction, persistenceLayer, decimalFormatter, instantiator, jobName, workManager
+            preferences, config, dateUtil, fabricPrivacy, androidPermission, uiInteraction, persistenceLayer, decimalFormatter, pumpEnactResultProvider, jobName, workManager
         )
         testPumpPlugin.pumpDescription.basalMinimumRate = 0.1
         testPumpPlugin.connected = true
@@ -237,8 +235,8 @@ class CommandQueueImplementationTest : TestBaseWithProfile() {
     fun commandIsPickedUp() {
         commandQueue = CommandQueueImplementation(
             injector, aapsLogger, rxBus, aapsSchedulers, rh,
-            constraintChecker, profileFunction, activePlugin, context, sp, preferences,
-            config, dateUtil, fabricPrivacy, androidPermission, uiInteraction, persistenceLayer, decimalFormatter, instantiator, jobName, workManager
+            constraintChecker, profileFunction, activePlugin, context, preferences,
+            config, dateUtil, fabricPrivacy, androidPermission, uiInteraction, persistenceLayer, decimalFormatter, pumpEnactResultProvider, jobName, workManager
         )
         val handler = mock(Handler::class.java)
         Mockito.`when`(handler.post(anyObject())).thenAnswer { invocation: InvocationOnMock ->
@@ -291,7 +289,7 @@ class CommandQueueImplementationTest : TestBaseWithProfile() {
         assertThat(commandQueue.size()).isEqualTo(1)
 
         // cancel tempbasal it should replace previous TEMPBASAL
-        commandQueue.cancelTempBasal(false, null)
+        commandQueue.cancelTempBasal(enforceNew = false, autoForced = false, callback = null)
         assertThat(commandQueue.size()).isEqualTo(1)
 
         // add extended bolus

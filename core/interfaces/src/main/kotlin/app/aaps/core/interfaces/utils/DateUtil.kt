@@ -1,7 +1,5 @@
 package app.aaps.core.interfaces.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import app.aaps.core.interfaces.resources.ResourceHelper
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
@@ -59,6 +57,7 @@ interface DateUtil {
     fun dateAndTimeString(mills: Long): String
     fun dateAndTimeAndSecondsString(mills: Long): String
     fun minAgo(rh: ResourceHelper, time: Long?): String
+    fun minOrSecAgo(rh: ResourceHelper, time: Long?): String
     fun minAgoShort(time: Long?): String
     fun minAgoLong(rh: ResourceHelper, time: Long?): String
     fun hourAgo(time: Long, rh: ResourceHelper): String
@@ -74,6 +73,7 @@ interface DateUtil {
     fun getTimeZoneOffsetMs(): Long
     fun getTimeZoneOffsetMinutes(timestamp: Long): Int
     fun isSameDay(timestamp1: Long, timestamp2: Long): Boolean
+    fun isAfterNoon(): Boolean
 
     fun isSameDayGroup(timestamp1: Long, timestamp2: Long): Boolean
 
@@ -84,7 +84,6 @@ interface DateUtil {
     fun qs(x: Double, numDigits: Int): String
     fun formatHHMM(timeAsSeconds: Int): String
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun timeZoneByOffset(offsetInMilliseconds: Long): TimeZone
     fun timeStampToUtcDateMillis(timestamp: Long): Long
     fun mergeUtcDateToTimestamp(timestamp: Long, dateUtcMillis: Long): Long

@@ -12,7 +12,6 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -39,6 +38,7 @@ import app.aaps.pump.equil.R
 import app.aaps.pump.equil.ble.GattAttributes
 import app.aaps.pump.equil.driver.definition.ActivationProgress
 import app.aaps.pump.equil.driver.definition.BluetoothConnectionState
+import app.aaps.pump.equil.keys.EquilStringKey
 import app.aaps.pump.equil.manager.Utils
 import app.aaps.pump.equil.manager.command.CmdDevicesOldGet
 import app.aaps.pump.equil.manager.command.CmdPair
@@ -47,7 +47,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.regex.Pattern
 
-// IMPORTANT: This activity needs to be called from RileyLinkSelectPreference (see pref_medtronic.xml as example)
 class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
 
     private val bluetoothAdapter: BluetoothAdapter? get() = (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?)?.adapter
@@ -56,6 +55,8 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
     private var bleScanner: BluetoothLeScanner? = null
     private var scanning = false
     private val handler = Handler(HandlerThread(this::class.simpleName + "Handler").also { it.start() }.looper)
+
+    @Suppress("PrivatePropertyName")
     private val SCAN_PERIOD_MILLIS: Long = 15000
     private var serialNumber = ""
 
@@ -87,7 +88,6 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
         return 2
     }
 
-    lateinit var buttonNext: Button
     lateinit var textTips: TextView
     lateinit var buttonPair: Button
     lateinit var progressPair: ProgressBar
@@ -98,14 +98,14 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
     lateinit var password: String
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        buttonNext = view.findViewById<Button>(R.id.button_next)
-        buttonPair = view.findViewById<Button>(R.id.button_pair)
-        textTips = view.findViewById<TextView>(R.id.text_tips)
-        progressPair = view.findViewById<ProgressBar>(R.id.progress_pair)
-        equilPasswordText = view.findViewById<TextInputEditText>(R.id.devicesPwd)
-        equilTextInputLayout = view.findViewById<TextInputLayout>(R.id.devicesPwdLayout)
-        devicesNameText = view.findViewById<TextInputEditText>(R.id.devicesName)
-        devicesNameInputLayout = view.findViewById<TextInputLayout>(R.id.devicesNameLayout)
+        val buttonNext = view.findViewById<Button>(R.id.button_next)
+        buttonPair = view.findViewById(R.id.button_pair)
+        textTips = view.findViewById(R.id.text_tips)
+        progressPair = view.findViewById(R.id.progress_pair)
+        equilPasswordText = view.findViewById(R.id.devicesPwd)
+        equilTextInputLayout = view.findViewById(R.id.devicesPwdLayout)
+        devicesNameText = view.findViewById(R.id.devicesName)
+        devicesNameInputLayout = view.findViewById(R.id.devicesNameLayout)
         buttonNext.setOnClickListener {
             context?.let {
                 val nextPage = getNextPageActionId()
@@ -113,34 +113,25 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
 
             }
         }
-        equilPasswordText.setText(sp.getString(rh.gs(R.string.key_equil_pair_password), ""))
+        equilPasswordText.setText(preferences.get(EquilStringKey.PairPassword))
         equilPasswordText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    if (validate(s.toString()) && validateNumber(devicesNameText.text.toString())) {
-                    }
+                    validatePassword(s.toString())
                 }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
             }
         })
         devicesNameText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    if (validate(equilPasswordText.text.toString()) && validateNumber(s.toString())) {
-                    }
+                    validateDeviceName(s.toString())
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {
-            }
         })
         buttonPair.setOnClickListener {
             context?.let {
@@ -149,10 +140,10 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
                 equilManager.setSerialNumber("")
                 password = equilPasswordText.getText().toString().trim()
                 serialNumber = devicesNameText.text.toString().trim()
-                if (validateNumber(serialNumber) && validate(password)) {
+                if (validateDeviceName(serialNumber) && validatePassword(password)) {
                     val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(equilPasswordText.windowToken, 0)
-                    sp.putString(rh.gs(R.string.key_equil_pair_password), password)
+                    preferences.put(EquilStringKey.PairPassword, password)
                     buttonPair.isClickable = false
                     buttonPair.alpha = 0.3f
                     textTips.visibility = View.INVISIBLE
@@ -165,7 +156,7 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
         buttonNext.isClickable = false
     }
 
-    private fun validateNumber(email: String): Boolean {
+    private fun validateDeviceName(email: String): Boolean {
         val emailPattern = rh.gs(R.string.sixhexanumber)
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)
@@ -180,7 +171,7 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
         }
     }
 
-    private fun validate(email: String): Boolean {
+    private fun validatePassword(email: String): Boolean {
         val emailPattern = rh.gs(app.aaps.core.validators.R.string.fourhexanumber)
         val pattern = Pattern.compile(emailPattern)
         val matcher = pattern.matcher(email)
@@ -250,15 +241,14 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
             }
         }
 
-        override fun onBatchScanResults(results: List<ScanResult>) {
-        }
+        override fun onBatchScanResults(results: List<ScanResult>) {}
     }
 
     private fun stopLeDeviceScan() {
         if (scanning) {
             scanning = false
             if (bluetoothAdapter?.isEnabled == true && bluetoothAdapter?.state == BluetoothAdapter.STATE_ON)
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || context?.let { ActivityCompat.checkSelfPermission(it, Manifest.permission.BLUETOOTH_SCAN) } == PackageManager.PERMISSION_GRANTED) {
+                if (context?.let { ActivityCompat.checkSelfPermission(it, Manifest.permission.BLUETOOTH_SCAN) } == PackageManager.PERMISSION_GRANTED) {
                     bleScanner?.stopScan(bleScanCallback)
                 }
             aapsLogger.debug(LTag.PUMPBTCOMM, "stopLeDeviceScan: Scanning Stop")
@@ -272,7 +262,7 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
 
     fun getVersion(scanResult: BluetoothDevice) {
         // CmdDevicesOldGet
-        var cmdDevicesOldGet = CmdDevicesOldGet(scanResult.address.toString(), aapsLogger, sp, equilManager)
+        val cmdDevicesOldGet = CmdDevicesOldGet(scanResult.address.toString(), aapsLogger, preferences, equilManager)
         commandQueue.customCommand(cmdDevicesOldGet, object : Callback() {
             override fun run() {
                 if (activity == null) return
@@ -314,7 +304,7 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
         equilManager.setActivationProgress(ActivationProgress.PRIMING)
         equilManager.setBluetoothConnectionState(BluetoothConnectionState.CONNECTED)
         aapsLogger.debug(LTag.PUMPCOMM, "result====${scanResult.name}===${scanResult.address}")
-        commandQueue.customCommand(CmdPair(scanResult.name.toString(), scanResult.address.toString(), password, aapsLogger, sp, equilManager), object : Callback() {
+        commandQueue.customCommand(CmdPair(scanResult.name.toString(), scanResult.address.toString(), password, aapsLogger, preferences, equilManager), object : Callback() {
             override fun run() {
                 if (activity == null) return
                 aapsLogger.debug(LTag.PUMPCOMM, "result====" + result.success + "===" + result.enacted)
@@ -353,14 +343,14 @@ class EquilPairSerialNumberFragment : EquilPairFragmentBase() {
     }
 
     private fun pumpSettings(address: String, serialNumber: String) {
-        commandQueue.customCommand(CmdSettingSet(null, aapsLogger, sp, equilManager), object : Callback() {
+        commandQueue.customCommand(CmdSettingSet(null, aapsLogger, preferences, equilManager), object : Callback() {
             override fun run() {
                 if (activity == null) return
                 if (result.success) {
                     dismissLoading()
                     equilManager.setAddress(address)
                     equilManager.setSerialNumber(serialNumber)
-                    equilPumpPlugin.showToast(rh.gs(R.string.equil_success))
+                    ToastUtils.okToast(requireContext(), rh.gs(R.string.equil_success))
                     runOnUiThread {
                         val nextPage = getNextPageActionId()
                         equilManager.setActivationProgress(ActivationProgress.CANNULA_CHANGE)

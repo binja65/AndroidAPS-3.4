@@ -223,14 +223,14 @@ class DanaRExecutionService : AbstractDanaRExecutionService() {
         return true
     }
 
-    override fun loadEvents(): PumpEnactResult = instantiator.providePumpEnactResult()
+    override fun loadEvents(): PumpEnactResult = pumpEnactResultProvider.get()
 
     override fun bolus(amount: Double, carbs: Int, carbTimeStamp: Long, t: EventOverviewBolusProgress.Treatment): Boolean {
         if (!isConnected) return false
         if (stopPressed) return false
         danaPump.bolusingTreatment = t
         danaPump.bolusDone = false
-        val preferencesSpeed = preferences.get(DanaIntKey.DanaBolusSpeed)
+        val preferencesSpeed = preferences.get(DanaIntKey.BolusSpeed)
         val start: MessageBase = if (preferencesSpeed == 0) MsgBolusStart(injector, amount) else MsgBolusStartWithSpeed(injector, amount, preferencesSpeed)
         danaPump.bolusStopped = false
         danaPump.bolusStopForced = false
@@ -322,12 +322,12 @@ class DanaRExecutionService : AbstractDanaRExecutionService() {
     }
 
     override fun setUserOptions(): PumpEnactResult {
-        if (!isConnected) return instantiator.providePumpEnactResult().success(false)
+        if (!isConnected) return pumpEnactResultProvider.get().success(false)
         SystemClock.sleep(300)
         val msg = MsgSetUserOptions(injector)
         mSerialIOThread?.sendMessage(msg)
         SystemClock.sleep(200)
-        return instantiator.providePumpEnactResult().success(!msg.failed)
+        return pumpEnactResultProvider.get().success(!msg.failed)
     }
 
     inner class LocalBinder : Binder() {
