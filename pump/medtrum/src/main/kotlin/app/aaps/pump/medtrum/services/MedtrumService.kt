@@ -259,6 +259,8 @@ class MedtrumService : DaggerService(), BLECommCallback {
             val detailedBolusInfo = detailedBolusInfoStorage.findDetailedBolusInfo(medtrumPump.bolusStartTime, medtrumPump.bolusAmountToBeDelivered)
             if (detailedBolusInfo != null) {
                 detailedBolusInfoStorage.add(detailedBolusInfo) // Reinsert
+                // Initialize BolusProgressData for the ongoing bolus
+                BolusProgressData.set(detailedBolusInfo.insulin, detailedBolusInfo.bolusType == BS.Type.SMB, detailedBolusInfo.id)
             }
             if (detailedBolusInfo?.bolusType == BS.Type.SMB) {
                 rxBus.send(EventPumpStatusChanged(rh.gs(app.aaps.core.ui.R.string.smb_bolus_u, detailedBolusInfo.insulin)))
