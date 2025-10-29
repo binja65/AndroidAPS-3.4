@@ -405,7 +405,7 @@ class MedtrumPump @Inject constructor(
         aapsLogger.debug(LTag.PUMP, "handleBolusStatusUpdate: BolusProgressData.insulin=${BolusProgressData.insulin}, old delivered=${BolusProgressData.delivered}, new delivered=$amountDelivered, bolusDone=$bolusDone")
         
         val insulin = BolusProgressData.insulin
-        if (insulin > 0) {
+        if (insulin > 0 && !bolusDone) {
             if (amountDelivered >= 0 && amountDelivered <= insulin && amountDelivered >= BolusProgressData.delivered) {
                 bolusProgressLastTimeStamp = dateUtil.now()
                 _bolusAmountDelivered.value = amountDelivered
@@ -415,8 +415,7 @@ class MedtrumPump @Inject constructor(
                 aapsLogger.warn(LTag.PUMP, "handleBolusStatusUpdate: Ignoring invalid delivered amount: $amountDelivered (insulin=$insulin, previous delivered=${BolusProgressData.delivered})")
             }
         } else {
-            // No active bolus, ignore this update (likely stale data from pump reconnection)
-            aapsLogger.debug(LTag.PUMP, "handleBolusStatusUpdate: Ignoring update - no active bolus (insulin=$insulin)")
+            aapsLogger.debug(LTag.PUMP, "handleBolusStatusUpdate: Ignoring update - no active bolus (insulin=$insulin, bolusDone=$bolusDone)")
         }
     }
 
