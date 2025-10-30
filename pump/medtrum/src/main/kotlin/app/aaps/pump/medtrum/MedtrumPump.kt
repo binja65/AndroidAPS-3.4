@@ -406,7 +406,7 @@ class MedtrumPump @Inject constructor(
         
         val insulin = BolusProgressData.insulin
         if (insulin > 0 && !bolusDone) {
-            if (amountDelivered >= 0 && amountDelivered <= insulin && amountDelivered >= BolusProgressData.delivered) {
+            if (amountDelivered >= 0 && amountDelivered <= insulin) {
                 bolusProgressLastTimeStamp = dateUtil.now()
                 _bolusAmountDelivered.value = amountDelivered
                 BolusProgressData.delivered = amountDelivered
