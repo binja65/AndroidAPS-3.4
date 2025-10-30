@@ -18,11 +18,6 @@
     <string name="carbs_short" comment="max 6 characters">Sach</string>
     <!--    PumpStatusGenerator-->
     <string name="short_status_last_connection">Posledné Spoj: pred %1$d min</string>
-    <string name="short_status_alert">Upozornenie: %s</string>
     <string name="short_status_last_bolus">Posledný bolus: %1$sJI @ %2$s</string>
-    <string name="short_status_temp_basal">Doč. bazál: %s</string>
-    <string name="short_status_extended">Ext: %s</string>
-    <string name="short_status_reservoir">Zásobník: %dJI</string>
-    <string name="short_status_battery">Bat: %d%%</string>
     <string name="short_status_not_initialized">Pumpa nie je inicializovaná</string>
 </resources>
