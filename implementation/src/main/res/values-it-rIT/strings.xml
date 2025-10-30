@@ -17,4 +17,7 @@
     <string name="night_tir">TIR notturno</string>
     <string name="carbs_short" comment="max 6 characters">CHO</string>
     <!--    PumpStatusGenerator-->
+    <string name="short_status_last_connection">Ultima conn: %1$d min fa</string>
+    <string name="short_status_last_bolus">UltimoBolo: %1$sU @ %2$s</string>
+    <string name="short_status_not_initialized">Micro non inizializzato</string>
 </resources>
