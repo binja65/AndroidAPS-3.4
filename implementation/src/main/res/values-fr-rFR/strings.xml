@@ -17,4 +17,6 @@
     <string name="night_tir">TIR Nuit</string>
     <string name="carbs_short" comment="max 6 characters">Gluc.</string>
     <!--    PumpStatusGenerator-->
+    <string name="short_status_last_connection">Der. connex. : il y a %1$d min</string>
+    <string name="short_status_temp_basal">DBT : %1$s</string>
 </resources>
