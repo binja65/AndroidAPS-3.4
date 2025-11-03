@@ -180,7 +180,7 @@ class EquilBLE @Inject constructor(
                 gatt: BluetoothGatt,
                 characteristic: BluetoothGattCharacteristic
             ) {
-                requestHighPriority()
+                // requestHighPriority()
                 decode(characteristic.value)
             }
 
@@ -434,7 +434,7 @@ class EquilBLE @Inject constructor(
                 return
             }
             autoScan = false
-            baseCmd = null
+            // baseCmd = null
             startScan()
         }
 
