@@ -31,7 +31,6 @@ class CmdSettingSet(
         val fastBolus = Utils.intToTwoBytes(0)
         val occlusion = Utils.intToTwoBytes(2800)
         val insulinUnit = Utils.intToTwoBytes(8)
-        // val basalThreshold = Utils.intToTwoBytes(240)
         val basalThreshold = Utils.intToTwoBytes(10 * 160) //max basal 10U/hr
         val bolusThreshold = Utils.intToTwoBytes(bolusThresholdStep)
         val data = Utils.concat(
