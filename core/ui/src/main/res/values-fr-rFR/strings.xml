@@ -261,9 +261,9 @@
     <string name="record">Enregistrement</string>
     <string name="location_front_right_upper_chest">Poitrine Droite</string>
     <string name="location_front_left_upper_chest">Poitrine Gauche</string>
-    <string name="location_side_right_upper_arm">Bras Droit Extérieur Haut</string>
-    <string name="location_side_left_upper_arm">Bras Gauche Extérieur Haut</string>
-    <string name="location_back_right_upper_arm">Bras Droit Arrière Haut</string>
+    <string name="location_side_right_upper_arm">Bras Droit Extérieur</string>
+    <string name="location_side_left_upper_arm">Bras Gauche Extérieur</string>
+    <string name="location_back_right_upper_arm">Bras Droit Arrière</string>
     <string name="location_back_left_upper_arm">Bras Gauche Arrière Haut</string>
     <string name="location_side_right_upper_abdomen">Abdomen Droit Extérieur Haut</string>
     <string name="location_side_left_upper_abdomen">Abdomen Gauche Extérieur Haut</string>
