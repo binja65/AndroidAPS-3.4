@@ -161,7 +161,6 @@ Regola password: deve contenere 4 caratteri, scelti tra ABCDEF0123456789.</strin
     <string name="equil_hint_dressing2">Si prega di rimuovere il micro dalla base</string>
     <string name="equil_unpair">Disattivare il vecchio micro %1$s?</string>
     <string name="equil_pump_updated">Micro aggiornato</string>
-    <string name="equil_maxbolus_tips">Bolo massimo consentito dal micro [%1$sU]</string>
     <string name="equil_replace_reservoir">Il serbatoio è vuoto. Sostituire il serbatoio</string>
     <string name="error_mustbe6hexadidits">Deve essere 6 caratteri tra ABCDEF0123456789</string>
     <string name="equil_removed_anyway">Comando disaccoppiamento non riuscito. Il micro verrà comunque rimosso. La password impostata durante l\'accoppiamento non verrà rimossa dal micro.</string>
