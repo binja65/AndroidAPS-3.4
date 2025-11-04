@@ -164,7 +164,6 @@
     <string name="equil_hint_dressing2">Proszę usuń pompę z płytki bazowej</string>
     <string name="equil_unpair">Dezaktywować starą pompę %1$s?</string>
     <string name="equil_pump_updated">Pompa zaktualizowana</string>
-    <string name="equil_maxbolus_tips">Maksymalny dozwolony bolus w pompie [%1$sU]</string>
     <string name="equil_replace_reservoir">Zbiornik jest pusty. Proszę wymienić zbiornik</string>
     <string name="error_mustbe6hexadidits">Musi składać się z 6 znaków spośród: ABCDEF0123456789</string>
 </resources>
