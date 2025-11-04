@@ -158,7 +158,6 @@
     <string name="equil_hint_dressing2">Vui lòng tháo bơm ra khỏi đế</string>
     <string name="equil_unpair">Vô hiệu hóa bơm cũ %1$s?</string>
     <string name="equil_pump_updated">Đã đồng bộ thời gian Pump</string>
-    <string name="equil_maxbolus_tips">Lượng bolus tối đa được phép trong bơm [%1$sU]</string>
     <string name="equil_replace_reservoir">Ống chứa trống. Vui lòng thay ống chứa mới</string>
     <string name="error_mustbe6hexadidits">Phải gồm 6 ký tự, chọn từ ABCDEF0123456789</string>
     <string name="equil_removed_anyway">Lệnh hủy ghép nối không thành công. Bơm vẫn sẽ bị xóa. Mật khẩu được đặt trong quá trình ghép nối sẽ không bị xóa khỏi bơm.</string>
