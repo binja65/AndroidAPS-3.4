@@ -164,7 +164,6 @@
     <string name="equil_hint_dressing2">Nuimkite pompą nuo jos pagrindo</string>
     <string name="equil_unpair">Deaktyvuoti seną pompą%1$s?</string>
     <string name="equil_pump_updated">Pompa atnaujinta</string>
-    <string name="equil_maxbolus_tips">Didžiausias leistinas bolusas pompoje [%1$svv]</string>
     <string name="equil_replace_reservoir">Rezervuaras tuščias. Pakeiskite rezervuarą</string>
     <string name="error_mustbe6hexadidits">Turi būti 6 simboliai iš ABCDEF0123456789</string>
 </resources>
