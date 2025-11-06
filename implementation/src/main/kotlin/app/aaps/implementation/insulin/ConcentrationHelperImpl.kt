@@ -38,10 +38,9 @@ class ConcentrationHelperImpl @Inject constructor(
         if (isU100())
             return rh.gs(app.aaps.core.ui.R.string.pump_base_basal_rate, rate)
         else {
-            val amountString = rh.gs(app.aaps.core.ui.R.string.pump_base_basal_rate, rate)
-            val convertedStringToPump = rh.gs(app.aaps.core.ui.R.string.pump_base_basal_rate, toPump(rate))
-            val convertedStringFromPump = rh.gs(app.aaps.core.ui.R.string.pump_base_basal_rate, fromPump(rate))
-            return if (toPump) rh.gs(R.string.concentration_format, amountString, convertedStringToPump) else rh.gs(R.string.concentration_format, convertedStringFromPump, amountString)
+            val amountString = rh.gs(app.aaps.core.ui.R.string.pump_base_basal_rate, if (toPump) rate else fromPump(rate))
+            val convertedString = rh.gs(R.string.pump_base_basal_rate_cu, if (toPump) toPump(rate) else rate)
+            return rh.gs(R.string.concentration_format, amountString, convertedString)
         }
     }
 
@@ -59,7 +58,7 @@ class ConcentrationHelperImpl @Inject constructor(
     override fun insulinConcentrationString(): String = rh.gs(R.string.insulin_concentration, preferences.get(IntNonKey.InsulinConcentration))
 
     override fun bolusWithVolume(amount: Double): String = rh.gs(
-        R.string.bolus_with_volume,
+        R.string.bolus_with_volume_cu,
         decimalFormatter.toPumpSupportedBolus(amount, activePlugin.activePump.pumpDescription.bolusStep),
         amount * 10
     )
