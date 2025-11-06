@@ -12,6 +12,7 @@ import app.aaps.core.data.pump.defs.PumpTempBasalType
 import app.aaps.core.data.pump.defs.PumpType
 import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.db.PersistenceLayer
+import app.aaps.core.interfaces.insulin.ConcentrationHelper
 import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.pump.defs.baseBasalRange
 import app.aaps.core.interfaces.pump.defs.hasExtendedBasals
@@ -46,6 +47,7 @@ class VirtualPumpFragment : DaggerFragment() {
     @Inject lateinit var decimalFormatter: DecimalFormatter
     @Inject lateinit var persistenceLayer: PersistenceLayer
     @Inject lateinit var preferences: Preferences
+    @Inject lateinit var ch: ConcentrationHelper
 
     private val disposable = CompositeDisposable()
 
@@ -113,13 +115,13 @@ class VirtualPumpFragment : DaggerFragment() {
     private fun updateGui() {
         if (_binding == null) return
         val profile = pumpSync.expectedPumpState().profile ?: return
-        binding.baseBasalRate.text = rh.gs(app.aaps.core.ui.R.string.pump_base_basal_rate, virtualPumpPlugin.baseBasalRate)
+        binding.baseBasalRate.text = ch.basalRateString(virtualPumpPlugin.baseBasalRate)
         binding.tempbasal.text = persistenceLayer.getTemporaryBasalActiveAt(dateUtil.now())?.toStringFull(profile, dateUtil, rh)
             ?: ""
         binding.extendedbolus.text = persistenceLayer.getExtendedBolusActiveAt(dateUtil.now())?.toStringFull(dateUtil, rh)
             ?: ""
         binding.battery.text = rh.gs(app.aaps.core.ui.R.string.format_percent, virtualPumpPlugin.batteryPercent)
-        binding.reservoir.text = rh.gs(app.aaps.core.ui.R.string.format_insulin_units, virtualPumpPlugin.reservoirInUnits.toDouble())
+        binding.reservoir.text = ch.insulinAmountString(virtualPumpPlugin.reservoirInUnits.toDouble())
 
         virtualPumpPlugin.refreshConfiguration()
         val pumpType = virtualPumpPlugin.pumpType
