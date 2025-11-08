@@ -33,8 +33,6 @@ class DateUtilImpl @Inject constructor(private val context: Context) : DateUtil 
 
     /** The timezone is captured each time systemZone is accessed.*/
     private val systemZone: ZoneId get() = ZoneId.systemDefault()
-    /** The timezone is captured ONCE when the app starts.*/
-    //private val systemZoneOnce: ZoneId = ZoneId.systemDefault()
     /** The locale used for formatting strings (e.g., date formats, AM/PM) is captured each time displayLocale is accessed.*/
     private val displayLocale: Locale get() = Locale.getDefault()
 
@@ -59,16 +57,9 @@ class DateUtilImpl @Inject constructor(private val context: Context) : DateUtil 
 
 
     override fun toISONoZone(timestamp: Long): String {
-        // Correctly apply the system zone to an instant and format it.
         val instant = Instant.ofEpochMilli(timestamp)
         val zonedDateTime = instant.atZone(systemZone)
         return ISO_LOCAL_FORMATTER.format(zonedDateTime)
-//    override fun toISONoZone(timestamp: Long): String {
-//        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-//            .withZone(systemZone)
-//        return formatter.format(Instant.ofEpochMilli(timestamp))
-///    override fun toISONoZone(timestamp: Long): String =
-///        Instant.ofEpochMilli(timestamp).atZone(systemZone).format(ISO_LOCAL_FORMATTER)
     }
 
     override fun secondsOfTheDayToMilliseconds(seconds: Int): Long {    //TODO: check original version returned ms from epoch for "minutes of today if today were in january"
@@ -76,7 +67,6 @@ class DateUtilImpl @Inject constructor(private val context: Context) : DateUtil 
         val targetTime = startOfToday.plusSeconds(seconds.toLong())
         return targetTime.toInstant().toEpochMilli()
     }
-
 
     override fun toSeconds(hhColonMm: String): Int {
         val p = Pattern.compile("(\\d+):(\\d+)( a.m.| p.m.| AM| PM|AM|PM|)")
@@ -122,11 +112,6 @@ class DateUtilImpl @Inject constructor(private val context: Context) : DateUtil 
     }
 
     override fun timeString(): String = timeString(now())
-    /*override fun timeString(mills: Long): String {
-        val pattern = if (AndroidDateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a"
-        val formatter = DateTimeFormatter.ofPattern(pattern, displayLocale) // Use locale for "a" (AM/PM)
-        return Instant.ofEpochMilli(mills).atZone(systemZone).format(formatter)
-    }*/
     override fun timeString(mills: Long): String {
         val pattern = if (AndroidDateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a"
         val formatter = DateTimeFormatter.ofPattern(pattern, displayLocale)
@@ -294,13 +279,10 @@ class DateUtilImpl @Inject constructor(private val context: Context) : DateUtil 
     }
 
     override fun isSameDay(timestamp1: Long, timestamp2: Long): Boolean {
-        // Convert each millisecond timestamp to an Instant (UTC)
         val instant1 = Instant.ofEpochMilli(timestamp1)
         val instant2 = Instant.ofEpochMilli(timestamp2)
-        // Apply the system's timezone to get the correct local date for each instant
         val date1 = instant1.atZone(systemZone).toLocalDate()
         val date2 = instant2.atZone(systemZone).toLocalDate()
-        // The .equals() method for LocalDate is a reliable way to check if they are the same day.
         return date1.isEqual(date2)
     }
 
@@ -436,10 +418,10 @@ class DateUtilImpl @Inject constructor(private val context: Context) : DateUtil 
 
     override fun timeStampToUtcDateMillis(timestamp: Long): Long =
         Instant.ofEpochMilli(timestamp).truncatedTo(ChronoUnit.DAYS).toEpochMilli()
-//TODO this has a different output than the old function.
+
+//TODO timeStampToUtcDateMillis has a different output than the old function.
 //Since that seems to be desired behaviour in the history browser,
 //the functionality was refactored in getTimestampWithCurrentTimeOfDay()
-
     override fun getTimestampWithCurrentTimeOfDay(timestamp: Long): Long {
         val inputDate = Instant.ofEpochMilli(timestamp).atZone(systemZone).toLocalDate()
         val timeOfNow = ZonedDateTime.now(systemZone).toLocalTime()
