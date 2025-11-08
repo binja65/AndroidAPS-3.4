@@ -5,7 +5,6 @@ import androidx.collection.LongSparseArray
 import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.R
 import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.utils.DateUtilOld
 import app.aaps.core.interfaces.utils.SafeParse
 import app.aaps.core.utils.pump.ThreadUtil
 import org.apache.commons.lang3.time.DateUtils.isSameDay

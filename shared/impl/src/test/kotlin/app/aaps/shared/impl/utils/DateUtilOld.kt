@@ -1,4 +1,4 @@
-package app.aaps.core.interfaces.utils
+package app.aaps.shared.impl.utils
 
 import app.aaps.core.interfaces.resources.ResourceHelper
 import java.util.TimeZone
