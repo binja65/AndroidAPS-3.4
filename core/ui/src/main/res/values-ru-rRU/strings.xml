@@ -120,6 +120,7 @@
     <string name="pump_running">Помпа работает</string>
     <string name="notconfigured">Не настроено</string>
     <string name="loopsuspended">ЗЦ остановлен</string>
+    <string name="loop_suspended_by_dst">Помпа остановлена при переходе времени</string>
     <string name="trend_arrow">Стрелка тренда</string>
     <string name="a11y_autosens_label">Auto sens</string>
     <string name="required">надо</string>
