@@ -645,4 +645,5 @@
     <string name="rate_percent_duration">Скорость: %1$.2fед/ч (%2$.2f%%) Продолжительность %3$d мин</string>
     <string name="percent_rate_duration_formatted"><![CDATA[<b>Скорость</b>:%1$.2f %% (%2$.2f ед/ч)<br><b> Продолжительность</b> %3$d мин<br>]]></string>
     <string name="rate_percent_duration_formatted"><![CDATA[<b>Скорость</b>: %1$.2f ед/ч (%2$.2f%%) <br><b>Продолжительность</b>: %3$d мин<br>]]></string>
+    <!--    Playback-->
 </resources>
