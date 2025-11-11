@@ -17,5 +17,6 @@ interface DecimalFormatter {
     fun to3Decimal(value: Double, unit: String): String
     fun toPumpSupportedBolus(value: Double, bolusStep: Double): String
     fun toPumpSupportedBolusWithUnits(value: Double, bolusStep: Double): String
+    fun toPumpSupportedBolusWithConcentratedUnits(value: Double, bolusStep: Double): String
     fun pumpSupportedBolusFormat(bolusStep: Double): DecimalFormat
 }
