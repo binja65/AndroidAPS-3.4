@@ -36,4 +36,6 @@
     <!-- Patched Syai Tag App -->
     <string name="syai_tag_app">Syai</string>
     <string name="description_source_patched_syai_tag_app">Prijímanie glykémií z aplikácie Syai.</string>
+    <!-- Patched SI App -->
+    <!-- Patched Sino App -->
 </resources>
