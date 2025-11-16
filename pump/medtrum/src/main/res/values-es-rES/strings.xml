@@ -28,6 +28,7 @@
     <string name="fw_version_label">Versión de firmware</string>
     <string name="patch_no_label">Parche sin etiqueta</string>
     <string name="patch_expiry_label">El parche expira</string>
+    <string name="patch_activation_time_label">Activación</string>
     <string name="refresh_label">Actualizar</string>
     <string name="reset_alarms_label">Restablecer alarmas</string>
     <string name="change_patch_label">Cambiar parche</string>
