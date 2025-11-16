@@ -43,8 +43,8 @@ class BleCommCallbacks(
         super.onConnectionStateChange(gatt, status, newState)
         if (newState == BluetoothProfile.STATE_CONNECTED && status == BluetoothGatt.GATT_SUCCESS) {
             aapsLogger.debug(LTag.PUMPBTCOMM, "OnConnectionStateChange delaying gattConnected event by $SLEEP_AFTER_CONNECT_GATT ms")
-            CoroutineScope(Dispatchers.Main).launch {
-                // give GATT a chance to configure encrypt, race condition bt stack.
+            CoroutineScope(Dispatchers.IO).launch {
+                // give GATT a chance to configure encryption, race condition bt stack.
                 delay(SLEEP_AFTER_CONNECT_GATT)
                 aapsLogger.debug(LTag.PUMPBTCOMM, "OnConnectionStateChange now delivering gattConnected")
 
