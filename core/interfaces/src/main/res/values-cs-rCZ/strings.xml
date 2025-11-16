@@ -10,6 +10,7 @@
     <string name="secago">před %1$ds</string>
     <string name="minago_long">před %1$d minutamí</string>
     <string name="hoursago">před %1$.1fh</string>
+    <string name="time_ago">zpět</string>
     <string name="days_ago">Před %1$.1f dny</string>
     <string name="days_ago_round">Před %1$.0f dny</string>
     <string name="in_days">za %1$.0f dní</string>
