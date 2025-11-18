@@ -10,7 +10,7 @@ class LogSuspendV2Test : TestBase() {
     fun parseValidLogDataWithBasePattern() {
         // Given - Suspend with Base pattern (patternType=1)
         // Format: timestamp(4) + typeAndKind(1) + batteryRemain(1) + patternType(1)
-        val hexData = "23C1AB640355 01"
+        val hexData = "23C1AB64035501"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -26,7 +26,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun parseLogDataWithLife1Pattern() {
         // Given - Life1 pattern (patternType=2)
-        val hexData = "23C1AB640355 02"
+        val hexData = "23C1AB64035502"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -38,7 +38,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun parseLogDataWithLife2Pattern() {
         // Given - Life2 pattern (patternType=3)
-        val hexData = "23C1AB640355 03"
+        val hexData = "23C1AB64035503"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -50,7 +50,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun parseLogDataWithLife3Pattern() {
         // Given - Life3 pattern (patternType=4)
-        val hexData = "23C1AB640355 04"
+        val hexData = "23C1AB64035504"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -62,7 +62,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun parseLogDataWithDr1Pattern() {
         // Given - Dr1 pattern (patternType=5)
-        val hexData = "23C1AB640355 05"
+        val hexData = "23C1AB64035505"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -74,7 +74,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun parseLogDataWithDr2Pattern() {
         // Given - Dr2 pattern (patternType=6)
-        val hexData = "23C1AB640355 06"
+        val hexData = "23C1AB64035506"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -86,7 +86,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun parseLogDataWithUnknownPattern() {
         // Given - Unknown pattern (patternType=9)
-        val hexData = "23C1AB640355 09"
+        val hexData = "23C1AB64035509"
 
         // When
         val log = LogSuspendV2.parse(hexData)
@@ -110,7 +110,7 @@ class LogSuspendV2Test : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB640355 01"
+        val hexData = "23C1AB64035501"
         val log = LogSuspendV2.parse(hexData)
 
         // When

@@ -11,7 +11,7 @@ class LogInjection1DayBasalTest : TestBase() {
         // Given - Daily basal total
         // Format: timestamp(4) + typeAndKind(1) + amount(2) + batteryRemain(1)
         // amount: 2400 = 24.0U per day
-        val hexData = "23C1AB642E60 0955"
+        val hexData = "23C1AB642E600955"
 
         // When
         val log = LogInjection1DayBasal.parse(hexData)
@@ -39,7 +39,7 @@ class LogInjection1DayBasalTest : TestBase() {
     @Test
     fun parseLogDataWithHighDailyBasal() {
         // Given - High daily basal (60.0U per day)
-        val hexData = "23C1AB642E70 1755"
+        val hexData = "23C1AB642E701755"
 
         // When
         val log = LogInjection1DayBasal.parse(hexData)
@@ -63,7 +63,7 @@ class LogInjection1DayBasalTest : TestBase() {
     @Test
     fun parseLogDataWithLowBattery() {
         // Given - Low battery
-        val hexData = "23C1AB642E60 091E"
+        val hexData = "23C1AB642E60091E"
 
         // When
         val log = LogInjection1DayBasal.parse(hexData)
@@ -75,7 +75,7 @@ class LogInjection1DayBasalTest : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB642E60 0955"
+        val hexData = "23C1AB642E600955"
         val log = LogInjection1DayBasal.parse(hexData)
 
         // When

@@ -12,7 +12,7 @@ class LogAlarmBatteryTest : TestBase() {
         // Format: timestamp(4) + typeAndKind(1) + alarmLevel(1) + ack(1) + batteryRemain(1)
         // alarmLevel: 1=INFO, 2=WARNING, 3=MAJOR, 4=CRITICAL
         // ack: 1=OCCUR, 2=STOP
-        val hexData = "23C1AB64280201 1E"
+        val hexData = "23C1AB642802011E"
 
         // When
         val log = LogAlarmBattery.parse(hexData)
@@ -27,7 +27,7 @@ class LogAlarmBatteryTest : TestBase() {
     @Test
     fun parseWarningLevel() {
         // Given - warning level battery alarm
-        val hexData = "23C1AB64280201 20"
+        val hexData = "23C1AB6428020120"
 
         // When
         val log = LogAlarmBattery.parse(hexData)
@@ -40,7 +40,7 @@ class LogAlarmBatteryTest : TestBase() {
     @Test
     fun parseCriticalLevel() {
         // Given - critical level battery alarm (5% remaining)
-        val hexData = "23C1AB64280401 05"
+        val hexData = "23C1AB6428040105"
 
         // When
         val log = LogAlarmBattery.parse(hexData)
@@ -52,7 +52,7 @@ class LogAlarmBatteryTest : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB64280201 1E"
+        val hexData = "23C1AB642802011E"
         val log = LogAlarmBattery.parse(hexData)
 
         // When

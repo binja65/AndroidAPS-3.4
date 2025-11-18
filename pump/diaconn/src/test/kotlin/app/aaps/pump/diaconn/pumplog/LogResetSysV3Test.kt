@@ -10,7 +10,7 @@ class LogResetSysV3Test : TestBase() {
     fun parseValidLogDataWithFactoryReset() {
         // Given - System reset after factory reset (reason=1)
         // Format: timestamp(4) + typeAndKind(1) + batteryRemain(1) + reason(1) + rcon1(2) + rcon2(2)
-        val hexData = "23C1AB64015501 12345678"
+        val hexData = "23C1AB6401550112345678"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -26,7 +26,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun parseLogDataWithEmergencyStopRelease() {
         // Given - Reset after emergency stop release (reason=2)
-        val hexData = "23C1AB64015502 12345678"
+        val hexData = "23C1AB6401550212345678"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -38,7 +38,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun parseLogDataWithBatteryChange() {
         // Given - Reset after user battery change (reason=3)
-        val hexData = "23C1AB64015503 12345678"
+        val hexData = "23C1AB6401550312345678"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -50,7 +50,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun parseLogDataWithCalibration() {
         // Given - Reset after calibration (reason=4)
-        val hexData = "23C1AB64015504 12345678"
+        val hexData = "23C1AB6401550412345678"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -62,7 +62,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun parseLogDataWithUnexpectedReset() {
         // Given - Unexpected system reset (reason=9)
-        val hexData = "23C1AB64015509 12345678"
+        val hexData = "23C1AB6401550912345678"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -74,7 +74,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun parseLogDataWithLowBattery() {
         // Given - Low battery
-        val hexData = "23C1AB64011E01 12345678"
+        val hexData = "23C1AB64011E0112345678"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -86,7 +86,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun parseLogDataWithDifferentRconValues() {
         // Given - Different RCON values
-        val hexData = "23C1AB640155 01AABBCCDD"
+        val hexData = "23C1AB64015501AABBCCDD"
 
         // When
         val log = LogResetSysV3.parse(hexData)
@@ -98,7 +98,7 @@ class LogResetSysV3Test : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB64015501 12345678"
+        val hexData = "23C1AB6401550112345678"
         val log = LogResetSysV3.parse(hexData)
 
         // When

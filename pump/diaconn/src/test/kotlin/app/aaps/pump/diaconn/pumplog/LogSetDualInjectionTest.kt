@@ -52,7 +52,7 @@ class LogSetDualInjectionTest : TestBase() {
     @Test
     fun parseLogDataWithSmallDose() {
         // Given - Small dual bolus (0.5U + 1.0U)
-        val hexData = "23C1AB640F3200640006 55"
+        val hexData = "23C1AB640F320064000655"
 
         // When
         val log = LogSetDualInjection.parse(hexData)

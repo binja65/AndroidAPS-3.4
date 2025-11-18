@@ -11,7 +11,7 @@ class LogAlarmShortAgeTest : TestBase() {
         // Given - Insulin shortage alarm with INFO level
         // Format: timestamp(4) + typeAndKind(1) + alarmLevel(1) + ack(1) + remain(1) + batteryRemain(1)
         // alarmLevel: 1=INFO, ack: 1=OCCUR, remain: 50U
-        val hexData = "23C1AB642A01 01321E"
+        val hexData = "23C1AB642A0101321E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -27,7 +27,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun parseLogDataWithWarningLevel() {
         // Given - WARNING level alarm (alarmLevel=2)
-        val hexData = "23C1AB642A02 01321E"
+        val hexData = "23C1AB642A0201321E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -39,7 +39,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun parseLogDataWithMajorLevel() {
         // Given - MAJOR level alarm (alarmLevel=3)
-        val hexData = "23C1AB642A03 01321E"
+        val hexData = "23C1AB642A0301321E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -51,7 +51,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun parseLogDataWithCriticalLevel() {
         // Given - CRITICAL level alarm (alarmLevel=4)
-        val hexData = "23C1AB642A04 01321E"
+        val hexData = "23C1AB642A0401321E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -63,7 +63,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun parseLogDataWithLowRemaining() {
         // Given - Very low insulin remaining (10U)
-        val hexData = "23C1AB642A01 010A1E"
+        val hexData = "23C1AB642A01010A1E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -75,7 +75,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun parseLogDataWithHighRemaining() {
         // Given - High insulin remaining (100U)
-        val hexData = "23C1AB642A01 01641E"
+        val hexData = "23C1AB642A0101641E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -87,7 +87,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun parseLogDataWithStopAck() {
         // Given - Alarm stopped (ack=2)
-        val hexData = "23C1AB642A01 02321E"
+        val hexData = "23C1AB642A0102321E"
 
         // When
         val log = LogAlarmShortAge.parse(hexData)
@@ -99,7 +99,7 @@ class LogAlarmShortAgeTest : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB642A01 01321E"
+        val hexData = "23C1AB642A0101321E"
         val log = LogAlarmShortAge.parse(hexData)
 
         // When

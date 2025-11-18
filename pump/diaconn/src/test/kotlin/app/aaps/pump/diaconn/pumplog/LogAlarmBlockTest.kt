@@ -11,7 +11,7 @@ class LogAlarmBlockTest : TestBase() {
         // Given - Injection blocked alarm with INFO level
         // Format: timestamp(4) + typeAndKind(1) + alarmLevel(1) + ack(1) + amount(2) + reason(1) + batteryRemain(1)
         // alarmLevel: 1=INFO, ack: 1=OCCUR, amount: 500 = 5.0U, reason: 1=BASE
-        val hexData = "23C1AB642901 01F401011E"
+        val hexData = "23C1AB64290101F401011E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -28,7 +28,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithWarningLevel() {
         // Given - WARNING level alarm (alarmLevel=2)
-        val hexData = "23C1AB642902 01F401011E"
+        val hexData = "23C1AB64290201F401011E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -40,7 +40,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithMajorLevel() {
         // Given - MAJOR level alarm (alarmLevel=3)
-        val hexData = "23C1AB642903 01F401011E"
+        val hexData = "23C1AB64290301F401011E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -52,7 +52,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithCriticalLevel() {
         // Given - CRITICAL level alarm (alarmLevel=4)
-        val hexData = "23C1AB642904 01F401011E"
+        val hexData = "23C1AB64290401F401011E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -64,7 +64,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithMealReason() {
         // Given - Blocked during meal bolus (reason=2)
-        val hexData = "23C1AB642901 01F401021E"
+        val hexData = "23C1AB64290101F401021E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -76,7 +76,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithSnackReason() {
         // Given - Blocked during snack bolus (reason=3)
-        val hexData = "23C1AB642901 01F401031E"
+        val hexData = "23C1AB64290101F401031E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -88,7 +88,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithSquareReason() {
         // Given - Blocked during square bolus (reason=4)
-        val hexData = "23C1AB642901 01F401041E"
+        val hexData = "23C1AB64290101F401041E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -100,7 +100,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithDualReason() {
         // Given - Blocked during dual bolus (reason=5)
-        val hexData = "23C1AB642901 01F401051E"
+        val hexData = "23C1AB64290101F401051E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -112,7 +112,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithTubeChangeReason() {
         // Given - Blocked during tube change (reason=6)
-        val hexData = "23C1AB642901 01F401061E"
+        val hexData = "23C1AB64290101F401061E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -124,7 +124,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun parseLogDataWithInsulinChangeReason() {
         // Given - Blocked during insulin change (reason=8)
-        val hexData = "23C1AB642901 01F401081E"
+        val hexData = "23C1AB64290101F401081E"
 
         // When
         val log = LogAlarmBlock.parse(hexData)
@@ -136,7 +136,7 @@ class LogAlarmBlockTest : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB642901 01F401011E"
+        val hexData = "23C1AB64290101F401011E"
         val log = LogAlarmBlock.parse(hexData)
 
         // When

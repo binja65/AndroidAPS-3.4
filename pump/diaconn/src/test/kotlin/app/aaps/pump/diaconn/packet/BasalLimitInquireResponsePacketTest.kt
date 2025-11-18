@@ -1,22 +1,18 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.sharedPreferences.SP
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.pump.diaconn.DiaconnG8Pump
-import app.aaps.pump.diaconn.R
+import app.aaps.pump.diaconn.keys.DiaconnStringNonKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito.`when`
 
 class BasalLimitInquireResponsePacketTest : TestBaseWithProfile() {
 
-    @Mock lateinit var sp: SP
-    @Mock lateinit var rh: ResourceHelper
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
     private val packetInjector = HasAndroidInjector {
@@ -25,7 +21,7 @@ class BasalLimitInquireResponsePacketTest : TestBaseWithProfile() {
                 it.aapsLogger = aapsLogger
                 it.dateUtil = dateUtil
                 it.diaconnG8Pump = diaconnG8Pump
-                it.sp = sp
+                it.preferences = preferences
                 it.rh = rh
             }
         }
@@ -34,14 +30,13 @@ class BasalLimitInquireResponsePacketTest : TestBaseWithProfile() {
     @BeforeEach
     fun setup() {
         diaconnG8Pump = DiaconnG8Pump(aapsLogger, dateUtil, decimalFormatter)
-        `when`(rh.gs(R.string.pumpversion)).thenReturn("pumpversion")
     }
 
     @Test
     fun handleMessageShouldProcessValidResponse() {
         // Given - maxBasalPerHours = 3.5 U/h (350 / 100.0)
         // For firmware < 3.0, maxBasal = maxBasalPerHours * 2.0 = 7.0
-        `when`(sp.getString("pumpversion", "")).thenReturn("2.63")
+        `when`(preferences.get(DiaconnStringNonKey.PumpVersion)).thenReturn("2.63")
 
         val packet = BasalLimitInquireResponsePacket(packetInjector)
 
@@ -50,7 +45,7 @@ class BasalLimitInquireResponsePacketTest : TestBaseWithProfile() {
 
         // When
         packet.handleMessage(data)
-
+2
         // Then
         assertThat(packet.failed).isFalse()
         assertThat(diaconnG8Pump.maxBasalPerHours).isWithin(0.01).of(3.5)
@@ -60,7 +55,7 @@ class BasalLimitInquireResponsePacketTest : TestBaseWithProfile() {
     @Test
     fun handleMessageShouldUseHigherMultiplierForNewerFirmware() {
         // Given - For firmware >= 3.0, maxBasal = maxBasalPerHours * 2.5
-        `when`(sp.getString("pumpversion", "")).thenReturn("3.53")
+        `when`(preferences.get(DiaconnStringNonKey.PumpVersion)).thenReturn("3.53")
 
         val packet = BasalLimitInquireResponsePacket(packetInjector)
         val data = createValidPacket(result = 16, maxBasalPerHours = 400) // 4.0 U/h
@@ -77,7 +72,7 @@ class BasalLimitInquireResponsePacketTest : TestBaseWithProfile() {
     @Test
     fun handleMessageShouldFailOnInvalidResult() {
         // Given
-        `when`(sp.getString("pumpversion", "")).thenReturn("2.63")
+        `when`(preferences.get(DiaconnStringNonKey.PumpVersion)).thenReturn("2.63")
 
         val packet = BasalLimitInquireResponsePacket(packetInjector)
         val data = createValidPacket(result = 17, maxBasalPerHours = 350) // 17 = CRC error

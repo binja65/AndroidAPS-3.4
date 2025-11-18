@@ -21,7 +21,7 @@ class LogChangeInjectorSuccessTest : TestBase() {
         assertThat(log.data).isEqualTo(hexData)
         assertThat(log.kind).isEqualTo(LogChangeInjectorSuccess.LOG_KIND)
         assertThat(log.primeAmount.toInt()).isEqualTo(500) // 5.0U for priming
-        assertThat(log.remainAmount.toInt()).isEqualTo(15000) // 150.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(15000) // 150.0U remaining
         assertThat(log.batteryRemain.toInt()).isEqualTo(85) // 85% battery
     }
 
@@ -58,19 +58,19 @@ class LogChangeInjectorSuccessTest : TestBase() {
         val log = LogChangeInjectorSuccess.parse(hexData)
 
         // Then
-        assertThat(log.remainAmount.toInt()).isEqualTo(2000) // 20.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(2000) // 20.0U remaining
     }
 
     @Test
     fun parseLogDataWithFullReservoir() {
         // Given - Full reservoir (300.0U)
-        val hexData = "23C1AB641AF401B87555"
+        val hexData = "23C1AB641AF401307555"
 
         // When
         val log = LogChangeInjectorSuccess.parse(hexData)
 
         // Then
-        assertThat(log.remainAmount.toInt()).isEqualTo(30000) // 300.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(30000) // 300.0U remaining
     }
 
     @Test

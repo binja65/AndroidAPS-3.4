@@ -10,7 +10,7 @@ class LogInjectMealSuccessTest : TestBase() {
     fun parseValidLogData() {
         // Given - meal bolus success log
         // Format: timestamp(4) + typeAndKind(1) + setAmount(2) + injectAmount(2) + injectTime(1) + time(1=breakfast) + batteryRemain(1)
-        val hexData = "23C1AB640A8E128E127C0155"
+        val hexData = "23C1AB64088E128E127C0155"
 
         // When
         val log = LogInjectMealSuccess.parse(hexData)
@@ -28,7 +28,7 @@ class LogInjectMealSuccessTest : TestBase() {
     @Test
     fun parseLogWithLunchTime() {
         // Given - lunch time (time=2)
-        val hexData = "23C1AB640AE803B6033C0232"
+        val hexData = "23C1AB6408E803B6033C0232"
 
         // When
         val log = LogInjectMealSuccess.parse(hexData)
@@ -40,7 +40,7 @@ class LogInjectMealSuccessTest : TestBase() {
     @Test
     fun parseLogWithDinnerTime() {
         // Given - dinner time (time=3)
-        val hexData = "23C1AB640AE803B6033C0332"
+        val hexData = "23C1AB6408E803B6033C0332"
 
         // When
         val log = LogInjectMealSuccess.parse(hexData)
@@ -52,7 +52,7 @@ class LogInjectMealSuccessTest : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB640A8E128E127C0155"
+        val hexData = "23C1AB64088E128E127C0155"
         val log = LogInjectMealSuccess.parse(hexData)
 
         // When

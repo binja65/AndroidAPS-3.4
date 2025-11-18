@@ -1,6 +1,5 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.pump.diaconn.DiaconnG8Pump
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
@@ -8,11 +7,9 @@ import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 
 class TempBasalInquireResponsePacketTest : TestBaseWithProfile() {
 
-    @Mock lateinit var activePlugin: ActivePlugin
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
     private val packetInjector = HasAndroidInjector {

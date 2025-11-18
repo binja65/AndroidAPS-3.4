@@ -21,7 +21,7 @@ class LogChangeTubeSuccessTest : TestBase() {
         assertThat(log.data).isEqualTo(hexData)
         assertThat(log.kind).isEqualTo(LogChangeTubeSuccess.LOG_KIND)
         assertThat(log.primeAmount.toInt()).isEqualTo(1500) // 15.0U for priming
-        assertThat(log.remainAmount.toInt()).isEqualTo(13500) // 135.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(13500) // 135.0U remaining
         assertThat(log.batteryRemain.toInt()).isEqualTo(85) // 85% battery
     }
 
@@ -52,25 +52,25 @@ class LogChangeTubeSuccessTest : TestBase() {
     @Test
     fun parseLogDataWithLowRemaining() {
         // Given - Low insulin remaining (50.0U)
-        val hexData = "23C1AB6418DC0588 1355"
+        val hexData = "23C1AB6418DC05881355"
 
         // When
         val log = LogChangeTubeSuccess.parse(hexData)
 
         // Then
-        assertThat(log.remainAmount.toInt()).isEqualTo(5000) // 50.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(5000) // 50.0U remaining
     }
 
     @Test
     fun parseLogDataWithFullReservoir() {
         // Given - Full reservoir (285.0U after 15U prime)
-        val hexData = "23C1AB6418DC053C6F55"
+        val hexData = "23C1AB6418DC05546F55"
 
         // When
         val log = LogChangeTubeSuccess.parse(hexData)
 
         // Then
-        assertThat(log.remainAmount.toInt()).isEqualTo(28500) // 285.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(28500) // 285.0U remaining
     }
 
     @Test

@@ -1,22 +1,18 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.sharedPreferences.SP
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.pump.diaconn.DiaconnG8Pump
-import app.aaps.pump.diaconn.R
+import app.aaps.pump.diaconn.keys.DiaconnStringNonKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito.`when`
 
 class BigMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
 
-    @Mock lateinit var sp: SP
-    @Mock lateinit var rh: ResourceHelper
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
     private val packetInjector = HasAndroidInjector {
@@ -25,7 +21,7 @@ class BigMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
                 it.aapsLogger = aapsLogger
                 it.dateUtil = dateUtil
                 it.diaconnG8Pump = diaconnG8Pump
-                it.sp = sp
+                it.preferences = preferences
                 it.rh = rh
             }
         }
@@ -34,7 +30,8 @@ class BigMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
     @BeforeEach
     fun setup() {
         diaconnG8Pump = DiaconnG8Pump(aapsLogger, dateUtil, decimalFormatter)
-        `when`(rh.gs(R.string.pumpversion)).thenReturn("pumpversion")
+        // Mock preferences to return a default version string (will be updated by the packet handler)
+        `when`(preferences.get(DiaconnStringNonKey.PumpVersion)).thenReturn("1.0")
     }
 
     @Test
@@ -204,8 +201,8 @@ class BigMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
         data[pos++] = second.toByte()
 
         // Pump system info (serial number, etc.)
-        data[pos++] = 75.toByte() // country 'K'
-        data[pos++] = 71.toByte() // productType 'G'
+        data[pos++] = 48.toByte() // country '0' (ASCII digit)
+        data[pos++] = 49.toByte() // productType '1' (ASCII digit)
         data[pos++] = 22.toByte() // makeYear
         data[pos++] = 6.toByte()  // makeMonth
         data[pos++] = 15.toByte() // makeDay

@@ -11,7 +11,7 @@ class LogInjection1HourBasalTest : TestBase() {
         // Given - 1 hour basal injection record
         // Format: timestamp(4) + typeAndKind(1) + tbBeforeAmount(2) + tbAfterAmount(2) + batteryRemain(1) + remainTotalAmount(2)
         // tbBeforeAmount: 100 = 1.0U, tbAfterAmount: 120 = 1.2U (with TB adjustment)
-        val hexData = "23C1AB642C6400780155983A"
+        val hexData = "23C1AB642C6400780055983A"
 
         // When
         val log = LogInjection1HourBasal.parse(hexData)
@@ -28,7 +28,7 @@ class LogInjection1HourBasalTest : TestBase() {
     @Test
     fun parseLogDataWithNoTempBasal() {
         // Given - Basal with no TB adjustment (same before/after)
-        val hexData = "23C1AB642C64006400 55983A"
+        val hexData = "23C1AB642C6400640055983A"
 
         // When
         val log = LogInjection1HourBasal.parse(hexData)
@@ -80,7 +80,7 @@ class LogInjection1HourBasalTest : TestBase() {
     @Test
     fun parseLogDataWithTempBasalDecrease() {
         // Given - TB decreased basal (1.0U -> 0.5U, 50% TB)
-        val hexData = "23C1AB642C64003200 55983A"
+        val hexData = "23C1AB642C6400320055983A"
 
         // When
         val log = LogInjection1HourBasal.parse(hexData)
@@ -93,7 +93,7 @@ class LogInjection1HourBasalTest : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB642C6400780155983A"
+        val hexData = "23C1AB642C6400780055983A"
         val log = LogInjection1HourBasal.parse(hexData)
 
         // When

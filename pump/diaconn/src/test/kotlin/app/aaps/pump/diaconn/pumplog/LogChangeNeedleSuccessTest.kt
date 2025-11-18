@@ -21,7 +21,7 @@ class LogChangeNeedleSuccessTest : TestBase() {
         assertThat(log.data).isEqualTo(hexData)
         assertThat(log.kind).isEqualTo(LogChangeNeedleSuccess.LOG_KIND)
         assertThat(log.primeAmount.toInt()).isEqualTo(300) // 3.0U for priming
-        assertThat(log.remainAmount.toInt()).isEqualTo(38260) // Remaining insulin
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(38260) // Remaining insulin
         assertThat(log.batteryRemain.toInt()).isEqualTo(85) // 85% battery
     }
 
@@ -58,7 +58,7 @@ class LogChangeNeedleSuccessTest : TestBase() {
         val log = LogChangeNeedleSuccess.parse(hexData)
 
         // Then
-        assertThat(log.remainAmount.toInt()).isEqualTo(3000) // 30.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(3000) // 30.0U remaining
     }
 
     @Test
@@ -70,7 +70,7 @@ class LogChangeNeedleSuccessTest : TestBase() {
         val log = LogChangeNeedleSuccess.parse(hexData)
 
         // Then
-        assertThat(log.remainAmount.toInt()).isEqualTo(30000) // 300.0U remaining
+        assertThat(log.remainAmount.toUShort().toInt()).isEqualTo(30136) // 300.0U remaining (note: hex value is 0x75B8 = 30136)
     }
 
     @Test

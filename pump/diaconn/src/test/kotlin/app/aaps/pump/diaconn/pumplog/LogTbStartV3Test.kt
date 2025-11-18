@@ -11,7 +11,7 @@ class LogTbStartV3Test : TestBase() {
         // Given - TB start at 120%
         // Format: timestamp(4) + typeAndKind(1) + tbTime(1) + tbInjectRateRatio(2) + tbDttm(4)
         // tbInjectRateRatio: 50120 = 50000 + 120 (120%)
-        val hexData = "23C1AB641206 78C3 AABBCCDD"
+        val hexData = "23C1AB64120678C3AABBCCDD"
 
         // When
         val log = LogTbStartV3.parse(hexData)
@@ -27,7 +27,7 @@ class LogTbStartV3Test : TestBase() {
     @Test
     fun parseLogDataWithAbsoluteRate() {
         // Given - TB start at absolute 2.5 U/h = 1250 (1000 + 250)
-        val hexData = "23C1AB641208 E204 AABBCCDD"
+        val hexData = "23C1AB641208E204AABBCCDD"
 
         // When
         val log = LogTbStartV3.parse(hexData)
@@ -40,7 +40,7 @@ class LogTbStartV3Test : TestBase() {
     @Test
     fun parseShortDurationTempBasal() {
         // Given - 30 minute TB (tbTime=2, 2*15=30)
-        val hexData = "23C1AB641202 78C3 AABBCCDD"
+        val hexData = "23C1AB64120278C3AABBCCDD"
 
         // When
         val log = LogTbStartV3.parse(hexData)
@@ -52,7 +52,7 @@ class LogTbStartV3Test : TestBase() {
     @Test
     fun parseLongDurationTempBasal() {
         // Given - 24 hour TB (tbTime=96, 96*15=1440 minutes)
-        val hexData = "23C1AB641260 78C3 AABBCCDD"
+        val hexData = "23C1AB64126078C3AABBCCDD"
 
         // When
         val log = LogTbStartV3.parse(hexData)
@@ -64,7 +64,7 @@ class LogTbStartV3Test : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB641206 78C3 AABBCCDD"
+        val hexData = "23C1AB64120678C3AABBCCDD"
         val log = LogTbStartV3.parse(hexData)
 
         // When

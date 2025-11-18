@@ -1,27 +1,23 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.pump.diaconn.DiaconnG8Pump
-import app.aaps.pump.diaconn.keys.DiaconnIntKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.verify
 
-class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
+class DisplayTimeInquireResponsePacketTest : TestBaseWithProfile() {
 
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
     private val packetInjector = HasAndroidInjector {
         AndroidInjector {
-            if (it is BolusSpeedInquireResponsePacket) {
+            if (it is DisplayTimeInquireResponsePacket) {
                 it.aapsLogger = aapsLogger
                 it.dateUtil = dateUtil
                 it.diaconnG8Pump = diaconnG8Pump
-                it.preferences = preferences
             }
         }
     }
@@ -32,66 +28,61 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     }
 
     @Test
-    fun handleMessageShouldParseBolusSpeed() {
-        // Given - Speed level 5
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createValidPacket(speed = 5)
+    fun handleMessageShouldParseDisplayTime() {
+        // Given - 30 second display timeout
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
+        val data = createValidPacket(lcdOnTimeSec = 30)
 
         // When
         packet.handleMessage(data)
 
         // Then
         assertThat(packet.failed).isFalse()
-        assertThat(diaconnG8Pump.speed).isEqualTo(5)
-        verify(preferences).put(DiaconnIntKey.BolusSpeed, 5)
+        assertThat(diaconnG8Pump.lcdOnTimeSec).isEqualTo(30)
     }
 
     @Test
-    fun handleMessageShouldHandleMinSpeed() {
-        // Given - Speed level 1 (slowest)
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createValidPacket(speed = 1)
+    fun handleMessageShouldHandleMinimumDisplayTime() {
+        // Given - 10 second display timeout (minimum)
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
+        val data = createValidPacket(lcdOnTimeSec = 10)
 
         // When
         packet.handleMessage(data)
 
         // Then
-        assertThat(diaconnG8Pump.speed).isEqualTo(1)
-        verify(preferences).put(DiaconnIntKey.BolusSpeed, 1)
+        assertThat(diaconnG8Pump.lcdOnTimeSec).isEqualTo(10)
     }
 
     @Test
-    fun handleMessageShouldHandleMaxSpeed() {
-        // Given - Speed level 8 (fastest)
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createValidPacket(speed = 8)
+    fun handleMessageShouldHandleMaximumDisplayTime() {
+        // Given - 120 second display timeout (maximum)
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
+        val data = createValidPacket(lcdOnTimeSec = 120)
 
         // When
         packet.handleMessage(data)
 
         // Then
-        assertThat(diaconnG8Pump.speed).isEqualTo(8)
-        verify(preferences).put(DiaconnIntKey.BolusSpeed, 8)
+        assertThat(diaconnG8Pump.lcdOnTimeSec).isEqualTo(120)
     }
 
     @Test
-    fun handleMessageShouldHandleAllSpeedLevels() {
-        // Test all speed levels 1-8
-        for (speed in 1..8) {
-            val packet = BolusSpeedInquireResponsePacket(packetInjector)
-            val data = createValidPacket(speed = speed)
+    fun handleMessageShouldHandleDifferentDisplayTimes() {
+        // Given - Test different display times
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
 
+        for (seconds in listOf(10, 15, 30, 60, 90, 120)) {
+            val data = createValidPacket(lcdOnTimeSec = seconds)
             packet.handleMessage(data)
-
-            assertThat(packet.failed).isFalse()
-            assertThat(diaconnG8Pump.speed).isEqualTo(speed)
+            assertThat(diaconnG8Pump.lcdOnTimeSec).isEqualTo(seconds)
         }
     }
 
     @Test
     fun handleMessageShouldFailOnInvalidResult() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
         val data = createPacketWithResult(17) // CRC error
 
         // When
@@ -104,7 +95,7 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     @Test
     fun handleMessageShouldFailOnDefectivePacket() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
         val data = ByteArray(20)
         data[0] = 0x00 // Wrong SOP
 
@@ -118,29 +109,29 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     @Test
     fun msgTypeShouldBeCorrect() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
 
         // Then
-        assertThat(packet.msgType).isEqualTo(0x85.toByte())
+        assertThat(packet.msgType).isEqualTo(0x8E.toByte())
     }
 
     @Test
     fun friendlyNameShouldBeCorrect() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = DisplayTimeInquireResponsePacket(packetInjector)
 
         // Then
-        assertThat(packet.friendlyName).isEqualTo("PUMP_BOLUS_SPEED_INQUIRE_RESPONSE")
+        assertThat(packet.friendlyName).isEqualTo("PUMP_DISPLAY_TIME_INQUIRE_RESPONSE")
     }
 
-    private fun createValidPacket(speed: Int): ByteArray {
+    private fun createValidPacket(lcdOnTimeSec: Int): ByteArray {
         val data = ByteArray(20)
         data[0] = 0xef.toByte() // SOP
-        data[1] = 0x85.toByte() // msgType
+        data[1] = 0x8E.toByte() // msgType
         data[2] = 0x01.toByte() // seq
         data[3] = 0x00.toByte() // con_end
         data[4] = 16.toByte()   // result (success)
-        data[5] = speed.toByte()
+        data[5] = lcdOnTimeSec.toByte()
 
         for (i in 6 until 19) {
             data[i] = 0xff.toByte()
@@ -153,7 +144,7 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     private fun createPacketWithResult(result: Int): ByteArray {
         val data = ByteArray(20)
         data[0] = 0xef.toByte()
-        data[1] = 0x85.toByte()
+        data[1] = 0x8E.toByte()
         data[2] = 0x01.toByte()
         data[3] = 0x00.toByte()
         data[4] = result.toByte()

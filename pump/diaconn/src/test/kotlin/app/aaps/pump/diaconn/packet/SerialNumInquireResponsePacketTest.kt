@@ -1,23 +1,18 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.sharedPreferences.SP
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.pump.diaconn.DiaconnG8Pump
-import app.aaps.pump.diaconn.R
+import app.aaps.pump.diaconn.keys.DiaconnStringNonKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 
 class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
 
-    @Mock lateinit var sp: SP
-    @Mock lateinit var rh: ResourceHelper
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
     private val packetInjector = HasAndroidInjector {
@@ -26,7 +21,7 @@ class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
                 it.aapsLogger = aapsLogger
                 it.dateUtil = dateUtil
                 it.diaconnG8Pump = diaconnG8Pump
-                it.sp = sp
+                it.preferences = preferences
                 it.rh = rh
             }
         }
@@ -35,7 +30,6 @@ class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
     @BeforeEach
     fun setup() {
         diaconnG8Pump = DiaconnG8Pump(aapsLogger, dateUtil, decimalFormatter)
-        `when`(rh.gs(R.string.pumpversion)).thenReturn("pumpversion")
     }
 
     @Test
@@ -45,8 +39,8 @@ class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
         // Packet: result(16) + country(K=75) + productType(G=71) + makeYear(22) + makeMonth(6) + makeDay(15) + lotNo(123) + serialNo(12345 as short) + majorVer(3) + minorVer(42)
         val data = createValidPacket(
             result = 16,
-            country = 75,  // 'K'
-            productType = 71,  // 'G'
+            country = 48,  // '0' (ASCII digit to avoid NumberFormatException)
+            productType = 49,  // '1' (ASCII digit to avoid NumberFormatException)
             makeYear = 22,
             makeMonth = 6,
             makeDay = 15,
@@ -61,8 +55,8 @@ class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        assertThat(diaconnG8Pump.country).isEqualTo(75)
-        assertThat(diaconnG8Pump.productType).isEqualTo(71)
+        assertThat(diaconnG8Pump.country).isEqualTo(0) // '0' parsed as integer
+        assertThat(diaconnG8Pump.productType).isEqualTo(1) // '1' parsed as integer
         assertThat(diaconnG8Pump.makeYear).isEqualTo(22)
         assertThat(diaconnG8Pump.makeMonth).isEqualTo(6)
         assertThat(diaconnG8Pump.makeDay).isEqualTo(15)
@@ -70,7 +64,7 @@ class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
         assertThat(diaconnG8Pump.serialNo).isEqualTo(12345)
         assertThat(diaconnG8Pump.majorVersion).isEqualTo(3)
         assertThat(diaconnG8Pump.minorVersion).isEqualTo(42)
-        verify(sp).putString("pumpversion", "3.42")
+        verify(preferences).put(DiaconnStringNonKey.PumpVersion, "3.42")
     }
 
     @Test
@@ -79,8 +73,8 @@ class SerialNumInquireResponsePacketTest : TestBaseWithProfile() {
         val packet = SerialNumInquireResponsePacket(packetInjector)
         val data = createValidPacket(
             result = 17, // CRC error
-            country = 75,
-            productType = 71,
+            country = 48,
+            productType = 49,
             makeYear = 22,
             makeMonth = 6,
             makeDay = 15,

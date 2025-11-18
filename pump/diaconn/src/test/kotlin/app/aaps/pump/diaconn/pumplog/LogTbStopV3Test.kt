@@ -11,7 +11,7 @@ class LogTbStopV3Test : TestBase() {
         // Given - TB stop completed normally (reason=0)
         // Format: timestamp(4) + typeAndKind(1) + tbInjectRateRatio(2) + reason(1) + tbDttm(4)
         // tbInjectRateRatio: 50120 = 50000 + 120 (120%)
-        val hexData = "23C1AB641278C300AABBCCDD"
+        val hexData = "23C1AB641378C300AABBCCDD"
 
         // When
         val log = LogTbStopV3.parse(hexData)
@@ -63,7 +63,7 @@ class LogTbStopV3Test : TestBase() {
     @Test
     fun parseLogDataWithPercentageRate() {
         // Given - TB with percentage rate (150% = 50150)
-        val hexData = "23C1AB6412 96C300AABBCCDD"
+        val hexData = "23C1AB641296C300AABBCCDD"
 
         // When
         val log = LogTbStopV3.parse(hexData)
@@ -87,7 +87,7 @@ class LogTbStopV3Test : TestBase() {
     @Test
     fun getTbInjectRateRatioShouldReturnUnsignedValue() {
         // Given
-        val hexData = "23C1AB641278C300AABBCCDD"
+        val hexData = "23C1AB641378C300AABBCCDD"
         val log = LogTbStopV3.parse(hexData)
 
         // When
@@ -100,7 +100,7 @@ class LogTbStopV3Test : TestBase() {
     @Test
     fun toStringContainsAllFields() {
         // Given
-        val hexData = "23C1AB641278C300AABBCCDD"
+        val hexData = "23C1AB641378C300AABBCCDD"
         val log = LogTbStopV3.parse(hexData)
 
         // When

@@ -1,27 +1,23 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.pump.diaconn.DiaconnG8Pump
-import app.aaps.pump.diaconn.keys.DiaconnIntKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.verify
 
-class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
+class BolusSpeedSettingResponsePacketTest : TestBaseWithProfile() {
 
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
     private val packetInjector = HasAndroidInjector {
         AndroidInjector {
-            if (it is BolusSpeedInquireResponsePacket) {
+            if (it is BolusSpeedSettingResponsePacket) {
                 it.aapsLogger = aapsLogger
                 it.dateUtil = dateUtil
                 it.diaconnG8Pump = diaconnG8Pump
-                it.preferences = preferences
             }
         }
     }
@@ -32,79 +28,64 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     }
 
     @Test
-    fun handleMessageShouldParseBolusSpeed() {
-        // Given - Speed level 5
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createValidPacket(speed = 5)
+    fun handleMessageShouldParseOtpNumber() {
+        // Given
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
+        val data = createValidPacket(otpNumber = 123456)
 
         // When
         packet.handleMessage(data)
 
         // Then
         assertThat(packet.failed).isFalse()
-        assertThat(diaconnG8Pump.speed).isEqualTo(5)
-        verify(preferences).put(DiaconnIntKey.BolusSpeed, 5)
+        assertThat(packet.result).isEqualTo(0)
+        assertThat(diaconnG8Pump.otpNumber).isEqualTo(123456)
     }
 
     @Test
-    fun handleMessageShouldHandleMinSpeed() {
-        // Given - Speed level 1 (slowest)
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createValidPacket(speed = 1)
+    fun handleMessageShouldHandleZeroOtpNumber() {
+        // Given
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
+        val data = createValidPacket(otpNumber = 0)
 
         // When
         packet.handleMessage(data)
 
         // Then
-        assertThat(diaconnG8Pump.speed).isEqualTo(1)
-        verify(preferences).put(DiaconnIntKey.BolusSpeed, 1)
+        assertThat(diaconnG8Pump.otpNumber).isEqualTo(0)
     }
 
     @Test
-    fun handleMessageShouldHandleMaxSpeed() {
-        // Given - Speed level 8 (fastest)
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createValidPacket(speed = 8)
+    fun handleMessageShouldHandleLargeOtpNumber() {
+        // Given
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
+        val data = createValidPacket(otpNumber = 999999)
 
         // When
         packet.handleMessage(data)
 
         // Then
-        assertThat(diaconnG8Pump.speed).isEqualTo(8)
-        verify(preferences).put(DiaconnIntKey.BolusSpeed, 8)
-    }
-
-    @Test
-    fun handleMessageShouldHandleAllSpeedLevels() {
-        // Test all speed levels 1-8
-        for (speed in 1..8) {
-            val packet = BolusSpeedInquireResponsePacket(packetInjector)
-            val data = createValidPacket(speed = speed)
-
-            packet.handleMessage(data)
-
-            assertThat(packet.failed).isFalse()
-            assertThat(diaconnG8Pump.speed).isEqualTo(speed)
-        }
+        assertThat(diaconnG8Pump.otpNumber).isEqualTo(999999)
     }
 
     @Test
     fun handleMessageShouldFailOnInvalidResult() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
-        val data = createPacketWithResult(17) // CRC error
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
+        val data = createPacketWithResult(1)
 
         // When
         packet.handleMessage(data)
 
         // Then
         assertThat(packet.failed).isTrue()
+        assertThat(diaconnG8Pump.resultErrorCode).isEqualTo(1)
     }
 
     @Test
     fun handleMessageShouldFailOnDefectivePacket() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
         val data = ByteArray(20)
         data[0] = 0x00 // Wrong SOP
 
@@ -118,7 +99,7 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     @Test
     fun msgTypeShouldBeCorrect() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
 
         // Then
         assertThat(packet.msgType).isEqualTo(0x85.toByte())
@@ -127,22 +108,25 @@ class BolusSpeedInquireResponsePacketTest : TestBaseWithProfile() {
     @Test
     fun friendlyNameShouldBeCorrect() {
         // Given
-        val packet = BolusSpeedInquireResponsePacket(packetInjector)
+        val packet = BolusSpeedSettingResponsePacket(packetInjector)
 
         // Then
-        assertThat(packet.friendlyName).isEqualTo("PUMP_BOLUS_SPEED_INQUIRE_RESPONSE")
+        assertThat(packet.friendlyName).isEqualTo("PUMP_BOLUS_SPEED_SETTING_RESPONSE")
     }
 
-    private fun createValidPacket(speed: Int): ByteArray {
+    private fun createValidPacket(otpNumber: Int): ByteArray {
         val data = ByteArray(20)
         data[0] = 0xef.toByte() // SOP
         data[1] = 0x85.toByte() // msgType
         data[2] = 0x01.toByte() // seq
         data[3] = 0x00.toByte() // con_end
-        data[4] = 16.toByte()   // result (success)
-        data[5] = speed.toByte()
+        data[4] = 0.toByte()    // result (0 = success for setting response)
+        data[5] = (otpNumber and 0xFF).toByte()
+        data[6] = ((otpNumber shr 8) and 0xFF).toByte()
+        data[7] = ((otpNumber shr 16) and 0xFF).toByte()
+        data[8] = ((otpNumber shr 24) and 0xFF).toByte()
 
-        for (i in 6 until 19) {
+        for (i in 9 until 19) {
             data[i] = 0xff.toByte()
         }
 
