@@ -88,10 +88,12 @@ class DiaconnG8PumpTest : TestBaseWithProfile() {
         // Setting temp basal from PumpSync state
         val tbr = PumpSync.PumpState.TemporaryBasal(
             timestamp = dateUtil.now() - 1000 * 60 * 5,
-            rate = 2.0,
             duration = 1000 * 60 * 30,
+            rate = 2.0,
             isAbsolute = true,
-            type = PumpSync.TemporaryBasalType.NORMAL
+            type = PumpSync.TemporaryBasalType.NORMAL,
+            id = 1L,
+            pumpId = 100L
         )
 
         sut.fromTemporaryBasal(tbr)
@@ -111,9 +113,9 @@ class DiaconnG8PumpTest : TestBaseWithProfile() {
         // Setting extended bolus from PumpSync state
         val eb = PumpSync.PumpState.ExtendedBolus(
             timestamp = dateUtil.now() - 1000 * 60 * 10,
-            amount = 4.5,
             duration = 1000 * 60 * 90,
-            isEmulatingTB = false
+            amount = 4.5,
+            rate = 3.0 // 4.5U over 90 minutes = 3.0 U/h
         )
 
         sut.fromExtendedBolus(eb)
