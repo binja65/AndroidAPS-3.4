@@ -98,19 +98,44 @@ class BigAPSMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
         data[3] = 0x00.toByte()    // con_end
         data[4] = 16.toByte()      // result (success)
 
-        // Fill remaining data with valid values
+        var pos = 5
+        // 1. pump system setting info
         // Insulin remain (2 bytes) = 15000 (150.00 U) - LITTLE_ENDIAN
-        data[5] = 0x98.toByte()  // Low byte  (15000 = 0x3A98)
-        data[6] = 0x3A.toByte()  // High byte
+        data[pos++] = 0x98.toByte()  // Low byte  (15000 = 0x3A98)
+        data[pos++] = 0x3A.toByte()  // High byte
+        data[pos++] = 80.toByte()    // Battery remain = 80%
+        data[pos++] = 1.toByte()     // Base pattern = 1 (basic)
+        data[pos++] = 2.toByte()     // systemTbStatus = 2 (released)
+        data[pos++] = 2.toByte()     // systemInjectionMealStatus = 2 (not injecting)
+        data[pos++] = 2.toByte()     // systemInjectionSnackStatus = 2
+        data[pos++] = 2.toByte()     // systemInjectionSquareStatue = 2
+        data[pos++] = 2.toByte()     // systemInjectionDualStatus = 2
 
-        // Battery remain (1 byte) = 80%
-        data[7] = 80.toByte()
+        // 2. basal injection suspend status
+        data[pos++] = 2.toByte()     // basePauseStatus = 2 (released)
 
-        // Base pattern (1 byte) = 1 (basic)
-        data[8] = 1.toByte()
+        // 3. Pump time
+        data[pos++] = 24.toByte()    // year = 2024
+        data[pos++] = 1.toByte()     // month = 1
+        data[pos++] = 1.toByte()     // day = 1
+        data[pos++] = 12.toByte()    // hour = 12
+        data[pos++] = 0.toByte()     // minute = 0
+        data[pos++] = 0.toByte()     // second = 0
+
+        // 4. pump system info (ASCII values)
+        data[pos++] = '1'.code.toByte()  // country (ASCII '1' = 0x31)
+        data[pos++] = '1'.code.toByte()  // productType (ASCII '1' = 0x31)
+        data[pos++] = 24.toByte()    // makeYear
+        data[pos++] = 1.toByte()     // makeMonth
+        data[pos++] = 1.toByte()     // makeDay
+        data[pos++] = 1.toByte()     // lotNo
+        data[pos++] = 0x01.toByte()  // serialNo low byte
+        data[pos++] = 0x00.toByte()  // serialNo high byte
+        data[pos++] = 2.toByte()     // majorVersion
+        data[pos++] = 63.toByte()    // minorVersion
 
         // Fill rest with reasonable defaults
-        for (i in 9 until 181) {
+        for (i in pos until 181) {
             data[i] = 0x00.toByte()
         }
 
