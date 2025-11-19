@@ -91,12 +91,12 @@ class BigAPSMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
     }
 
     private fun createValidPacket(): ByteArray {
-        val data = ByteArray(200)
-        data[0] = 0xef.toByte() // SOP
-        data[1] = 0x94.toByte() // msgType
-        data[2] = 0x01.toByte() // seq
-        data[3] = 0x00.toByte() // con_end
-        data[4] = 16.toByte()   // result (success)
+        val data = ByteArray(182)  // BIG packet size
+        data[0] = 0xed.toByte()    // SOP_BIG (not regular SOP)
+        data[1] = 0x94.toByte()    // msgType
+        data[2] = 0x01.toByte()    // seq
+        data[3] = 0x00.toByte()    // con_end
+        data[4] = 16.toByte()      // result (success)
 
         // Fill remaining data with valid values
         // Insulin remain (2 bytes) = 15000 (150.00 U) - LITTLE_ENDIAN
@@ -110,27 +110,27 @@ class BigAPSMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
         data[8] = 1.toByte()
 
         // Fill rest with reasonable defaults
-        for (i in 9 until 199) {
+        for (i in 9 until 181) {
             data[i] = 0x00.toByte()
         }
 
-        data[199] = DiaconnG8Packet.getCRC(data, 199)
+        data[181] = DiaconnG8Packet.getCRC(data, 181)
         return data
     }
 
     private fun createPacketWithResult(result: Int): ByteArray {
-        val data = ByteArray(200)
-        data[0] = 0xef.toByte()
+        val data = ByteArray(182)  // BIG packet size
+        data[0] = 0xed.toByte()    // SOP_BIG
         data[1] = 0x94.toByte()
         data[2] = 0x01.toByte()
         data[3] = 0x00.toByte()
         data[4] = result.toByte()
 
-        for (i in 5 until 199) {
+        for (i in 5 until 181) {
             data[i] = 0xff.toByte()
         }
 
-        data[199] = DiaconnG8Packet.getCRC(data, 199)
+        data[181] = DiaconnG8Packet.getCRC(data, 181)
         return data
     }
 }
