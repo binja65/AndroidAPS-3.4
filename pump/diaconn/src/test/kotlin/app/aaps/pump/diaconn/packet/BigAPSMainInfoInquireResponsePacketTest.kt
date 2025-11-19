@@ -1,12 +1,14 @@
 package app.aaps.pump.diaconn.packet
 
 import app.aaps.pump.diaconn.DiaconnG8Pump
+import app.aaps.pump.diaconn.keys.DiaconnStringNonKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
 
 class BigAPSMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
 
@@ -27,6 +29,8 @@ class BigAPSMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
     @BeforeEach
     fun setup() {
         diaconnG8Pump = DiaconnG8Pump(aapsLogger, dateUtil, decimalFormatter)
+        // Mock preferences to return pump version (packet will save "2.63" and then retrieve it)
+        `when`(preferences.get(DiaconnStringNonKey.PumpVersion)).thenReturn("2.63")
     }
 
     @Test
