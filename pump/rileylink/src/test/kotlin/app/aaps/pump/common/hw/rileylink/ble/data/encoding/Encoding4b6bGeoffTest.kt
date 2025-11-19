@@ -167,13 +167,12 @@ class Encoding4b6bGeoffTest {
 
     @Test
     fun `decode too short data should throw exception`() {
-        // Data too short to be valid
+        // Data too short to be valid - single byte will cause coding errors
         val shortData = byteArrayOf(0x55)
 
-        // This might not throw depending on implementation, but let's test the behavior
-        val result = encoder.decode4b6b(shortData)
-        // Should return empty or throw - either is acceptable
-        assert(result.isEmpty() || result.isNotEmpty())
+        assertThrows(RileyLinkCommunicationException::class.java) {
+            encoder.decode4b6b(shortData)
+        }
     }
 
     @Test

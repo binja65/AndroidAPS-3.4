@@ -150,8 +150,10 @@ class RadioResponseTest {
         radioResponse.with(command)
 
         val encodedPayload = byteArrayOf(0x55, 0x66)
-        // CRC8 of [0xAA, 0xBB] should match the CRC byte
-        val decodedPayload = byteArrayOf(0xAA.toByte(), 0xBB.toByte(), 0x17) // 0x17 is correct CRC8
+        // Calculate correct CRC8 for the payload
+        val payload = byteArrayOf(0xAA.toByte(), 0xBB.toByte())
+        val correctCRC = app.aaps.pump.common.utils.CRC.crc8(payload)
+        val decodedPayload = payload + correctCRC
         whenever(encoding4b6b.decode4b6b(encodedPayload)).thenReturn(decodedPayload)
 
         val rxData = byteArrayOf(0x00, 0x42, 0x01) + encodedPayload
