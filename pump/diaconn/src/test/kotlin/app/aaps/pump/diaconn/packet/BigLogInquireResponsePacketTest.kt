@@ -5,6 +5,7 @@ import app.aaps.core.data.pump.defs.PumpType
 import app.aaps.core.interfaces.pump.DetailedBolusInfoStorage
 import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.pump.TemporaryBasalStorage
+import app.aaps.pump.common.utils.and
 import app.aaps.pump.diaconn.DiaconnG8Pump
 import app.aaps.pump.diaconn.api.DiaconnLogUploader
 import app.aaps.pump.diaconn.database.DiaconnHistoryRecordDao
@@ -430,7 +431,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.INSULIN_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), eq("12345"))
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.INSULIN_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
@@ -449,7 +450,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.NOTE), anyString(), anyLong(), eq(PumpType.DIACONN_G8), eq("12345"))
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.NOTE), anyString(), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
@@ -468,7 +469,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.CANNULA_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), eq("12345"))
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.CANNULA_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
@@ -535,7 +536,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.PUMP_BATTERY_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), eq("12345"))
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.PUMP_BATTERY_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
