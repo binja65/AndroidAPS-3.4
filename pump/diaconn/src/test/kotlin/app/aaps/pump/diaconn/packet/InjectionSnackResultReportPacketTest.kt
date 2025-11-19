@@ -4,7 +4,7 @@ import app.aaps.core.interfaces.pump.BolusProgressData
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.pump.diaconn.DiaconnG8Pump
-import app.aaps.shared.tests.TestBase
+import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 
-class InjectionSnackResultReportPacketTest : TestBase() {
+class InjectionSnackResultReportPacketTest : TestBaseWithProfile() {
 
     @Mock lateinit var rxBus: RxBus
     @Mock lateinit var rh: ResourceHelper

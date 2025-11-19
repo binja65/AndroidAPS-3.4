@@ -1,10 +1,10 @@
 package app.aaps.pump.diaconn.packet
 
-import app.aaps.shared.tests.TestBase
+import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class DiaconnG8PacketTest : TestBase() {
+class DiaconnG8PacketTest : TestBaseWithProfile() {
 
     @Test
     fun getCRCShouldCalculateCorrectly() {
