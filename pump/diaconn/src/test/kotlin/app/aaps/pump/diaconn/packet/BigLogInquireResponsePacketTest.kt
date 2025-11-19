@@ -121,6 +121,147 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
         assertThat(data.size).isEqualTo(20) // Standard SOP packet size
     }
 
+    @Test
+    fun handleMessageShouldFailOnParameterError() {
+        // Given - Result code 18 indicates parameter error
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = createPacketWithResult(18)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldFailOnProtocolError() {
+        // Given - Result code 19 indicates protocol specification error
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = createPacketWithResult(19)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldFailOnSystemError() {
+        // Given - Any result code other than 16 that's not 17-19 is system error
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = createPacketWithResult(20)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldFailOnInvalidCrc() {
+        // Given - Valid packet structure but invalid CRC
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = createValidPacket(0)
+        data[19] = 0xFF.toByte() // Corrupt CRC
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldFailOnInvalidPacketSize() {
+        // Given - Packet size that's not 20 or 182 bytes
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = ByteArray(25)
+        data[0] = 0xef.toByte() // Valid SOP
+        data[1] = 0xb2.toByte()
+        data[2] = 0x01.toByte()
+        data[3] = 0x00.toByte()
+        data[4] = 16.toByte() // Valid result
+        data[24] = DiaconnG8Packet.getCRC(data, 24)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then - Should fail due to invalid packet size
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldAcceptBigPacketSize() {
+        // Given - Big packet (182 bytes)
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = ByteArray(182)
+        data[0] = 0xed.toByte() // SOP_BIG
+        data[1] = 0xb2.toByte()
+        data[2] = 0x01.toByte()
+        data[3] = 0x00.toByte()
+        data[4] = 16.toByte() // result (success)
+        data[5] = 0.toByte() // log count = 0
+
+        // Fill remaining data
+        for (i in 6 until 181) {
+            data[i] = 0x00.toByte()
+        }
+
+        data[181] = DiaconnG8Packet.getCRC(data, 181)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isFalse()
+        assertThat(data.size).isEqualTo(182)
+    }
+
+    @Test
+    fun handleMessageShouldFailOnInvalidSopByte() {
+        // Given - Invalid start-of-packet byte
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = ByteArray(20)
+        data[0] = 0xaa.toByte() // Invalid SOP (should be 0xef or 0xed)
+        data[1] = 0xb2.toByte()
+        data[19] = DiaconnG8Packet.getCRC(data, 19)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldHandleZeroResult() {
+        // Given - Result code 0 (system error)
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = createPacketWithResult(0)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
+    @Test
+    fun handleMessageShouldHandleMaxResult() {
+        // Given - Maximum byte value result code
+        val packet = BigLogInquireResponsePacket(packetInjector)
+        val data = createPacketWithResult(255)
+
+        // When
+        packet.handleMessage(data)
+
+        // Then
+        assertThat(packet.failed).isTrue()
+    }
+
     private fun createValidPacket(logCount: Int): ByteArray {
         val baseSize = 20
         val logSize = 15 // Each log entry is 15 bytes (1 wrapping + 2 logNum + 12 logData)
