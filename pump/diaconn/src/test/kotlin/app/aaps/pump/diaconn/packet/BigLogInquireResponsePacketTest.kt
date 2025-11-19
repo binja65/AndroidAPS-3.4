@@ -1,13 +1,8 @@
 package app.aaps.pump.diaconn.packet
 
-import android.content.Context
-import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.pump.DetailedBolusInfoStorage
 import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.pump.TemporaryBasalStorage
-import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.rx.bus.RxBus
-import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.pump.diaconn.DiaconnG8Pump
 import app.aaps.pump.diaconn.api.DiaconnLogUploader
 import app.aaps.pump.diaconn.database.DiaconnHistoryRecordDao
@@ -21,16 +16,11 @@ import org.mockito.Mock
 
 class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
-    @Mock lateinit var rxBus: RxBus
-    @Mock lateinit var rh: ResourceHelper
-    @Mock lateinit var activePlugin: ActivePlugin
     @Mock lateinit var detailedBolusInfoStorage: DetailedBolusInfoStorage
     @Mock lateinit var temporaryBasalStorage: TemporaryBasalStorage
-    @Mock lateinit var preferences: Preferences
     @Mock lateinit var pumpSync: PumpSync
     @Mock lateinit var diaconnHistoryRecordDao: DiaconnHistoryRecordDao
     @Mock lateinit var diaconnLogUploader: DiaconnLogUploader
-    @Mock lateinit var context: Context
 
     private lateinit var diaconnG8Pump: DiaconnG8Pump
 
