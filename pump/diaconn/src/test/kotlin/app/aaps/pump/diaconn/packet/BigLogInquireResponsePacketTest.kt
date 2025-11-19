@@ -420,7 +420,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
     fun handleMessageShouldProcessInsulinChangeLog() {
         // Given - Packet with LogChangeInjectorSuccess (0x1A)
         `when`(preferences.get(DiaconnBooleanKey.LogInsulinChange)).thenReturn(true)
-        `when`(pumpSync.insertTherapyEventIfNewWithTimestamp(anyLong(), any(), anyLong(), any(), anyString())).thenReturn(true)
+        `when`(pumpSync.insertTherapyEventIfNewWithTimestamp(anyLong(), any(), any(), anyLong(), any(), anyString())).thenReturn(true)
         diaconnG8Pump.serialNo = 12345
 
         val packet = BigLogInquireResponsePacket(packetInjector)
@@ -431,7 +431,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.INSULIN_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), anyString())
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.INSULIN_CHANGE), any(), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
@@ -458,7 +458,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
     fun handleMessageShouldProcessNeedleChangeLog() {
         // Given - Packet with LogChangeNeedleSuccess (0x1C)
         `when`(preferences.get(DiaconnBooleanKey.LogCannulaChange)).thenReturn(true)
-        `when`(pumpSync.insertTherapyEventIfNewWithTimestamp(anyLong(), any(), anyLong(), any(), anyString())).thenReturn(true)
+        `when`(pumpSync.insertTherapyEventIfNewWithTimestamp(anyLong(), any(), any(), anyLong(), any(), anyString())).thenReturn(true)
         diaconnG8Pump.serialNo = 12345
 
         val packet = BigLogInquireResponsePacket(packetInjector)
@@ -469,7 +469,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.CANNULA_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), anyString())
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.CANNULA_CHANGE), any(), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
@@ -525,7 +525,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
     fun handleMessageShouldProcessSystemResetLog() {
         // Given - Packet with LogResetSysV3 (0x01) with battery replacement reason
         `when`(preferences.get(DiaconnBooleanKey.LogBatteryChange)).thenReturn(true)
-        `when`(pumpSync.insertTherapyEventIfNewWithTimestamp(anyLong(), any(), anyLong(), any(), anyString())).thenReturn(true)
+        `when`(pumpSync.insertTherapyEventIfNewWithTimestamp(anyLong(), any(), any(), anyLong(), any(), anyString())).thenReturn(true)
         diaconnG8Pump.serialNo = 12345
 
         val packet = BigLogInquireResponsePacket(packetInjector)
@@ -536,7 +536,7 @@ class BigLogInquireResponsePacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.PUMP_BATTERY_CHANGE), anyLong(), eq(PumpType.DIACONN_G8), anyString())
+        verify(pumpSync).insertTherapyEventIfNewWithTimestamp(anyLong(), eq(TE.Type.PUMP_BATTERY_CHANGE), any(), anyLong(), eq(PumpType.DIACONN_G8), anyString())
         verify(diaconnHistoryRecordDao).createOrUpdate(any())
     }
 
