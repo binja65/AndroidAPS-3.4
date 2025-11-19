@@ -10,7 +10,6 @@
     <string name="secago">%1$d сек назад</string>
     <string name="minago_long">%1$d минут назад</string>
     <string name="hoursago">%1$.1fч. назад</string>
-    <string name="time_ago">назад</string>
     <string name="days_ago">%1$s дн назад</string>
     <string name="days_ago_round">%1$s дн назад</string>
     <string name="in_days">через %1$.0f дн</string>
