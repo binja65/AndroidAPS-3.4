@@ -1,6 +1,5 @@
 package app.aaps.pump.diaconn
 
-import android.content.Context
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.pump.DetailedBolusInfoStorage
@@ -8,7 +7,6 @@ import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.pump.TemporaryBasalStorage
 import app.aaps.core.interfaces.queue.CommandQueue
 import app.aaps.core.interfaces.ui.UiInteraction
-import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.objects.constraints.ConstraintObject
 import app.aaps.pump.diaconn.database.DiaconnHistoryDatabase
 import app.aaps.shared.tests.TestBaseWithProfile
@@ -28,8 +26,6 @@ class DiaconnG8PluginTest : TestBaseWithProfile() {
     @Mock lateinit var diaconnHistoryDatabase: DiaconnHistoryDatabase
     @Mock lateinit var detailedBolusInfoStorage: DetailedBolusInfoStorage
     @Mock lateinit var temporaryBasalStorage: TemporaryBasalStorage
-    @Mock lateinit var fabricPrivacy: FabricPrivacy
-    @Mock lateinit var testContext: Context
 
     lateinit var diaconnG8Pump: DiaconnG8Pump
 
@@ -45,7 +41,7 @@ class DiaconnG8PluginTest : TestBaseWithProfile() {
 
         diaconnG8Pump = DiaconnG8Pump(aapsLogger, dateUtil, decimalFormatter)
         diaconnG8Plugin = DiaconnG8Plugin(
-            aapsLogger, rh, preferences, commandQueue, rxBus, testContext, constraintChecker, diaconnG8Pump,
+            aapsLogger, rh, preferences, commandQueue, rxBus, context, constraintChecker, diaconnG8Pump,
             pumpSync, detailedBolusInfoStorage, temporaryBasalStorage, fabricPrivacy, dateUtil, aapsSchedulers,
             uiInteraction, diaconnHistoryDatabase, pumpEnactResultProvider
         )
@@ -118,8 +114,8 @@ class DiaconnG8PluginTest : TestBaseWithProfile() {
 
     @Test
     fun preferenceScreenTest() {
-        val screen = preferenceManager.createPreferenceScreen(testContext)
-        diaconnG8Plugin.addPreferenceScreen(preferenceManager, screen, testContext, null)
+        val screen = preferenceManager.createPreferenceScreen(context)
+        diaconnG8Plugin.addPreferenceScreen(preferenceManager, screen, context, null)
         assertThat(screen.preferenceCount).isGreaterThan(0)
     }
 }
