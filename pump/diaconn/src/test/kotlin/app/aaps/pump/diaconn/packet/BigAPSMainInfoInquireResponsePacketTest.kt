@@ -99,9 +99,9 @@ class BigAPSMainInfoInquireResponsePacketTest : TestBaseWithProfile() {
         data[4] = 16.toByte()   // result (success)
 
         // Fill remaining data with valid values
-        // Insulin remain (2 bytes) = 15000 (150.00 U)
-        data[5] = 0x3A.toByte()
-        data[6] = 0x98.toByte()
+        // Insulin remain (2 bytes) = 15000 (150.00 U) - LITTLE_ENDIAN
+        data[5] = 0x98.toByte()  // Low byte  (15000 = 0x3A98)
+        data[6] = 0x3A.toByte()  // High byte
 
         // Battery remain (1 byte) = 80%
         data[7] = 80.toByte()

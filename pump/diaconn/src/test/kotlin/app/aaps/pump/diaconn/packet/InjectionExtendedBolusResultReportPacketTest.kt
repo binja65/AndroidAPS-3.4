@@ -45,7 +45,7 @@ class InjectionExtendedBolusResultReportPacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        assertThat(diaconnG8Pump.isExtendedInProgress).isTrue()
+        assertThat(diaconnG8Pump.squareStatus).isEqualTo(1) // 1 = in progress
         assertThat(diaconnG8Pump.squareTime).isEqualTo(60)
         assertThat(diaconnG8Pump.squareInjTime).isEqualTo(30)
         assertThat(diaconnG8Pump.squareAmount).isEqualTo(5.0)
@@ -69,7 +69,7 @@ class InjectionExtendedBolusResultReportPacketTest : TestBaseWithProfile() {
 
         // Then
         assertThat(packet.failed).isFalse()
-        assertThat(diaconnG8Pump.isExtendedInProgress).isFalse()
+        assertThat(diaconnG8Pump.squareStatus).isEqualTo(2) // 2 = stopped
         assertThat(diaconnG8Pump.squareAmount).isEqualTo(10.0)
         assertThat(diaconnG8Pump.squareInjAmount).isEqualTo(10.0)
     }
@@ -140,18 +140,18 @@ class InjectionExtendedBolusResultReportPacketTest : TestBaseWithProfile() {
         data[2] = 0x01.toByte()
         data[3] = 0x00.toByte()
         data[4] = result.toByte()
-        // Setting minutes (2 bytes)
-        data[5] = (settingMinutes shr 8).toByte()
-        data[6] = settingMinutes.toByte()
-        // Elapsed time (2 bytes)
-        data[7] = (elapsedTime shr 8).toByte()
-        data[8] = elapsedTime.toByte()
-        // Bolus amount (2 bytes)
-        data[9] = (bolusAmount shr 8).toByte()
-        data[10] = bolusAmount.toByte()
-        // Delivered amount (2 bytes)
-        data[11] = (deliveredAmount shr 8).toByte()
-        data[12] = deliveredAmount.toByte()
+        // Setting minutes (2 bytes) - LITTLE_ENDIAN
+        data[5] = settingMinutes.toByte()             // Low byte
+        data[6] = (settingMinutes shr 8).toByte()     // High byte
+        // Elapsed time (2 bytes) - LITTLE_ENDIAN
+        data[7] = elapsedTime.toByte()                // Low byte
+        data[8] = (elapsedTime shr 8).toByte()        // High byte
+        // Bolus amount (2 bytes) - LITTLE_ENDIAN
+        data[9] = bolusAmount.toByte()                // Low byte
+        data[10] = (bolusAmount shr 8).toByte()       // High byte
+        // Delivered amount (2 bytes) - LITTLE_ENDIAN
+        data[11] = deliveredAmount.toByte()           // Low byte
+        data[12] = (deliveredAmount shr 8).toByte()   // High byte
 
         for (i in 13 until 19) {
             data[i] = 0xff.toByte()

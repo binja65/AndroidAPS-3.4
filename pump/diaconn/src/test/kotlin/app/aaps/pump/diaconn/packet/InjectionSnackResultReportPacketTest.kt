@@ -155,12 +155,12 @@ class InjectionSnackResultReportPacketTest : TestBaseWithProfile() {
         data[2] = 0x01.toByte()
         data[3] = 0x00.toByte()
         data[4] = result.toByte()
-        // Bolus amount to be delivered (2 bytes)
-        data[5] = (bolusAmount shr 8).toByte()
-        data[6] = bolusAmount.toByte()
-        // Delivered bolus amount (2 bytes)
-        data[7] = (deliveredAmount shr 8).toByte()
-        data[8] = deliveredAmount.toByte()
+        // Bolus amount to be delivered (2 bytes) - LITTLE_ENDIAN
+        data[5] = bolusAmount.toByte()             // Low byte
+        data[6] = (bolusAmount shr 8).toByte()     // High byte
+        // Delivered bolus amount (2 bytes) - LITTLE_ENDIAN
+        data[7] = deliveredAmount.toByte()         // Low byte
+        data[8] = (deliveredAmount shr 8).toByte() // High byte
 
         for (i in 9 until 19) {
             data[i] = 0xff.toByte()
