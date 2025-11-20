@@ -36,7 +36,7 @@ class FrequencyScanResultsTest {
     fun `can add trial to results`() {
         val trial = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -75
+            averageRSSI = -75.0
             tries = 10
             successes = 8
         }
@@ -51,17 +51,17 @@ class FrequencyScanResultsTest {
     fun `can add multiple trials`() {
         val trial1 = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         val trial2 = FrequencyTrial().apply {
             frequencyMHz = 916.6
-            averageRSSI = -70
+            averageRSSI = -70.0
         }
 
         val trial3 = FrequencyTrial().apply {
             frequencyMHz = 916.7
-            averageRSSI = -80
+            averageRSSI = -80.0
         }
 
         scanResults.trials.add(trial1)
@@ -76,17 +76,17 @@ class FrequencyScanResultsTest {
         // Lower (more negative) RSSI should come first after sorting
         val trial1 = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -70 // Better signal
+            averageRSSI = -70.0 // Better signal
         }
 
         val trial2 = FrequencyTrial().apply {
             frequencyMHz = 916.6
-            averageRSSI = -80 // Worse signal
+            averageRSSI = -80.0 // Worse signal
         }
 
         val trial3 = FrequencyTrial().apply {
             frequencyMHz = 916.7
-            averageRSSI = -75 // Medium signal
+            averageRSSI = -75.0 // Medium signal
         }
 
         scanResults.trials.add(trial2) // Add in wrong order
@@ -96,26 +96,26 @@ class FrequencyScanResultsTest {
         scanResults.sort()
 
         // After sorting, should be in ascending RSSI order (most negative first)
-        assertEquals(-80, scanResults.trials[0].averageRSSI)
-        assertEquals(-75, scanResults.trials[1].averageRSSI)
-        assertEquals(-70, scanResults.trials[2].averageRSSI)
+        assertEquals(-80.0, scanResults.trials[0].averageRSSI)
+        assertEquals(-75.0, scanResults.trials[1].averageRSSI)
+        assertEquals(-70.0, scanResults.trials[2].averageRSSI)
     }
 
     @Test
     fun `sort uses frequency as tiebreaker when RSSI is equal`() {
         val trial1 = FrequencyTrial().apply {
             frequencyMHz = 916.7
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         val trial2 = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         val trial3 = FrequencyTrial().apply {
             frequencyMHz = 916.6
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         scanResults.trials.add(trial1)
@@ -156,7 +156,7 @@ class FrequencyScanResultsTest {
     fun `sort handles single trial`() {
         val trial = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         scanResults.trials.add(trial)
@@ -170,7 +170,7 @@ class FrequencyScanResultsTest {
     fun `complete scan workflow`() {
         // Simulate a frequency scan
         val frequencies = listOf(916.45, 916.50, 916.55, 916.60, 916.65)
-        val rssiValues = listOf(-78, -72, -69, -75, -80) // 916.55 should be best
+        val rssiValues = listOf(-78.0, -72.0, -69.0, -75.0, -80.0) // 916.55 should be best
 
         frequencies.forEachIndexed { index, freq ->
             val trial = FrequencyTrial().apply {
@@ -195,7 +195,7 @@ class FrequencyScanResultsTest {
     fun `trials list is mutable`() {
         val trial1 = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         scanResults.trials.add(trial1)
@@ -209,12 +209,12 @@ class FrequencyScanResultsTest {
     fun `sort with negative and positive frequencies`() {
         val trial1 = FrequencyTrial().apply {
             frequencyMHz = 916.5
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         val trial2 = FrequencyTrial().apply {
             frequencyMHz = 868.5 // Different band
-            averageRSSI = -75
+            averageRSSI = -75.0
         }
 
         scanResults.trials.add(trial1)
@@ -239,7 +239,7 @@ class FrequencyScanResultsTest {
             val trial = FrequencyTrial().apply {
                 frequencyMHz = freq
                 // Simulate varying signal strength, with peak around 916.5
-                averageRSSI = -85 + (10 * kotlin.math.cos((freq - 916.5) * 5)).toInt()
+                averageRSSI = -85.0 + (10 * kotlin.math.cos((freq - 916.5) * 5)).toInt()
                 tries = 5
                 successes = if (averageRSSI > -80) 4 else 2
             }
