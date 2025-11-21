@@ -76,6 +76,8 @@ class ProfileHelperActivity : TranslatedDaggerAppCompatActivity() {
 
     private lateinit var binding: ActivityProfilehelperBinding
     private val disposable = CompositeDisposable()
+    private var weightTextWatcher: TextWatcher? = null
+    private var tddTextWatcher: TextWatcher? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,20 +158,22 @@ class ProfileHelperActivity : TranslatedDaggerAppCompatActivity() {
         }
 
         binding.age.setParams(0.0, 1.0, 18.0, 1.0, DecimalFormat("0"), false, null)
-        binding.weight.setParams(0.0, 0.0, 150.0, 1.0, DecimalFormat("0"), false, null, object : TextWatcher {
+        weightTextWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 binding.tddRow.visibility = (binding.weight.value == 0.0).toVisibility()
             }
-        })
-        binding.tdd.setParams(0.0, 0.0, 200.0, 1.0, DecimalFormat("0"), false, null, object : TextWatcher {
+        }
+        binding.weight.setParams(0.0, 0.0, 150.0, 1.0, DecimalFormat("0"), false, null, weightTextWatcher)
+        tddTextWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 binding.weightRow.visibility = (binding.tdd.value == 0.0).toVisibility()
             }
-        })
+        }
+        binding.tdd.setParams(0.0, 0.0, 200.0, 1.0, DecimalFormat("0"), false, null, tddTextWatcher)
 
         binding.basalPctFromTdd.setParams(32.0, 32.0, 37.0, 1.0, DecimalFormat("0"), false, null)
 
@@ -322,5 +326,17 @@ class ProfileHelperActivity : TranslatedDaggerAppCompatActivity() {
     override fun onPause() {
         super.onPause()
         disposable.clear()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.tabLayout.clearOnTabSelectedListeners()
+        binding.profileType.setOnItemClickListener(null)
+        binding.availableProfileList.setOnItemClickListener(null)
+        binding.profileswitchList.setOnItemClickListener(null)
+        binding.copyToLocalProfile.setOnClickListener(null)
+        binding.compareProfiles.setOnClickListener(null)
+        weightTextWatcher?.let { binding.weight.editText?.removeTextChangedListener(it) }
+        tddTextWatcher?.let { binding.tdd.editText?.removeTextChangedListener(it) }
     }
 }

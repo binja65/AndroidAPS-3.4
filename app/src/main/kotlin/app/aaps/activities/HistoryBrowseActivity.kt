@@ -158,6 +158,12 @@ class HistoryBrowseActivity : TranslatedDaggerAppCompatActivity() {
     @Synchronized
     override fun onDestroy() {
         destroyed = true
+        binding.left.setOnClickListener(null)
+        binding.right.setOnClickListener(null)
+        binding.end.setOnClickListener(null)
+        binding.zoom.setOnClickListener(null)
+        binding.zoom.setOnLongClickListener(null)
+        binding.date.setOnClickListener(null)
         secondaryGraphs.clear()
         secondaryGraphsLabel.clear()
         super.onDestroy()
