@@ -144,7 +144,7 @@ class ProfileHelperActivity : TranslatedDaggerAppCompatActivity() {
             val profile = if (typeSelected[tabSelected] == ProfileType.MOTOL_DEFAULT) defaultProfile.profile(age, tdd, weight, profileFunction.getUnits())
             else defaultProfileDPV.profile(age, tdd, pct / 100.0, profileFunction.getUnits())
             profile?.let {
-                OKDialog.showConfirmation(this, rh.gs(app.aaps.core.ui.R.string.careportal_profileswitch), rh.gs(app.aaps.core.ui.R.string.copytolocalprofile), Runnable {
+                OKDialog.showConfirmation(this, rh.gs(app.aaps.core.ui.R.string.careportal_profileswitch), rh.gs(app.aaps.core.ui.R.string.copytolocalprofile), {
                     activePlugin.activeProfileSource.addProfile(
                         activePlugin.activeProfileSource.copyFrom(
                             it, "DefaultProfile " +
@@ -265,7 +265,7 @@ class ProfileHelperActivity : TranslatedDaggerAppCompatActivity() {
                 ProfileType.AVAILABLE_PROFILE -> activePlugin.activeProfileSource.profile?.getSpecificProfile(profileList[profileUsed[tab]].toString())
                 ProfileType.PROFILE_SWITCH    -> ProfileSealed.EPS(value = profileSwitch[profileSwitchUsed[tab]], activePlugin = null).convertToNonCustomizedProfile(dateUtil)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
 
@@ -331,12 +331,10 @@ class ProfileHelperActivity : TranslatedDaggerAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         binding.tabLayout.clearOnTabSelectedListeners()
-        binding.profileType.setOnItemClickListener(null)
-        binding.availableProfileList.setOnItemClickListener(null)
-        binding.profileswitchList.setOnItemClickListener(null)
+        binding.profileType.onItemClickListener = null
+        binding.availableProfileList.onItemClickListener = null
+        binding.profileswitchList.onItemClickListener = null
         binding.copyToLocalProfile.setOnClickListener(null)
         binding.compareProfiles.setOnClickListener(null)
-        weightTextWatcher?.let { binding.weight.editText?.removeTextChangedListener(it) }
-        tddTextWatcher?.let { binding.tdd.editText?.removeTextChangedListener(it) }
     }
 }
