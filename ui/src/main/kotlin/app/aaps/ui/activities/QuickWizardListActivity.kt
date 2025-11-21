@@ -237,6 +237,7 @@ class QuickWizardListActivity : TranslatedDaggerAppCompatActivity(), OnStartDrag
 
     override fun onDestroy() {
         super.onDestroy()
+        binding.recyclerview.adapter = null
         binding.addButton.setOnClickListener(null)
         menuProvider?.let { removeMenuProvider(it) }
     }

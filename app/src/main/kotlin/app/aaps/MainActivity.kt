@@ -338,6 +338,7 @@ class MainActivity : DaggerAppCompatActivityWithResult() {
 
     override fun onDestroy() {
         super.onDestroy()
+        binding.mainPager.adapter = null
         binding.mainDrawerLayout.removeDrawerListener(actionBarDrawerToggle)
         mainMenuProvider?.let { removeMenuProvider(it) }
         disposable.clear()

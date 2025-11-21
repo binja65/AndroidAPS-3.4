@@ -246,6 +246,7 @@ class DanaHistoryActivity : TranslatedDaggerAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         binding.reload.setOnClickListener(null)
+        binding.typeList.setAdapter(null)
         binding.typeList.onItemClickListener = null
         binding.recyclerview.adapter = null
     }

@@ -117,6 +117,7 @@ class MedtronicHistoryActivity : DaggerActivity() {
     override fun onDestroy() {
         super.onDestroy()
         recyclerView.adapter = null
+        historyTypeSpinner.adapter = null
         historyTypeSpinner.onItemSelectedListener = null
     }
 

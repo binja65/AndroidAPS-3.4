@@ -57,6 +57,8 @@ class DiaconnG8UserOptionsActivity : TranslatedDaggerAppCompatActivity() {
         binding.saveLcdOnTime.setOnClickListener(null)
         binding.saveLang.setOnClickListener(null)
         binding.saveBolusSpeed.setOnClickListener(null)
+        binding.beepAndAlarm.adapter = null
+        binding.alarmIntesity.adapter = null
         binding.beepAndAlarm.onItemSelectedListener = null
     }
 
