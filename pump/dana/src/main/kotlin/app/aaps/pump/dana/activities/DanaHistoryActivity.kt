@@ -243,6 +243,13 @@ class DanaHistoryActivity : TranslatedDaggerAppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.reload.setOnClickListener(null)
+        binding.typeList.onItemClickListener = null
+        binding.recyclerview.adapter = null
+    }
+
     private fun swapAdapter(type: Byte) {
         disposable += danaHistoryRecordDao
             .allFromByType(dateUtil.now() - T.months(1).msecs(), type)

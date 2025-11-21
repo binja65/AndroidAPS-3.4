@@ -23,6 +23,7 @@ class WidgetConfigureActivity : DaggerActivity() {
     }
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private lateinit var binding: WidgetConfigureBinding
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -31,7 +32,7 @@ class WidgetConfigureActivity : DaggerActivity() {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED)
 
-        val binding = WidgetConfigureBinding.inflate(layoutInflater)
+        binding = WidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -68,5 +69,12 @@ class WidgetConfigureActivity : DaggerActivity() {
 
         binding.seekBar.progress = sp.getInt(PREF_PREFIX_KEY + appWidgetId, 25)
         binding.useBlack.isChecked = sp.getBoolean(PREF_PREFIX_KEY + "use_black_$appWidgetId", false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.seekBar.setOnSeekBarChangeListener(null)
+        binding.closeLayout.close.setOnClickListener(null)
+        binding.useBlack.setOnCheckedChangeListener(null)
     }
 }
