@@ -96,7 +96,7 @@ import kotlin.math.min
 
 @Singleton
 class DataHandlerMobile @Inject constructor(
-    aapsSchedulers: AapsSchedulers,
+    private val aapsSchedulers: AapsSchedulers,
     private val context: Context,
     private val rxBus: RxBus,
     private val aapsLogger: AAPSLogger,
