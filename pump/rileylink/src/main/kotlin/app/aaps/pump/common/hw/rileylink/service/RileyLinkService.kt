@@ -65,7 +65,6 @@ abstract class RileyLinkService : DaggerService() {
     override fun onDestroy() {
         super.onDestroy()
 
-        rfSpy.stopReader()
         rileyLinkBLE.disconnect() // dispose of Gatt (disconnect and close)
         broadcastReceiver?.unregisterBroadcasts(this)
         bluetoothStateReceiver?.unregisterBroadcasts(this)
@@ -104,8 +103,9 @@ abstract class RileyLinkService : DaggerService() {
                 false
             } else {
                 aapsLogger.warn(LTag.PUMPBTCOMM, "Disconnecting from old RL (${rileyLinkServiceData.rileyLinkAddress}), reconnecting to new: $deviceAddress")
-                rfSpy.stopReader()
                 rileyLinkBLE.disconnect()
+                // need to shut down listening thread too?
+                // preferences.put(MedtronicConst.Prefs.RileyLinkAddress, deviceAddress);
                 rileyLinkServiceData.rileyLinkAddress = deviceAddress
                 rileyLinkBLE.findRileyLink(deviceAddress)
                 true
@@ -148,7 +148,6 @@ abstract class RileyLinkService : DaggerService() {
     abstract fun setPumpDeviceState(pumpDeviceState: PumpDeviceState)
     fun disconnectRileyLink() {
         if (rileyLinkBLE.isConnected) {
-            rfSpy.stopReader()
             rileyLinkBLE.disconnect()
             rileyLinkServiceData.rileyLinkAddress = null
             rileyLinkServiceData.rileyLinkName = null

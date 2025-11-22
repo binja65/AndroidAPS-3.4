@@ -73,11 +73,6 @@ class RFSpy @Inject constructor(
         reader.start()
     }
 
-    // Call this when disconnecting from RileyLink
-    fun stopReader() {
-        reader.stop()
-    }
-
     // Here should go generic RL initialisation + protocol adjustments depending on
     // firmware version
     fun initializeRileyLink() {
