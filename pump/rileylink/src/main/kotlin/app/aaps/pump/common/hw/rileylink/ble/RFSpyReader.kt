@@ -25,6 +25,7 @@ class RFSpyReader internal constructor(private val aapsLogger: AAPSLogger, priva
     private var acquireCount = 0
     private var releaseCount = 0
     private var stopAtNull = true
+    @Volatile private var running = false
     fun setRileyLinkEncodingType(encodingType: RileyLinkEncodingType) {
         aapsLogger.debug("setRileyLinkEncodingType: $encodingType")
         stopAtNull = !(encodingType == RileyLinkEncodingType.Manchester || encodingType == RileyLinkEncodingType.FourByteSixByteRileyLink)
@@ -58,13 +59,16 @@ class RFSpyReader internal constructor(private val aapsLogger: AAPSLogger, priva
     }
 
     fun start() {
+        if (running) return  // Prevent multiple starts
+        running = true
         executor.execute {
             val serviceUUID = UUID.fromString(GattAttributes.SERVICE_RADIO)
             val radioDataUUID = UUID.fromString(GattAttributes.CHARA_RADIO_DATA)
-            while (true) {
+            while (running) {
                 try {
                     acquireCount++
                     waitForRadioData.acquire()
+                    if (!running) break  // Check after acquire in case stop() was called
                     aapsLogger.debug(LTag.PUMPBTCOMM, "${ThreadUtil.sig()}waitForRadioData acquired (count=$acquireCount) at t=${SystemClock.uptimeMillis()}")
                     SystemClock.sleep(100)
                     var result = rileyLinkBle.readCharacteristicBlocking(serviceUUID, radioDataUUID)
@@ -92,8 +96,17 @@ class RFSpyReader internal constructor(private val aapsLogger: AAPSLogger, priva
                         aapsLogger.error(LTag.PUMPBTCOMM, "FAIL: got invalid result code: ${result.resultCode}")
                 } catch (_: InterruptedException) {
                     aapsLogger.error(LTag.PUMPBTCOMM, "Interrupted while waiting for data")
+                    break
                 }
             }
+            aapsLogger.debug(LTag.PUMPBTCOMM, "RFSpyReader stopped")
         }
+    }
+
+    fun stop() {
+        running = false
+        waitForRadioData.release()  // Unblock if waiting on acquire()
+        executor.shutdownNow()
+        executor = Executors.newSingleThreadExecutor()  // Ready for restart
     }
 }
