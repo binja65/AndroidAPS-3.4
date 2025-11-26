@@ -50,6 +50,7 @@
     <string name="connecting_for">Tilkobler i %1$d sek</string>
     <string name="handshaking">Tilkobling verifiseres</string>
     <string name="connected">Tilkoblet</string>
+    <string name="authorized">Autorisert</string>
     <string name="disconnecting">Frakobler</string>
     <string name="waiting_for_disconnection">Venter på frakobling</string>
     <!-- Custom Watchface -->
