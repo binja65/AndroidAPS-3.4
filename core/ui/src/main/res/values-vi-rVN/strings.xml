@@ -451,7 +451,7 @@
     <string name="insight_set_tbr_over_notification">INSIGHT: Đặt TBR thông qua thông báo</string>
     <string name="read_status" comment="10 characters max for READSTATUS translation">TRẠNG THÁI %1$s</string>
     <string name="keepalive_status_outdated" comment="26 characters max for translation">KeepAlive: Trạng thái lỗi thời.</string>
-    <string name="keepalive_basal_outdated" comment="26 characters max for translation">KeepAlive. Liều Basal lỗi thời.</string>
+    <string name="keepalive_basal_outdated" comment="26 characters max for translation">Kết nối. Liều Basal Basal đã quá hạn.</string>
     <string name="sms" comment="26 characters max for translation">SMS</string>
     <string name="formatPercent">%1$.0f%%</string>
     <string name="basal">Liều Basal</string>
