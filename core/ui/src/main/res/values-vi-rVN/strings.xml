@@ -148,7 +148,7 @@
     <string name="confirm_remove_multiple_items">Bạn có chắc chắn muốn xóa %1$d mục không</string>
     <string name="overview_treatment_label">Điều trị</string>
     <string name="copytolocalprofile">Tạo cấu hình mới từ cấu hình này không?</string>
-    <string name="wear_wizard_settings">Wizard Settings</string>
+    <string name="wear_wizard_settings">Cài đặt Wizard</string>
     <string name="bg_trend_label">Xu hướng 15 phút</string>
     <string name="treatments_wizard_cob_label">COB</string>
     <string name="bolus_iob_label">Bolus IOB</string>
@@ -226,7 +226,7 @@
     <string name="cgm_sensor_insert">Gắn cảm biến CGM</string>
     <string name="careportal_pump_site_management">Các vị trí tiêm</string>
     <string name="careportal_cgm_site_management">Các vị trí CGM</string>
-    <string name="careportal_cgmsensorstart">Khởi động cảm biến CGM</string>
+    <string name="careportal_cgmsensorstart">Kích hoạt cảm biến CGM</string>
     <string name="careportal_cgm_sensor_stop">Dừng cảm biến CGM</string>
     <string name="careportal_dad_alert">Cảnh báo D.A.D</string>
     <string name="careportal_insulin_cartridge_change">Thay ống chứa insulin</string>
@@ -237,14 +237,14 @@
     <string name="careportal_combobolus">Bolus kết hợp</string>
     <string name="careportal_tempbasalstart">Bắt đầu basal tạm thời</string>
     <string name="careportal_tempbasalend">Kết thúc Basal tạm thời</string>
-    <string name="careportal_carbscorrection">Carbs hiệu chỉnh</string>
+    <string name="careportal_carbscorrection">Điều chỉnh Carbs</string>
     <string name="careportal_openapsoffline">OpenAPS Offline</string>
     <string name="pump_battery_change">Thay pin Pump</string>
     <string name="temporary_target">Mục tiêu Tạm thời</string>
     <string name="running_mode">Chế độ hoạt động</string>
     <string name="careportal_temporarytargetvalue">Giá trị mục tiêu tạm thời</string>
     <string name="careportal_temporarytargetcancel">Huỷ mục tiêu tạm thời</string>
-    <string name="boluswizard">Bolus wizard</string>
+    <string name="boluswizard">Tính toán Bolus</string>
     <string name="glucosetype_finger">Ngón tay</string>
     <string name="glucosetype_sensor">Cảm biến</string>
     <string name="manual">Thủ công</string>
@@ -293,7 +293,7 @@
     <string name="arrow_up_left">Phía trên bên trái</string>
     <string name="arrow_center">Ở giữa</string>
     <!--    Command-->
-    <string name="connectiontimedout">Hết thời gian chờ kết nối</string>
+    <string name="connectiontimedout">Hết thời gian kết nối</string>
     <!--    PumpEnactResult-->
     <string name="enacted">Đã kích hoạt</string>
     <string name="comment">Nhận xét</string>
@@ -305,17 +305,17 @@
     <string name="carbsreq">Cần thêm %1$d g carb trong vòng %2$d phút</string>
     <!--    TDDStatsActivity-->
     <string name="cumulative_tdd">Tổng liều hằng ngày</string>
-    <string name="expweight">Tổng liều hằng ngày theo trọng số mũ</string>
+    <string name="expweight">Tổng liều hằng ngày theo cấp số nhân</string>
     <string name="basalrate">Basal</string>
     <string name="bolus">Bolus</string>
     <string name="tdd">TDD</string>
     <string name="ratio">Ratio</string>
     <string name="amount_days"># Ngày</string>
-    <string name="weight">Cân nặng</string>
+    <string name="weight">Trọng lượng</string>
     <string name="warning_Message">Kết quả có thể sai lệch nếu tính cả bolus dùng để mồi/đổ đầy ống!</string>
     <string name="olddata_Message">Dữ liệu cũ, vui lòng nhấn \'RELOAD\'</string>
-    <string name="tbb">Tổng basal nền</string>
-    <string name="tbb2">TBB (Tổng Base nền) * 2</string>
+    <string name="tbb">Tổng liều basal</string>
+    <string name="tbb2">TBB * 2</string>
     <!--    Ntp-->
     <string name="timedetection">Nhận diện thời gian</string>
     <!-- User Entry -->
@@ -335,19 +335,18 @@
     <string name="uel_profile_switch_cloned">ĐÃ NHÂN BẢN CHUYỂN CẤU HÌNH</string>
     <string name="uel_closed_loop_mode">CHẾ ĐỘ VÒNG KÍN</string>
     <string name="uel_lgs_loop_mode">CHẾ ĐỘ VÒNG KÍN LGS</string>
-    <string name="uel_open_loop_mode">MỞ VÒNG LẶP</string>
+    <string name="uel_open_loop_mode">VÒNG LẶP MỞ</string>
     <string name="uel_loop_disabled">VÒNG LẶP TẮT</string>
     <string name="uel_loop_resumed">BẬT LẠI VÒNG LẶP</string>
     <string name="uel_pump_running">BƠM ĐANG CHẠY</string>
     <string name="uel_reconnect">KẾT NỐI LẠI</string>
     <string name="uel_disconnect">NGẮT KẾT NỐI</string>
     <string name="uel_resume">TIẾP TỤC</string>
-    <string name="uel_suspend">TẠM NGƯNG</string>
+    <string name="uel_suspend">TẠM DỪNG</string>
     <string name="uel_hw_pump_allowed">CHO PHÉP PHẦN CỨNG PUMP</string>
     <string name="uel_clear_pairing_keys">XÓA KHÓA GHÉP NỐI</string>
     <string name="uel_accepts_temp_basal">CHO PHÉP BASAL TẠM THỜI</string>
     <string name="uel_cancel_temp_basal">HỦY TEMP BASAL</string>
-    <string name="uel_cancel_bolus">HỦY BOLUS</string>
     <string name="uel_cancel_extended_bolus">HỦY BOLUS MỞ RỘNG</string>
     <string name="uel_cancel_tt">CANCEL TEMP TARGET</string>
     <string name="uel_careportal">CAREPORTAL</string>
@@ -359,9 +358,9 @@
     <string name="uel_prime_bolus">BOLUS MỒI</string>
     <string name="uel_treatment">ĐIỀU TRỊ</string>
     <string name="uel_careportal_ns_refresh">CẬP NHẬT CAREPORTAL TỪ NS</string>
-    <string name="uel_profile_switch_ns_refresh">CẬP NHẬT CHUYỂN CẤU HÌNH TỪ NS</string>
+    <string name="uel_profile_switch_ns_refresh">CẬP NHẬT CẤU HÌNH TỪ NS</string>
     <string name="uel_treatments_ns_refresh">CẬP NHẬT ĐIỀU TRỊ TỪ NS</string>
-    <string name="uel_tt_ns_refresh">CẬP NHẬT MỤC TIÊU TẠM THỜI TỪ NS</string>
+    <string name="uel_tt_ns_refresh">CẬP NHẬT TEMP TARGET TỪ NS</string>
     <string name="uel_automation_removed">ĐÃ XÓA AUTOMATION</string>
     <string name="uel_bg_removed">BG REMOVED</string>
     <string name="uel_careportal_removed">ĐÃ XÓA CAREPORTAL</string>
@@ -376,13 +375,13 @@
     <string name="uel_restart_events_removed">SỰ KIỆN KHỞI ĐỘNG LẠI ĐÃ BỊ XÓA</string>
     <string name="uel_treatment_removed">ĐÃ XÓA ĐIỀU TRỊ</string>
     <string name="uel_tt_removed">ĐÃ XÓA TEMP TARGET</string>
-    <string name="uel_ns_paused">NS TẠM DỪNG</string>
+    <string name="uel_ns_paused">ĐÃ TẠM DỪNG NS</string>
     <string name="uel_ns_resume">TIẾP TỤC NS</string>
-    <string name="uel_ns_queue_cleared">DÃ XOÁ HÀNG ĐỢI NS</string>
+    <string name="uel_ns_queue_cleared">ĐÃ XOÁ HÀNG ĐỢI NS</string>
     <string name="uel_ns_settings_copied">ĐÃ SAO CHÉP CÀI ĐẶT NS</string>
-    <string name="uel_error_dialog_ok">ĐỒNG Ý (HỘP THOẠI LỖI)</string>
-    <string name="uel_error_dialog_mute">TẮT TIẾNG (HỘP THOẠI LỖI) </string>
-    <string name="uel_error_dialog_mute_5min">TẮT TIẾNG 5 PHÚT (HỘP THOẠI LỖI)</string>
+    <string name="uel_error_dialog_ok">THÔNG BÁO LỖI OK</string>
+    <string name="uel_error_dialog_mute">TẮT ÂM BÁO LỖI </string>
+    <string name="uel_error_dialog_mute_5min">TẮT ÂM BÁO LỖI TRONG 5 PHÚT</string>
     <string name="uel_objective_started">MỤC TIÊU ĐÃ BẮT ĐẦU</string>
     <string name="uel_objective_unstarted">MỤC TIÊU CHƯA BẮT ĐẦU</string>
     <string name="uel_objectives_skipped">CÁC MỤC TIÊU ĐÃ BỎ QUA</string>
@@ -398,14 +397,14 @@
     <string name="uel_cleanup_databases">DỌN DẸP DỮ LIỆU</string>
     <string name="uel_export_databases">XUẤT DỮ LIỆU</string>
     <string name="uel_import_databases">NHẬP DỮ LIỆU</string>
-    <string name="uel_otp_export">XUẤT OTP</string>
+    <string name="uel_otp_export">XUẤT MÃ OTP</string>
     <string name="uel_otp_reset">ĐẶT LẠI OTP</string>
     <string name="uel_stop_sms">DỪNG SMS</string>
     <string name="uel_export_csv">XUẤT DỮ LIỆU NGƯỜI DÙNG</string>
     <string name="uel_start_aaps">BẮT ĐẦU AAPS</string>
     <string name="uel_exit_aaps">THOÁT AAPS</string>
-    <string name="uel_plugin_enabled">PLUGIN ĐÃ BẬT</string>
-    <string name="uel_plugin_disabled">PLUGIN ĐÃ TẮT</string>
+    <string name="uel_plugin_enabled">ĐÃ BẬT PLUGIN</string>
+    <string name="uel_plugin_disabled">ĐÃ TẮT PLUGIN</string>
     <string name="uel_unknown">KHÔNG XÁC ĐỊNH</string>
     <string name="ue_string">Chuỗi</string>
     <string name="ue_source">Nguồn</string>
