@@ -415,21 +415,24 @@
     <string name="uel_loop_change">VÒNG LẶP ĐÃ THAY ĐỔI</string>
     <string name="uel_loop_removed">VÒNG LẶP ĐÃ BỊ XOÁ</string>
     <string name="uel_other">KHÁC</string>
+    <string name="uel_running_mode">RUNNING MODE</string>
+    <string name="uel_running_mode_removed">ĐÃ XÓA CHẾ ĐỘ THỂ DỤC</string>
+    <string name="uel_running_mode_updarted">ĐÃ CẬP NHẬT CHẾ ĐỘ THỂ DỤC</string>
     <!-- HardLimits -->
-    <string name="profile_low_target">Mục tiêu thấp của cấu hình</string>
-    <string name="profile_high_target">Cấu hình Mục tiêu cao</string>
-    <string name="temp_target_low_target">Giá trị thấp nhất của mục tiêu tạm thời</string>
-    <string name="temp_target_high_target">Giá trị cao nhất của mục tiêu tạm thời</string>
+    <string name="profile_low_target">Mục tiêu Thấp</string>
+    <string name="profile_high_target">Mục tiêu Cao</string>
+    <string name="temp_target_low_target">Giá trị thấp của mục tiêu tạm thời</string>
+    <string name="temp_target_high_target">Giá trị cao của mục tiêu tạm thời</string>
     <string name="temp_target_value">Giá trị mục tiêu tạm thời</string>
-    <string name="profile_dia">Giá trị DIA của cấu hình</string>
-    <string name="profile_sensitivity_value">Giá trị độ nhạy của cấu hình</string>
-    <string name="profile_max_daily_basal_value">Giá trị basal tối đa của cấu hình</string>
+    <string name="profile_dia">Cấu hình giá trị DIA</string>
+    <string name="profile_sensitivity_value">Giá trị độ nhạy</string>
+    <string name="profile_max_daily_basal_value">Giá trị basal tối đa</string>
     <string name="current_basal_value">Giá trị basal hiện tại</string>
-    <string name="profile_carbs_ratio_value">Giá trị tỷ lệ carb của cấu hình</string>
+    <string name="profile_carbs_ratio_value">Giá trị tỷ lệ carb</string>
     <string name="valuelimitedto">%1$.2f bị giới hạn ở %2$.2f</string>
     <string name="valueoutofrange">»%1$s« nằm ngoài giới hạn an toàn</string>
     <string name="value_out_of_hard_limits">»%1$s« %2$.2f nằm ngoài giới hạn an toàn</string>
-    <string name="basal_value">Giá trị Basal</string>
+    <string name="basal_value">Giá trị liều Basal</string>
     <!-- Command Queue + readStatus reasons -->
     <string name="bolus_u_min">BOLUS %1$.2f U</string>
     <string name="carbs_g">CARBS %1$d g</string>
@@ -449,7 +452,7 @@
     <string name="temp_basal_percent">LIỀU BASAL TẠM THỜI %1$d%% %2$d min</string>
     <string name="insight_set_tbr_over_notification">INSIGHT: Đặt TBR thông qua thông báo</string>
     <string name="read_status" comment="10 characters max for READSTATUS translation">TRẠNG THÁI %1$s</string>
-    <string name="keepalive_status_outdated" comment="26 characters max for translation">KeepAlive: Trạng thái lỗi thời.</string>
+    <string name="keepalive_status_outdated" comment="26 characters max for translation">Kết nối. Trạng thái đã hết hạn.</string>
     <string name="keepalive_basal_outdated" comment="26 characters max for translation">Kết nối. Liều Basal Basal đã quá hạn.</string>
     <string name="sms" comment="26 characters max for translation">SMS</string>
     <string name="formatPercent">%1$.0f%%</string>
