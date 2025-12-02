@@ -12,7 +12,7 @@
     <string name="insulin_unit_shortname">U</string>
     <string name="pump_base_basal_rate">%1$.2f U/h</string>
     <string name="pump_not_initialized_profile_not_set">Bơm chưa được khởi tạo, cấu hình (profile) chưa được thiết lập!</string>
-    <string name="failed_update_basal_profile">Cập nhật cấu hình basal profile thất bại</string>
+    <string name="failed_update_basal_profile">Không thể cập nhật cấu hình basal</string>
     <string name="no_valid_basal_rate">Không đọc được liều basal hợp lệ từ bơm</string>
     <string name="limiting_iob">Giới hạn IOB: %1$.1f U – Lý do: %2$s.</string>
     <string name="loop_disabled">VÒNG LẶP BỊ TẮT DO GIỚI HẠN AN TOÀN</string>
@@ -46,7 +46,7 @@
     <string name="advanced_settings_title">Cài đặt nâng cao</string>
     <string name="extendedbolusdeliveryerror">Tiêm liều Bolus mở rộng thất bại</string>
     <string name="aps_mode_title">Chế độ APS</string>
-    <string name="extended_bolus">Bolus mở rộng</string>
+    <string name="extended_bolus">Liều Bolus mở rộng</string>
     <string name="paused">Đã tạm dừng</string>
     <string name="tdd_total">TDD Total</string>
     <string name="tdd_old_data">Dữ liệu cũ</string>
@@ -102,17 +102,17 @@
     <string name="cob">COB</string>
     <string name="name_short">Tên:</string>
     <string name="time">Thời gian</string>
-    <string name="ns_wifi_ssids">WiFi SSID</string>
+    <string name="ns_wifi_ssids">Tên Wi-Fi</string>
     <string name="loading">Đang tải…</string>
     <string name="notes_label">Ghi chú</string>
     <string name="remove_button">Xóa</string>
     <string name="add_new">Thêm mới</string>
     <string name="addnew_above">Thêm ở trên</string>
     <string name="wrong_pump_data">Phát hiện dữ liệu từ bơm khác. Đổi trình điều khiển để đặt lại trạng thái.</string>
-    <string name="bg_label">Đường huyết</string>
+    <string name="bg_label">BG</string>
     <string name="calibration">Hiệu chuẩn</string>
     <string name="alarminxmin">Báo động sau %1$d phút</string>
-    <string name="treatmentdeliveryerror">Bolus gặp lỗi. Hãy kiểm tra thủ công lượng insulin và carb đã bơm</string>
+    <string name="treatmentdeliveryerror">Bolus gặp lỗi. Hãy kiểm tra thủ công lượng carb và insulin đã bơm</string>
     <string name="bolus_reminder">Nhắc nhở bolus</string>
     <string name="duration_label">Duration</string>
     <string name="shortgramm">g</string>
@@ -146,7 +146,7 @@
     <string name="profile">Cấu hình</string>
     <string name="select_for_removal">Chọn để xóa</string>
     <string name="confirm_remove_multiple_items">Bạn có chắc chắn muốn xóa %1$d mục không</string>
-    <string name="overview_treatment_label">Điều trị (Treatment)</string>
+    <string name="overview_treatment_label">Điều trị</string>
     <string name="copytolocalprofile">Tạo cấu hình mới từ cấu hình này không?</string>
     <string name="wear_wizard_settings">Wizard Settings</string>
     <string name="bg_trend_label">Xu hướng 15 phút</string>
