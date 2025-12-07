@@ -65,7 +65,7 @@
     <string name="pref_ring_history">Lịch sử vòng tròn</string>
     <string name="pref_light_ring_history">Lịch sử vòng tròn (nhẹ)</string>
     <string name="pref_animations">Hiệu ứng động</string>
-    <string name="pref_wizard_in_menu">Máy tính trong menu</string>
+    <string name="pref_wizard_in_menu">Tính toán trong menu</string>
     <string name="pref_prime_in_menu">Prime trong menu</string>
     <string name="pref_single_target">Mục tiêu đơn lẻ</string>
     <string name="pref_wizard_percentage">Tính toán theo phần trăm</string>
@@ -75,7 +75,7 @@
     <string name="pref_moreWatchfaceSettings">Thêm cài đặt mặt đồng hồ</string>
     <string name="pref_lookInYourWatchfaceConfiguration">Hãy xem lại phần cài đặt mặt đồng hồ.</string>
     <string name="menu_tempt">TempT</string>
-    <string name="menu_wizard">Máy tính</string>
+    <string name="menu_wizard">Tính toán</string>
     <string name="menu_wizard_short">Calc</string>
     <string name="menu_treatment">Treatment</string>
     <string name="menu_treatment_short">Treat</string>
