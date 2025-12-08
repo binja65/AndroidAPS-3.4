@@ -107,6 +107,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.androidx.wear)
     implementation(libs.androidx.wear.tiles)
+    implementation(libs.androidx.wear.watchface.complications.data.source)
     implementation(libs.androidx.constraintlayout)
 
     compileOnly(libs.com.google.android.wearable)

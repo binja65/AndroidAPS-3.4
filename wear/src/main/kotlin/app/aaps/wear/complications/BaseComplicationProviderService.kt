@@ -13,7 +13,7 @@ import android.support.wearable.complications.ComplicationData
 import android.support.wearable.complications.ComplicationManager
 import android.support.wearable.complications.ComplicationProviderService
 import android.support.wearable.complications.ComplicationText
-import android.support.wearable.complications.ProviderUpdateRequester
+import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
@@ -312,8 +312,8 @@ abstract class BaseComplicationProviderService : ComplicationProviderService() {
                 if (wearUtil.isBelowRateLimit("update-req-$provider", 2)) {
                     aapsLogger.warn(LTag.WEAR, "Requesting update of $provider")
                     val componentName = ComponentName(applicationContext, provider)
-                    val providerUpdateRequester = ProviderUpdateRequester(applicationContext, componentName)
-                    providerUpdateRequester.requestUpdateAll()
+                    val updateRequester = ComplicationDataSourceUpdateRequester.create(applicationContext, componentName)
+                    updateRequester.requestUpdateAll()
                 }
             }
         }
