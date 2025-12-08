@@ -123,7 +123,7 @@ class CmdDevicesOldGet(
         firmwareVersion = fv.toFloat()
         aapsLogger.debug(
             LTag.PUMPCOMM, "CmdDevicesOldGet====" +
-                Utils.bytesToHex(data) + "========" + firmwareVersion + "===" + (firmwareVersion < EquilConst.EQUIL_SUPPORT_LEVEL)
+                    Utils.bytesToHex(data) + "========" + firmwareVersion + "===" + (firmwareVersion < EquilConst.EQUIL_SUPPORT_LEVEL)
         )
         reqModel.ciphertext = Utils.bytesToHex(getNextData())
         synchronized(this) {
@@ -165,8 +165,8 @@ class CmdDevicesOldGet(
         firmwareVersion = fv.toFloat()
         aapsLogger.debug(
             LTag.PUMPCOMM, ("CmdDevicesOldGet====" +
-                Utils.bytesToHex(data) + "=====" + value + "===" + firmwareVersion + "===="
-                + (firmwareVersion < EquilConst.EQUIL_SUPPORT_LEVEL))
+                    Utils.bytesToHex(data) + "=====" + value + "===" + firmwareVersion + "===="
+                    + (firmwareVersion < EquilConst.EQUIL_SUPPORT_LEVEL))
         )
         synchronized(this) {
             cmdSuccess = true
@@ -174,7 +174,15 @@ class CmdDevicesOldGet(
         }
     }
 
-    fun isSupport(): Boolean = firmwareVersion >= EquilConst.EQUIL_SUPPORT_LEVEL
+
+    fun isSupport(serialNumber: String): Boolean {
+        val firstChar = serialNumber.firstOrNull()?.uppercaseChar()
+        val needsVersionCheck = setOf('0', '1', '3', 'A', 'D')
+        return when (firstChar) {
+            in needsVersionCheck -> firmwareVersion >= EquilConst.EQUIL_SUPPORT_LEVEL
+            else -> true
+        }
+    }
 
     override fun getEventType(): EquilHistoryRecord.EventType? = null
 }
