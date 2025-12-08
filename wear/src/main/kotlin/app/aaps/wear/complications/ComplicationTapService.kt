@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package app.aaps.wear.complications
 
 import android.app.Notification
@@ -8,8 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.support.wearable.complications.ProviderUpdateRequester
 import android.widget.Toast
-import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import app.aaps.core.interfaces.logging.AAPSLogger
@@ -112,7 +114,7 @@ class ComplicationTapService : DaggerService() {
 
         // Request an update for the complication that has just been tapped
         if (provider != null) {
-            val requester = ComplicationDataSourceUpdateRequester.create(this, provider)
+            val requester = ProviderUpdateRequester(this, provider)
             requester.requestUpdate(complicationId)
         }
 
