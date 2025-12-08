@@ -2,18 +2,15 @@
 
 package app.aaps.wear.complications
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.IBinder
+import android.os.Bundle
 import android.support.wearable.complications.ProviderUpdateRequester
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.core.app.NotificationCompat
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.sharedPreferences.SP
@@ -26,14 +23,19 @@ import app.aaps.wear.interaction.menus.StatusMenuActivity
 import app.aaps.wear.interaction.utils.Constants
 import app.aaps.wear.interaction.utils.DisplayFormat
 import app.aaps.wear.interaction.utils.WearUtil
-import dagger.android.DaggerService
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
 /**
- * Foreground service to handle complication tap actions reliably.
- * This ensures the tap action works even when the app process was killed.
+ * Transparent activity to handle complication tap actions reliably.
+ * Using an Activity instead of BroadcastReceiver ensures the tap works
+ * even when the app is in Doze mode or deep sleep on Android 12+.
+ *
+ * This solves the ForegroundServiceStartNotAllowedException that occurs
+ * when trying to start a foreground service from a BroadcastReceiver
+ * while the app is in the background.
  */
-class ComplicationTapService : DaggerService() {
+class ComplicationTapActivity : DaggerAppCompatActivity() {
 
     @Inject lateinit var wearUtil: WearUtil
     @Inject lateinit var displayFormat: DisplayFormat
@@ -41,62 +43,90 @@ class ComplicationTapService : DaggerService() {
     @Inject lateinit var aapsLogger: AAPSLogger
 
     companion object {
-        private const val CHANNEL_ID = "complication_tap_channel"
-        private const val NOTIFICATION_ID = 29847
-
         const val EXTRA_PROVIDER_COMPONENT = "info.nightscout.androidaps.complications.action.PROVIDER_COMPONENT"
         const val EXTRA_COMPLICATION_ID = "info.nightscout.androidaps.complications.action.COMPLICATION_ID"
         const val EXTRA_COMPLICATION_ACTION = "info.nightscout.androidaps.complications.action.COMPLICATION_ACTION"
         const val EXTRA_COMPLICATION_SINCE = "info.nightscout.androidaps.complications.action.COMPLICATION_SINCE"
 
-        fun createIntent(
+        /**
+         * Returns a pending intent for complication tap action.
+         * Uses PendingIntent.getActivity() which can be triggered even when app is in background/doze.
+         */
+        fun getTapActionIntent(
             context: Context,
             provider: ComponentName?,
             complicationId: Int,
-            action: ComplicationAction,
-            since: Long? = null
-        ): Intent {
-            return Intent(context, ComplicationTapService::class.java).apply {
+            action: ComplicationAction
+        ): PendingIntent {
+            val intent = Intent(context, ComplicationTapActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 putExtra(EXTRA_PROVIDER_COMPONENT, provider)
                 putExtra(EXTRA_COMPLICATION_ID, complicationId)
                 putExtra(EXTRA_COMPLICATION_ACTION, action.toString())
-                since?.let { putExtra(EXTRA_COMPLICATION_SINCE, it) }
             }
+
+            // Use FLAG_IMMUTABLE for security (required on Android 12+)
+            // Use UPDATE_CURRENT to ensure the intent is refreshed
+            return PendingIntent.getActivity(
+                context,
+                complicationId,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+
+        /**
+         * Returns a pending intent for warning tap action with timestamp
+         */
+        fun getTapWarningSinceIntent(
+            context: Context?,
+            provider: ComponentName?,
+            complicationId: Int,
+            action: ComplicationAction,
+            since: Long
+        ): PendingIntent {
+            val intent = Intent(context, ComplicationTapActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra(EXTRA_PROVIDER_COMPONENT, provider)
+                putExtra(EXTRA_COMPLICATION_ID, complicationId)
+                putExtra(EXTRA_COMPLICATION_ACTION, action.toString())
+                putExtra(EXTRA_COMPLICATION_SINCE, since)
+            }
+
+            return PendingIntent.getActivity(
+                context,
+                complicationId,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
         }
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        createNotificationChannel()
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Start as foreground service immediately to prevent ANR
-        startForeground(NOTIFICATION_ID, createNotification())
+        aapsLogger.debug(LTag.WEAR, "ComplicationTapActivity started")
 
         try {
-            intent?.let { handleComplicationTap(it) }
+            handleComplicationTap()
         } catch (e: Exception) {
             aapsLogger.error(LTag.WEAR, "Error handling complication tap", e)
         } finally {
-            // Stop the service after handling the tap
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf(startId)
+            // Finish immediately - this is a transparent activity
+            finish()
         }
-
-        return START_NOT_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
-
-    private fun handleComplicationTap(intent: Intent) {
+    private fun handleComplicationTap() {
         val extras = intent.extras ?: return
+
         val provider = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             extras.getParcelable(EXTRA_PROVIDER_COMPONENT, ComponentName::class.java)
         } else {
             @Suppress("DEPRECATION")
             extras.getParcelable(EXTRA_PROVIDER_COMPONENT)
         }
+
         val complicationId = extras.getInt(EXTRA_COMPLICATION_ID)
         val complicationActionStr = extras.getString(EXTRA_COMPLICATION_ACTION, ComplicationAction.MENU.toString())
 
@@ -105,12 +135,12 @@ class ComplicationTapService : DaggerService() {
             action = ComplicationAction.valueOf(complicationActionStr)
         } catch (_: IllegalArgumentException) {
             aapsLogger.error(LTag.WEAR, "Cannot interpret complication action: $complicationActionStr")
-        } catch (ex: NullPointerException) {
+        } catch (_: NullPointerException) {
             aapsLogger.error(LTag.WEAR, "Cannot interpret complication action: $complicationActionStr")
         }
 
         action = remapActionWithUserPreferences(action)
-        aapsLogger.debug(LTag.WEAR, "ComplicationTapService handling action: $action for complication: $complicationId")
+        aapsLogger.debug(LTag.WEAR, "ComplicationTapActivity handling action: $action for complication: $complicationId")
 
         // Request an update for the complication that has just been tapped
         if (provider != null) {
@@ -163,27 +193,5 @@ class ComplicationTapService : DaggerService() {
                 else -> originalAction
             }
         }
-    }
-
-    private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            "Complication Actions",
-            NotificationManager.IMPORTANCE_LOW
-        ).apply {
-            description = "Handles complication tap actions"
-            setShowBadge(false)
-        }
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager.createNotificationChannel(channel)
-    }
-
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_icon)
-            .setContentTitle("AAPS")
-            .setContentText("Processing...")
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
     }
 }
