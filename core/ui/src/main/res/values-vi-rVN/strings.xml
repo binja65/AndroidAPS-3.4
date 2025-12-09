@@ -72,7 +72,7 @@
     <string name="basal_label">Basal</string>
     <string name="target_label">Mục tiêu</string>
     <string name="dia_long_label">Thời gian hoạt động của Insulin</string>
-    <string name="ic_long_label">Tỉ lệ Insulin–Carb (ICR)</string>
+    <string name="ic_long_label">Tỷ lệ Insulin/Carb (I:C)</string>
     <string name="isf_long_label">Độ nhạy Insulin (ISF)</string>
     <string name="basal_long_label">Tỷ lệ liều Basal</string>
     <string name="target_long_label">Mục tiêu đường huyết</string>
