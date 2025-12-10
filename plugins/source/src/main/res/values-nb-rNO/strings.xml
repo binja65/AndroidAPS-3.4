@@ -32,6 +32,7 @@
     <string name="bg_generation_interval_minutes">BS-genereringsintervall i minutter</string>
     <!-- Patched Syai Tag App -->
     <string name="syai_tag_app">Syai</string>
+    <string name="description_source_patched_syai_tag_app">Motta blodsukkerverdier fra Syai/Ottai App.</string>
     <!-- Patched SI App -->
     <string name="patched_si_app">SI app</string>
     <string name="description_source_patched_si_app">Motta BS-verdier fra den patchede appen Sibionic SI.</string>
