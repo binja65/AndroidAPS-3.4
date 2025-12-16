@@ -235,4 +235,24 @@
     <string name="status_loop_state">Loop-status</string>
     <string name="label_loop_state_title">AAPS(Loop-status) </string>
     <string name="action_loop_state_selected">Loop-status forespurt</string>
+    <string name="wizard_total_insulin">Totalt insulin</string>
+    <string name="wizard_calculation">Beregning</string>
+    <string name="wizard_carbs_format">%1$d g karbo</string>
+    <string name="wizard_settings_format">IK: %1$s | ISF: %2$s</string>
+    <string name="wizard_percentage_label">Prosent</string>
+    <string name="wizard_bolus_delivered">Bolus levert</string>
+    <string name="wizard_swipe_left_confirm">Sveip til venstre for å bekrefte</string>
+    <string name="wizard_result_bg">BS</string>
+    <string name="wizard_result_bg_tt">BS (Midl. mål: %1$s)</string>
+    <string name="wizard_result_trend">15\' trend</string>
+    <string name="wizard_result_iob">IOB</string>
+    <string name="wizard_result_cob">COB (%1$.1f g)</string>
+    <string name="wizard_result_carbs">Karbo (%1$d g)</string>
+    <string name="wizard_result_subtotal">Delsum</string>
+    <string name="wizard_result_total">Total</string>
+    <string name="wizard_insulin_format">%1$s E</string>
+    <string name="insulin_unit_short">E</string>
+    <string name="wizard_result_correction_percentage">Korr. %1$d%%</string>
+    <string name="expand_calculation_details">Trykk for å vise beregningsdetaljene</string>
+    <string name="wizard_confirmation_sent">Sendt</string>
 </resources>
