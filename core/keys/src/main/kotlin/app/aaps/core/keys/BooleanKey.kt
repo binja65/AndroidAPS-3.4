@@ -52,6 +52,7 @@ enum class BooleanKey(
     ApsUseUam("use_uam", true, defaultedBySM = true), // change from default false
     ApsSensitivityRaisesTarget("sensitivity_raises_target", true, defaultedBySM = true),
     ApsResistanceLowersTarget("resistance_lowers_target", true, defaultedBySM = true), // change from default false
+    ApsSuggestedBasalEnabled("suggested_basal_enabled", true, defaultedBySM = true),
     ApsAlwaysUseShortDeltas("always_use_shortavg", false, defaultedBySM = true, hideParentScreenIfHidden = true),
     ApsDynIsfAdjustSensitivity("dynisf_adjust_sensitivity", false, defaultedBySM = true, dependency = ApsUseDynamicSensitivity), // change from default false
     ApsAmaAutosensAdjustTargets("autosens_adjust_targets", true, defaultedBySM = true),

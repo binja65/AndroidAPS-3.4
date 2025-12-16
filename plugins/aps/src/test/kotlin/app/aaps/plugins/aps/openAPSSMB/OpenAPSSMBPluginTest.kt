@@ -8,6 +8,7 @@ import app.aaps.core.interfaces.iob.GlucoseStatusProvider
 import app.aaps.core.interfaces.profiling.Profiler
 import app.aaps.core.interfaces.stats.TddCalculator
 import app.aaps.core.interfaces.ui.UiInteraction
+import app.aaps.plugins.aps.SuggestedBasalCalculator
 import app.aaps.core.validators.preferences.AdaptiveDoublePreference
 import app.aaps.core.validators.preferences.AdaptiveIntPreference
 import app.aaps.core.validators.preferences.AdaptiveIntentPreference
@@ -30,6 +31,7 @@ class OpenAPSSMBPluginTest : TestBaseWithProfile() {
     @Mock lateinit var tddCalculator: TddCalculator
     @Mock lateinit var uiInteraction: UiInteraction
     @Mock lateinit var profiler: Profiler
+    @Mock lateinit var suggestedBasalCalculator: SuggestedBasalCalculator
     private lateinit var openAPSSMBPlugin: OpenAPSSMBPlugin
 
     init {
@@ -66,7 +68,7 @@ class OpenAPSSMBPluginTest : TestBaseWithProfile() {
         openAPSSMBPlugin = OpenAPSSMBPlugin(
             injector, aapsLogger, rxBus, constraintChecker, rh, profileFunction, profileUtil, config, activePlugin,
             iobCobCalculator, hardLimits, preferences, dateUtil, processedTbrEbData, persistenceLayer, glucoseStatusProvider,
-            tddCalculator, bgQualityCheck, uiInteraction, determineBasalSMB, profiler
+            tddCalculator, bgQualityCheck, uiInteraction, determineBasalSMB, profiler, suggestedBasalCalculator
         )
     }
 

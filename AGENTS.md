@@ -50,3 +50,4 @@ Whenever you add a new AI Doc, please remember to update this list:
 - ai-docs/smb-limitations.md — SMB “always”/“after carbs” limits enforced by advanced filtering support and how BG sources report it.
 - ai-docs/version-expiration.md — Version expiration guard implementation and data map; how the app warns and clamps automation once a build is past its expiry.
 - ai-docs/script-debug-output.md — How APS algorithms build `consoleError`/`scriptDebug` messages and surface them in the OpenAPS fragment UI.
+- ai-docs/suggested-basal-debug.md — Suggested basal debug line added by APS plugins, its inputs (TDD/profile/settings), preferences, and current placeholder behavior.

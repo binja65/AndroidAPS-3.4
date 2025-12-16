@@ -20,6 +20,7 @@ import app.aaps.core.interfaces.aps.APSResult
 import app.aaps.core.interfaces.aps.AutosensResult
 import app.aaps.core.interfaces.aps.CurrentTemp
 import app.aaps.core.interfaces.aps.OapsProfileAutoIsf
+import app.aaps.core.interfaces.aps.RT
 import app.aaps.core.interfaces.bgQualityCheck.BgQualityCheck
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.constraints.Constraint
@@ -42,6 +43,7 @@ import app.aaps.core.interfaces.profiling.Profiler
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventAPSCalculationFinished
+import app.aaps.core.interfaces.stats.TddCalculator
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.HardLimits
@@ -71,6 +73,9 @@ import app.aaps.plugins.aps.OpenAPSFragment
 import app.aaps.plugins.aps.R
 import app.aaps.plugins.aps.events.EventOpenAPSUpdateGui
 import app.aaps.plugins.aps.events.EventResetOpenAPSGui
+import app.aaps.plugins.aps.SuggestedBasalCalculator
+import app.aaps.plugins.aps.SuggestedBasalInput
+import app.aaps.plugins.aps.SuggestedBasalSettings
 import dagger.android.HasAndroidInjector
 import org.json.JSONObject
 import java.util.Locale
@@ -99,10 +104,12 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     private val processedTbrEbData: ProcessedTbrEbData,
     private val persistenceLayer: PersistenceLayer,
     private val glucoseStatusProvider: GlucoseStatusProvider,
+    private val tddCalculator: TddCalculator,
     private val bgQualityCheck: BgQualityCheck,
     private val uiInteraction: UiInteraction,
     private val determineBasalAutoISF: DetermineBasalAutoISF,
-    private val profiler: Profiler
+    private val profiler: Profiler,
+    private val suggestedBasalCalculator: SuggestedBasalCalculator
 ) : PluginBase(
     PluginDescription()
         .mainType(PluginType.APS)
@@ -432,6 +439,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         aapsLogger.debug(LTag.APS, "AutoIsfMode:        $autoIsfMode")
         //aapsLogger.debug(LTag.APS, "AutoISF extras:     ${Json.encodeToString(OapsProfile.serializer(), oapsProfile)}")
 
+        val suggestedBasalSettings = suggestedBasalSettings()
+        val suggestedBasalTdd = resolveSuggestedBasalTdd()
         determineBasalAutoISF.determine_basal(
             glucose_status = glucoseStatus,
             currenttemp = currentTemp,
@@ -451,6 +460,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             auto_isf_consoleError = consoleError,
             auto_isf_consoleLog = consoleLog
         ).also {
+            addSuggestedBasalDebug(it, profile, suggestedBasalTdd, suggestedBasalSettings)
             val determineBasalResult = DetermineBasalResult(injector, it)
             // Preserve input data
             determineBasalResult.inputConstraints = inputConstraints
@@ -535,6 +545,33 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             .store(BooleanKey.ApsUseDynamicSensitivity, preferences)
             .store(IntKey.ApsDynIsfAdjustmentFactor, preferences)
     }
+
+    private fun addSuggestedBasalDebug(rt: RT, profile: Profile, tdd: Double?, settings: SuggestedBasalSettings) {
+        if (!settings.enabled) return
+        val suggestedBasal = suggestedBasalCalculator.calculateSuggestedBasalRate(
+            SuggestedBasalInput(
+                tdd = tdd,
+                profile = profile,
+                settings = settings
+            )
+        )
+        val tddText = tdd?.let { formatAmount(it) } ?: "n/a"
+        val basalText = formatRate(profile.getBasal())
+        val multiplierText = formatAmount(settings.multiplier)
+        val suggestedText = formatRate(suggestedBasal)
+        rt.consoleError?.add("Suggested basal (debug): $suggestedText U/h (TDD=$tddText U, basal now=$basalText U/h, multiplier=$multiplierText)")
+    }
+
+    private fun resolveSuggestedBasalTdd(): Double? = tddCalculator.calculateDaily(-24, 0)?.totalAmount
+
+    private fun suggestedBasalSettings(): SuggestedBasalSettings =
+        SuggestedBasalSettings(
+            enabled = preferences.get(BooleanKey.ApsSuggestedBasalEnabled),
+            multiplier = preferences.get(DoubleKey.ApsSuggestedBasalMultiplier)
+        )
+
+    private fun formatRate(value: Double): String = String.format(Locale.US, "%.3f", value)
+    private fun formatAmount(value: Double): String = String.format(Locale.US, "%.2f", value)
 
     // Rounds value to 'digits' decimal places
     // different for negative numbers fun round(value: Double, digits: Int): Double = BigDecimal(value).setScale(digits, RoundingMode.HALF_EVEN).toDouble()
@@ -949,6 +986,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsMaxBasal, dialogMessage = R.string.openapsma_max_basal_summary, title = R.string.openapsma_max_basal_title))
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsSmbMaxIob, dialogMessage = R.string.openapssmb_max_iob_summary, title = R.string.openapssmb_max_iob_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsUseAutosens, title = R.string.openapsama_use_autosens))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsSuggestedBasalEnabled, summary = R.string.suggested_basal_enabled_summary, title = R.string.suggested_basal_enabled_title))
+            addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsSuggestedBasalMultiplier, dialogMessage = R.string.suggested_basal_summary, title = R.string.suggested_basal_title))
             //addPreference(AdaptiveUnitPreference(ctx = context, unitKey = UnitDoubleKey.ApsLgsThreshold, dialogMessage = R.string.lgs_threshold_summary, title = R.string.lgs_threshold_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsSensitivityRaisesTarget, summary = R.string.sensitivity_raises_target_summary, title = R.string.sensitivity_raises_target_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsResistanceLowersTarget, summary = R.string.resistance_lowers_target_summary, title = R.string.resistance_lowers_target_title))

@@ -14,6 +14,7 @@ import app.aaps.core.interfaces.aps.APSResult
 import app.aaps.core.interfaces.aps.AutosensResult
 import app.aaps.core.interfaces.aps.CurrentTemp
 import app.aaps.core.interfaces.aps.OapsProfile
+import app.aaps.core.interfaces.aps.RT
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.constraints.Constraint
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
@@ -32,6 +33,7 @@ import app.aaps.core.interfaces.profile.ProfileFunction
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventAPSCalculationFinished
+import app.aaps.core.interfaces.stats.TddCalculator
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.interfaces.utils.Round
@@ -53,8 +55,12 @@ import app.aaps.plugins.aps.OpenAPSFragment
 import app.aaps.plugins.aps.R
 import app.aaps.plugins.aps.events.EventOpenAPSUpdateGui
 import app.aaps.plugins.aps.events.EventResetOpenAPSGui
+import app.aaps.plugins.aps.SuggestedBasalCalculator
+import app.aaps.plugins.aps.SuggestedBasalInput
+import app.aaps.plugins.aps.SuggestedBasalSettings
 import dagger.android.HasAndroidInjector
 import org.json.JSONObject
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.floor
@@ -77,7 +83,9 @@ class OpenAPSAMAPlugin @Inject constructor(
     private val persistenceLayer: PersistenceLayer,
     private val glucoseStatusProvider: GlucoseStatusProvider,
     private val preferences: Preferences,
-    private val determineBasalAMA: DetermineBasalAMA
+    private val determineBasalAMA: DetermineBasalAMA,
+    private val tddCalculator: TddCalculator,
+    private val suggestedBasalCalculator: SuggestedBasalCalculator
 
 ) : PluginBase(
     PluginDescription()
@@ -184,6 +192,7 @@ class OpenAPSAMAPlugin @Inject constructor(
 
         val iobArray = iobCobCalculator.calculateIobArrayInDia(profile)
         val mealData = iobCobCalculator.getMealDataWithWaitingForCalculationFinish()
+        val suggestedBasalTdd = resolveSuggestedBasalTdd()
 
         val oapsProfile = OapsProfile(
             dia = min(profile.dia, 3.0),
@@ -228,7 +237,7 @@ class OpenAPSAMAPlugin @Inject constructor(
             out_units = if (profileFunction.getUnits() == GlucoseUnit.MMOL) "mmol/L" else "mg/dl",
             variable_sens = 0.0, // not used
             insulinDivisor = 0, // not used
-            TDD = 0.0 // not used
+            TDD = suggestedBasalTdd ?: 0.0 // not used
         )
 
         aapsLogger.debug(LTag.APS, ">>> Invoking determine_basal AMA <<<")
@@ -239,6 +248,7 @@ class OpenAPSAMAPlugin @Inject constructor(
         aapsLogger.debug(LTag.APS, "Autosens data:      $autosensResult")
         aapsLogger.debug(LTag.APS, "Meal data:          $mealData")
 
+        val suggestedBasalSettings = suggestedBasalSettings()
         determineBasalAMA.determine_basal(
             glucose_status = glucoseStatus,
             currenttemp = currentTemp,
@@ -248,6 +258,7 @@ class OpenAPSAMAPlugin @Inject constructor(
             meal_data = mealData,
             currentTime = now
         ).also {
+            addSuggestedBasalDebug(it, profile, suggestedBasalTdd, suggestedBasalSettings)
             val determineBasalResult = DetermineBasalResult(injector, it)
             // Preserve input data
             determineBasalResult.inputConstraints = inputConstraints
@@ -308,6 +319,33 @@ class OpenAPSAMAPlugin @Inject constructor(
     override fun configuration(): JSONObject = JSONObject()
     override fun applyConfiguration(configuration: JSONObject) {}
 
+    private fun addSuggestedBasalDebug(rt: RT, profile: Profile, tdd: Double?, settings: SuggestedBasalSettings) {
+        if (!settings.enabled) return
+        val suggestedBasal = suggestedBasalCalculator.calculateSuggestedBasalRate(
+            SuggestedBasalInput(
+                tdd = tdd,
+                profile = profile,
+                settings = settings
+            )
+        )
+        val tddText = tdd?.let { formatAmount(it) } ?: "n/a"
+        val basalText = formatRate(profile.getBasal())
+        val multiplierText = formatAmount(settings.multiplier)
+        val suggestedText = formatRate(suggestedBasal)
+        rt.consoleError?.add("Suggested basal (debug): $suggestedText U/h (TDD=$tddText U, basal now=$basalText U/h, multiplier=$multiplierText)")
+    }
+
+    private fun resolveSuggestedBasalTdd(): Double? = tddCalculator.calculateDaily(-24, 0)?.totalAmount
+
+    private fun suggestedBasalSettings(): SuggestedBasalSettings =
+        SuggestedBasalSettings(
+            enabled = preferences.get(BooleanKey.ApsSuggestedBasalEnabled),
+            multiplier = preferences.get(DoubleKey.ApsSuggestedBasalMultiplier)
+        )
+
+    private fun formatRate(value: Double): String = String.format(Locale.US, "%.3f", value)
+    private fun formatAmount(value: Double): String = String.format(Locale.US, "%.2f", value)
+
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "absorption_ama_advanced") return
         val category = PreferenceCategory(context)
@@ -319,6 +357,8 @@ class OpenAPSAMAPlugin @Inject constructor(
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsMaxBasal, dialogMessage = R.string.openapsma_max_basal_summary, title = R.string.openapsma_max_basal_title))
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsAmaMaxIob, dialogMessage = R.string.openapsma_max_iob_summary, title = R.string.openapsma_max_iob_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsUseAutosens, title = R.string.openapsama_use_autosens))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsSuggestedBasalEnabled, summary = R.string.suggested_basal_enabled_summary, title = R.string.suggested_basal_enabled_title))
+            addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsSuggestedBasalMultiplier, dialogMessage = R.string.suggested_basal_summary, title = R.string.suggested_basal_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsAmaAutosensAdjustTargets, summary = R.string.openapsama_autosens_adjust_targets_summary, title = R.string.openapsama_autosens_adjust_targets))
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsAmaMin5MinCarbsImpact, dialogMessage = R.string.openapsama_min_5m_carb_impact_summary, title = R.string.openapsama_min_5m_carb_impact))
             addPreference(preferenceManager.createPreferenceScreen(context).apply {
