@@ -235,4 +235,24 @@
     <string name="status_loop_state">Stato loop</string>
     <string name="label_loop_state_title">AAPS (stato Loop)</string>
     <string name="action_loop_state_selected">Stato del loop richiesto</string>
+    <string name="wizard_total_insulin">Insulina totale</string>
+    <string name="wizard_calculation">Calcolo</string>
+    <string name="wizard_carbs_format">%1$d g carboidrati</string>
+    <string name="wizard_settings_format">IC: %1$s | ISF: %2$s</string>
+    <string name="wizard_percentage_label">Percentuale</string>
+    <string name="wizard_bolus_delivered">Bolo erogato</string>
+    <string name="wizard_swipe_left_confirm">Scorri verso sinistra per confermare</string>
+    <string name="wizard_result_bg">BG</string>
+    <string name="wizard_result_bg_tt">BG (TT: %1$s)</string>
+    <string name="wizard_result_trend">Trend di 15min</string>
+    <string name="wizard_result_iob">IOB</string>
+    <string name="wizard_result_cob">COB (%1$.1f g)</string>
+    <string name="wizard_result_carbs">Carboidrati (%1$d g)</string>
+    <string name="wizard_result_subtotal">Subtotale</string>
+    <string name="wizard_result_total">Totale</string>
+    <string name="wizard_insulin_format">%1$s U</string>
+    <string name="insulin_unit_short">U</string>
+    <string name="wizard_result_correction_percentage">Corr. %1$d%%</string>
+    <string name="expand_calculation_details">Clicca per espandere i dettagli di calcolo</string>
+    <string name="wizard_confirmation_sent">Inviato</string>
 </resources>
