@@ -235,4 +235,24 @@
     <string name="status_loop_state">Stav uzavretého okruhu</string>
     <string name="label_loop_state_title">AAPS (Stav uzavretého okruhu)</string>
     <string name="action_loop_state_selected">Požadovaný stav uzavretého okruhu</string>
+    <string name="wizard_total_insulin">Celkový inzulín</string>
+    <string name="wizard_calculation">Výpočet</string>
+    <string name="wizard_carbs_format">%1$d g sacharidov</string>
+    <string name="wizard_settings_format">IC: %1$s | ISF: %2$s</string>
+    <string name="wizard_percentage_label">Percento</string>
+    <string name="wizard_bolus_delivered">Bolus bol podaný</string>
+    <string name="wizard_swipe_left_confirm">Potiahnite prstom doľava pre potvrdenie</string>
+    <string name="wizard_result_bg">GL</string>
+    <string name="wizard_result_bg_tt">GL (DC: %1$s)</string>
+    <string name="wizard_result_trend">15min trend</string>
+    <string name="wizard_result_iob">IOB</string>
+    <string name="wizard_result_cob">COB (%1$.1f g)</string>
+    <string name="wizard_result_carbs">Sacharidy (%1$d g)</string>
+    <string name="wizard_result_subtotal">Medzisúčet</string>
+    <string name="wizard_result_total">Spolu</string>
+    <string name="wizard_insulin_format">%1$s JI</string>
+    <string name="insulin_unit_short">JI</string>
+    <string name="wizard_result_correction_percentage">Korekcia %1$d%%</string>
+    <string name="expand_calculation_details">Kliknutím rozbalíte podrobnosti výpočtu</string>
+    <string name="wizard_confirmation_sent">Odoslané</string>
 </resources>
