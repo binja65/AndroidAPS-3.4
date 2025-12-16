@@ -235,4 +235,24 @@
     <string name="status_loop_state">Trạng thái vòng lặp</string>
     <string name="label_loop_state_title">AAPS(Trạng thái vòng lặp)</string>
     <string name="action_loop_state_selected">Đã yêu cầu trạng thái vòng lặp</string>
+    <string name="wizard_total_insulin">Tổng insulin</string>
+    <string name="wizard_calculation">Tính toán</string>
+    <string name="wizard_carbs_format">%1$d g carbs</string>
+    <string name="wizard_settings_format">IC: %1$s | ISF: %2$s</string>
+    <string name="wizard_percentage_label">Phần trăm</string>
+    <string name="wizard_bolus_delivered">Đã tiêm bolus</string>
+    <string name="wizard_swipe_left_confirm">Vuốt sang trái để xác nhận</string>
+    <string name="wizard_result_bg">BG</string>
+    <string name="wizard_result_bg_tt">BG (TT: %1$s)</string>
+    <string name="wizard_result_trend">Xu hướng 15 phút</string>
+    <string name="wizard_result_iob">IOB</string>
+    <string name="wizard_result_cob">COB (%1$.1f g)</string>
+    <string name="wizard_result_carbs">Carbs (%1$d g)</string>
+    <string name="wizard_result_subtotal">Tổng phụ</string>
+    <string name="wizard_result_total">Tổng</string>
+    <string name="wizard_insulin_format">%1$s U</string>
+    <string name="insulin_unit_short">U</string>
+    <string name="wizard_result_correction_percentage">Corr. %1$d%%</string>
+    <string name="expand_calculation_details">Nhấn để mở rộng chi tiết tính toán</string>
+    <string name="wizard_confirmation_sent">Gửi</string>
 </resources>
