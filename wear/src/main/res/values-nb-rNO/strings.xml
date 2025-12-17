@@ -156,10 +156,14 @@
     <string name="pref_include_external">Inkluder eksterne visninger i mal</string>
     <string name="pref_switch_external">Bytt ekstern dataer i urskiven</string>
     <string name="custom_pref_show_seconds">Vis sekunder</string>
+    <string name="digitalstyle_pref_your_style">Stil</string>
     <string name="digitalstyle_style_none">ingen stil</string>
     <string name="digitalstyle_style_minimal">minimalistisk stil</string>
     <string name="digitalstyle_style_shape">form-stil</string>
     <string name="digitalstyle_style_full">full stil</string>
+    <string name="digitalstyle_pref_your_color">Farge</string>
+    <string name="digitalstyle_pref_your_color_saturation">Fargemetning</string>
+    <string name="digitalstyle_pref_your_color_opacity">Fargeopasitet</string>
     <string name="bolus_progress_channel_name">AAPS bolusfremdrift</string>
     <string name="bolus_progress_silent_channel_name">AAPS stille bolusfremdrift</string>
     <string name="bolus_progress_channel_description">Bolusfremdrift og avbryt</string>
