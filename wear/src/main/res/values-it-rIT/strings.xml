@@ -156,10 +156,14 @@
     <string name="pref_include_external">Includi viste esterne nel modello</string>
     <string name="pref_switch_external">Cambia dati esterni in Watchface</string>
     <string name="custom_pref_show_seconds">Mostra secondi</string>
+    <string name="digitalstyle_pref_your_style">Il tuo stile</string>
     <string name="digitalstyle_style_none">nessuno stile</string>
     <string name="digitalstyle_style_minimal">stile minimale</string>
     <string name="digitalstyle_style_shape">stile shape</string>
     <string name="digitalstyle_style_full">stile completo</string>
+    <string name="digitalstyle_pref_your_color">Il tuo colore</string>
+    <string name="digitalstyle_pref_your_color_saturation">Saturazione del tuo colore</string>
+    <string name="digitalstyle_pref_your_color_opacity">Opacità del tuo colore</string>
     <string name="bolus_progress_channel_name">Progresso bolo AAPS</string>
     <string name="bolus_progress_silent_channel_name">Progresso bolo AAPS silenzioso</string>
     <string name="bolus_progress_channel_description">Progresso e cancellazione bolo</string>
