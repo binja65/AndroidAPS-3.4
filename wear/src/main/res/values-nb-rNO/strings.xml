@@ -238,8 +238,6 @@
     <string name="wizard_calculation">Beregning</string>
     <string name="wizard_carbs_format">%1$d g karbo</string>
     <string name="wizard_settings_format">IK: %1$s | ISF: %2$s</string>
-    <string name="wizard_percentage_label">Prosent</string>
-    <string name="wizard_bolus_delivered">Bolus levert</string>
     <string name="wizard_swipe_left_confirm">Sveip til venstre for å bekrefte</string>
     <string name="wizard_result_bg">BS</string>
     <string name="wizard_result_bg_tt">BS (Midl. mål: %1$s)</string>
