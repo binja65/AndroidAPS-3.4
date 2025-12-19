@@ -252,4 +252,5 @@
     <string name="wizard_result_correction_percentage">Corr. %1$d%%</string>
     <string name="expand_calculation_details">Haga clic para expandir los detalles de cálculo</string>
     <string name="wizard_confirmation_sent">Enviado</string>
+    <string name="tile_settings">Ajustes de tarjetas</string>
 </resources>
