@@ -234,8 +234,6 @@
     <string name="wizard_calculation">Výpočet</string>
     <string name="wizard_carbs_format">%1$d g sacharidů</string>
     <string name="wizard_settings_format">IC: %1$s | ISF: %2$s</string>
-    <string name="wizard_percentage_label">Procento</string>
-    <string name="wizard_bolus_delivered">Bolus byl podán</string>
     <string name="wizard_swipe_left_confirm">Přejetím vlevo potvrďte</string>
     <string name="wizard_result_bg">GL</string>
     <string name="wizard_result_bg_tt">GL (DC: %1$s)</string>
