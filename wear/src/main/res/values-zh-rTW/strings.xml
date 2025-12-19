@@ -238,8 +238,6 @@
     <string name="wizard_calculation">計算</string>
     <string name="wizard_carbs_format">%1$d 克碳水化合物</string>
     <string name="wizard_settings_format">IC：%1$s ｜ ISF：%2$s</string>
-    <string name="wizard_percentage_label">百分比</string>
-    <string name="wizard_bolus_delivered">已注射劑量</string>
     <string name="wizard_swipe_left_confirm">向左滑動以確認</string>
     <string name="wizard_result_bg">血糖</string>
     <string name="wizard_result_bg_tt">血糖（目標時間：%1$s）</string>
