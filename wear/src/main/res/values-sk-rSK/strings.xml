@@ -156,10 +156,14 @@
     <string name="pref_include_external">Zahrnúť externé zobrazenia do šablóny</string>
     <string name="pref_switch_external">Zobraziť externé dáta v ciferníku</string>
     <string name="custom_pref_show_seconds">Zobrazovať sekundy</string>
+    <string name="digitalstyle_pref_your_style">Tvoj štýl</string>
     <string name="digitalstyle_style_none">žiadny štýl</string>
     <string name="digitalstyle_style_minimal">minimálny štýl</string>
     <string name="digitalstyle_style_shape">tvar štýlu</string>
     <string name="digitalstyle_style_full">úplný štýl</string>
+    <string name="digitalstyle_pref_your_color">Tvoja farba</string>
+    <string name="digitalstyle_pref_your_color_saturation">Tvoja sýtosť farieb</string>
+    <string name="digitalstyle_pref_your_color_opacity">Tvoja priehľadnosť farieb</string>
     <string name="bolus_progress_channel_name">AAPS Priebeh podávania bolusu</string>
     <string name="bolus_progress_silent_channel_name">AAPS Priebeh podávania bolusu tichý</string>
     <string name="bolus_progress_channel_description">Priebeh bolusu a zrušenie</string>
