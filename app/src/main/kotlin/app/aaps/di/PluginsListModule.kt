@@ -1,5 +1,7 @@
 package app.aaps.di
 
+import dagger.Binds
+import dagger.multibindings.IntoSet
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.plugins.aps.autotune.AutotunePlugin
 import app.aaps.plugins.aps.loop.LoopPlugin

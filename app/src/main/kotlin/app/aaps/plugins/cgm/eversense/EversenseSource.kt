@@ -1,25 +1,33 @@
 package app.aaps.plugins.cgm.eversense
 
-import javax.inject.Inject // <--- Make sure this is imported
-import app.aaps.common.interfaces.PluginBase
-import app.aaps.plugins.cgm.common.CgmSourcePlugin
+import javax.inject.Inject
+import app.aaps.R
+import app.aaps.common.helpers.ResourceHelper
+import app.aaps.common.logger.AAPSLogger
+import app.aaps.common.enums.PluginType
+import app.aaps.common.objects.PluginDescription
+import app.aaps.plugins.cgm.common.AbstractBgSourceWithSensorInsertLogPlugin
+import app.aaps.common.interfaces.BgSource
 
-// Add "@Inject constructor()" here:
-class EversenseSource @Inject constructor() : CgmSourcePlugin, PluginBase { 
+class EversenseSource @Inject constructor(
+    rh: ResourceHelper,
+    aapsLogger: AAPSLogger
+) : AbstractBgSourceWithSensorInsertLogPlugin(
+    PluginDescription()
+        .mainType(PluginType.BGSOURCE)
+        .fragmentClass(EversenseFragment::class.java.name) // <--- Your Fragment
+        .pluginIcon(R.drawable.ic_blooddrop_48) // Use generic icon for now
+        .preferencesId(R.xml.eversense_preferences) // <--- Your Menu XML
+        .pluginName(R.string.source_eversense)
+        .preferencesVisibleInSimpleMode(false)
+        .description(R.string.description_source_eversense),
+    aapsLogger, rh
+), BgSource {
 
-    override fun getName(): String = "Eversense"
+    // Since we inherit from AbstractBgSource..., we might need to implement
+    // a few internal methods. If "class EversenseSource" has a red underline,
+    // click it and press Alt+Enter > "Implement Members".
 
-    // Shows in the "General" section (Configuration list)
-    override fun isEnabled(type: Int): Boolean = type == PluginBase.GENERAL
-
-    // The name the user actually sees in the list
-    override fun getVisibleName(): String = "Eversense"
-
-    // Allows the user to hide it
-    override fun canBeHidden(): Boolean = true
-
-    // This connects the "Gear" icon to the menu below
-    override fun getSettingsFragment(): Any {
-        return EversenseFragment()
-    }
+    // Likely required member (example):
+    // override fun getBgSourceType(): BgSourceType = BgSourceType.XMITTER
 }
