@@ -252,4 +252,5 @@
     <string name="wizard_result_correction_percentage">修正 %1$d%%</string>
     <string name="expand_calculation_details">點擊以展開計算詳細內容</string>
     <string name="wizard_confirmation_sent">已送出</string>
+    <string name="tile_settings">資訊方塊設定</string>
 </resources>
