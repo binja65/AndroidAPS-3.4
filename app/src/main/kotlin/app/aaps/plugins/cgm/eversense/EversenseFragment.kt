@@ -1,10 +1,10 @@
 package app.aaps.plugins.cgm.eversense
 
+import app.aaps.common.utils.ToastUtils
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import app.aaps.R
-import app.aaps.utils.ToastUtils
 
 class EversenseFragment : PreferenceFragmentCompat() {
 

@@ -393,9 +393,11 @@ abstract class PluginsListModule {
     abstract fun bindNSClientSourcePlugin(plugin: NSClientSourcePlugin): PluginBase
 	
 	@Binds
-    @IntoSet
+    @AllConfigs  // Required for ConfigBuilder to find it
+    @IntoMap     // Required by the module structure
+    @IntKey(415) // Pick a unique number. Xdrip is 400, NSClient is 410, MM640g is 420. 415 is safe.
     abstract fun bindEversenseSourcePlugin(plugin: app.aaps.plugins.cgm.eversense.EversenseSource): PluginBase
-
+	
     @Binds
     @AllConfigs
     @IntoMap

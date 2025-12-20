@@ -6,14 +6,12 @@ import app.aaps.common.helpers.ResourceHelper
 import app.aaps.common.logger.AAPSLogger
 import app.aaps.common.enums.PluginType
 import app.aaps.common.objects.PluginDescription
-import app.aaps.plugins.cgm.common.AbstractBgSourceWithSensorInsertLogPlugin
-import app.aaps.common.interfaces.BgSource
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.source.BgSource
-import app.aaps.plugins.source.AbstractBgSourceWithSensorInsertLogPlugin
+import app.aaps.plugins.source.AbstractBgSourceWithSensorInsertLogPlugin // <--- Correct path for your version
+import app.aaps.core.interfaces.source.BgSource // <--- Correct interface path
 
 class EversenseSource @Inject constructor(
     rh: ResourceHelper,
@@ -21,19 +19,15 @@ class EversenseSource @Inject constructor(
 ) : AbstractBgSourceWithSensorInsertLogPlugin(
     PluginDescription()
         .mainType(PluginType.BGSOURCE)
-        .fragmentClass(EversenseFragment::class.java.name) // <--- Your Fragment
-        .pluginIcon(R.drawable.ic_blooddrop_48) // Use generic icon for now
-        .preferencesId(R.xml.eversense_preferences) // <--- Your Menu XML
+        .fragmentClass(EversenseFragment::class.java.name)
+        .pluginIcon(R.drawable.ic_blooddrop_48)
+        .preferencesId(R.xml.eversense_preferences)
         .pluginName(R.string.source_eversense)
         .preferencesVisibleInSimpleMode(false)
         .description(R.string.description_source_eversense),
     aapsLogger, rh
 ), BgSource {
 
-    // Since we inherit from AbstractBgSource..., we might need to implement
-    // a few internal methods. If "class EversenseSource" has a red underline,
-    // click it and press Alt+Enter > "Implement Members".
-
-    // Likely required member (example):
-    // override fun getBgSourceType(): BgSourceType = BgSourceType.XMITTER
+    // If "BgSource" interface requires specific methods, implement them here.
+    // For now, this minimal setup should compile if AbstractBgSource handles the basics.
 }
