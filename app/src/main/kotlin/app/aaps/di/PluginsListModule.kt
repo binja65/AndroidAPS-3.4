@@ -389,6 +389,10 @@ abstract class PluginsListModule {
     @IntoMap
     @IntKey(410)
     abstract fun bindNSClientSourcePlugin(plugin: NSClientSourcePlugin): PluginBase
+	
+	@Binds
+    @IntoSet
+    abstract fun bindEversenseSource(plugin: app.aaps.plugins.cgm.eversense.EversenseSource): PluginBase
 
     @Binds
     @AllConfigs
