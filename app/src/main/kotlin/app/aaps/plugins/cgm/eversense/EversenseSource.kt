@@ -8,6 +8,12 @@ import app.aaps.common.enums.PluginType
 import app.aaps.common.objects.PluginDescription
 import app.aaps.plugins.cgm.common.AbstractBgSourceWithSensorInsertLogPlugin
 import app.aaps.common.interfaces.BgSource
+import app.aaps.core.data.plugin.PluginType
+import app.aaps.core.interfaces.logging.AAPSLogger
+import app.aaps.core.interfaces.plugin.PluginDescription
+import app.aaps.core.interfaces.resources.ResourceHelper
+import app.aaps.core.interfaces.source.BgSource
+import app.aaps.plugins.source.AbstractBgSourceWithSensorInsertLogPlugin
 
 class EversenseSource @Inject constructor(
     rh: ResourceHelper,

@@ -394,7 +394,7 @@ abstract class PluginsListModule {
 	
 	@Binds
     @IntoSet
-    abstract fun bindEversenseSource(plugin: app.aaps.plugins.cgm.eversense.EversenseSource): PluginBase
+    abstract fun bindEversenseSourcePlugin(plugin: app.aaps.plugins.cgm.eversense.EversenseSource): PluginBase
 
     @Binds
     @AllConfigs
