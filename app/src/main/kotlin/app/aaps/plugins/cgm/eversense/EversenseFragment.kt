@@ -1,10 +1,10 @@
 package app.aaps.plugins.cgm.eversense
 
 import android.os.Bundle
+import android.widget.Toast // <--- Standard Android Toast (Guaranteed to work)
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import app.aaps.R
-import app.aaps.utils.ToastUtils
 
 class EversenseFragment : PreferenceFragmentCompat() {
 
@@ -15,12 +15,13 @@ class EversenseFragment : PreferenceFragmentCompat() {
 
     private fun setupListeners() {
         findPreference<Preference>("eversense_calibrate")?.setOnPreferenceClickListener {
-            ToastUtils.showToastInMainThread(context, "Opening Calibration Interface...")
+            // Replaced ToastUtils with standard Toast to fix error
+            Toast.makeText(context, "Opening Calibration Interface...", Toast.LENGTH_SHORT).show()
             true
         }
 
         findPreference<Preference>("eversense_connect")?.setOnPreferenceClickListener {
-            ToastUtils.showToastInMainThread(context, "Scanning for Smart Transmitter...")
+            Toast.makeText(context, "Scanning for Smart Transmitter...", Toast.LENGTH_SHORT).show()
             true
         }
     }
