@@ -293,7 +293,7 @@ class MedtrumOverviewViewModel @Inject constructor(
         } else {
             // Update text string and warning color color in view field
             medtrumPump.stateWarnColor?.let { _patchExpiryColor.postValue(it) }
-            _patchExpiry.postValue(rh.gs(R.string.expiry_not_enabled) + " ⚠\uFE0F")
+            _patchExpiry.postValue(rh.gs(R.string.expiry_not_enabled))
         }
     }
 
