@@ -28,6 +28,6 @@ class EversensePlugin @Inject constructor(
 ), BgSource {
     // No extra overrides needed; the abstract class handles defaults.
     init {
-        EversenseCGMPlugin.instance.setActivity(context)
+        EversenseCGMPlugin.instance.setContext(context)
     }
 }
