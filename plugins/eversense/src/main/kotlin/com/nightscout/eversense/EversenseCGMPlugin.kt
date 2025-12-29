@@ -22,7 +22,7 @@ class EversenseCGMPlugin {
             return
         }
 
-        bluetoothManager.adapter.startLeScan([EversenseGattCallback.serviceUUID], callback)
+        // bluetoothManager.adapter.startLeScan([EversenseGattCallback.serviceUUID], callback)
     }
 
     companion object {
