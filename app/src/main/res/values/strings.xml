@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="source_eversense">Eversense</string>
-	<string name="description_source_eversense">Eversense CGM Driver</string>
     <string name="default_lang" translatable="false">System default</string>
     <string name="key_last_cleanup_run" translatable="false">last_cleanup_run</string>
     <string name="nav_preferences_plugin">%1$s Preferences</string>

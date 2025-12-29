@@ -1,6 +1,5 @@
 package app.aaps.di
 
-import dagger.multibindings.IntoSet
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.plugins.aps.autotune.AutotunePlugin
 import app.aaps.plugins.aps.loop.LoopPlugin
@@ -36,6 +35,7 @@ import app.aaps.plugins.smoothing.AvgSmoothingPlugin
 import app.aaps.plugins.smoothing.ExponentialSmoothingPlugin
 import app.aaps.plugins.smoothing.NoSmoothingPlugin
 import app.aaps.plugins.source.DexcomPlugin
+import app.aaps.plugins.source.EversensePlugin
 import app.aaps.plugins.source.GlimpPlugin
 import app.aaps.plugins.source.GlunovoPlugin
 import app.aaps.plugins.source.IntelligoPlugin
@@ -395,7 +395,7 @@ abstract class PluginsListModule {
     @AllConfigs
     @IntoMap
     @IntKey(415)
-    abstract fun bindEversenseSourcePlugin(plugin: app.aaps.plugins.cgm.eversense.EversenseSource): PluginBase
+    abstract fun bindEversenseSourcePlugin(plugin: EversensePlugin): PluginBase
 	
     @Binds
     @AllConfigs

@@ -1,4 +1,4 @@
-package app.aaps.plugins.source
+package app.aaps.plugins.source.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -33,6 +33,7 @@ import app.aaps.core.objects.ui.ActionModeHelper
 import app.aaps.core.ui.dialogs.OKDialog
 import app.aaps.core.ui.extensions.toVisibility
 import app.aaps.core.ui.extensions.toVisibilityKeepSpace
+import app.aaps.plugins.source.R
 import app.aaps.plugins.source.databinding.SourceFragmentBinding
 import app.aaps.plugins.source.databinding.SourceItemBinding
 import dagger.android.support.DaggerFragment
@@ -53,7 +54,7 @@ class BGSourceFragment : DaggerFragment(), MenuProvider {
     @Inject lateinit var profileUtil: ProfileUtil
 
     private val disposable = CompositeDisposable()
-    private val millsToThePast = T.hours(36).msecs()
+    private val millsToThePast = T.Companion.hours(36).msecs()
     private lateinit var actionHelper: ActionModeHelper<GV>
     private var _binding: SourceFragmentBinding? = null
 
@@ -140,7 +141,7 @@ class BGSourceFragment : DaggerFragment(), MenuProvider {
             if (position > 0) {
                 val previous = glucoseValues[position - 1]
                 val diff = previous.timestamp - glucoseValue.timestamp
-                if (diff < T.secs(20).msecs())
+                if (diff < T.Companion.secs(20).msecs())
                     holder.binding.root.setBackgroundColor(rh.gac(context, app.aaps.core.ui.R.attr.bgsourceError))
             }
 

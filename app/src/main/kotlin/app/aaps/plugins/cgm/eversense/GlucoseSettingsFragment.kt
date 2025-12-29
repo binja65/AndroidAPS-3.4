@@ -2,7 +2,7 @@ package app.aaps.plugins.cgm.eversense
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
-import app.aaps.R
+import app.aaps.plugins.source.R
 
 class GlucoseSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

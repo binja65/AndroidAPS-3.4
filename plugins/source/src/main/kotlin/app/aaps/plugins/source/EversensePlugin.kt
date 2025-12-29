@@ -1,18 +1,18 @@
-package app.aaps.plugins.cgm.eversense
+package app.aaps.plugins.source
 
-import javax.inject.Inject
-import app.aaps.R
-// Fix: Use correct core imports
+import android.content.Context
+import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.source.BgSource
-import app.aaps.plugins.source.AbstractBgSourceWithSensorInsertLogPlugin
-// Fix: This is the correct location for PluginType in your version
-import app.aaps.core.data.plugin.PluginType
+import app.aaps.plugins.source.fragments.EversenseFragment
+import com.nightscout.eversense.EversenseCGMPlugin
+import javax.inject.Inject
 
-class EversenseSource @Inject constructor(
+class EversensePlugin @Inject constructor(
     rh: ResourceHelper,
+    private val context: Context,
     aapsLogger: AAPSLogger
 ) : AbstractBgSourceWithSensorInsertLogPlugin(
     PluginDescription()
@@ -27,4 +27,7 @@ class EversenseSource @Inject constructor(
     aapsLogger, rh
 ), BgSource {
     // No extra overrides needed; the abstract class handles defaults.
+    init {
+        EversenseCGMPlugin.instance.setActivity(context)
+    }
 }
