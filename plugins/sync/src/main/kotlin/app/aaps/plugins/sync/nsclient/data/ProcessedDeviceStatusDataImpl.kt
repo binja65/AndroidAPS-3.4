@@ -77,11 +77,9 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
             val enacted = openAPSData.enacted
             val suggested = openAPSData.suggested ?: return HtmlHelper.fromHtml("")  // Early return if no suggested data (though this should always exist)
 
-            val timeWindowMs = 30_000L // 30 seconds
-
-            // Check if enacted is recent (within 30s of suggested or newer)
+            // Check if enacted is recent
             val enactedIsRecent = enacted != null &&
-                openAPSData.clockEnacted >= (openAPSData.clockSuggested - timeWindowMs)
+                openAPSData.clockEnacted >= (openAPSData.clockSuggested)
 
             // Check if reasons are the same (when both exist and enacted is recent)
             val reasonsMatch = enactedIsRecent &&
