@@ -1,12 +1,7 @@
 package app.aaps.plugins.source.fragments
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import app.aaps.plugins.source.R
@@ -34,7 +29,7 @@ class EversenseFragment : PreferenceFragmentCompat() {
             EversenseCGMPlugin.instance.startScan(object : EversenseScanCallback {
                 override fun onResult(var0: EversenseScanResult) {
                     if (var0.name.startsWith("DEMO")) {
-                        EversenseCGMPlugin.instance.connect(var0.device, var0.name)
+                        EversenseCGMPlugin.instance.connect(var0.device)
                     }
                 }
             })
