@@ -23,6 +23,8 @@ import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.source.BgSource
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
+import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.plugins.source.keys.GlunovoLongKey
 import app.aaps.plugins.source.fragments.BGSourceFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
