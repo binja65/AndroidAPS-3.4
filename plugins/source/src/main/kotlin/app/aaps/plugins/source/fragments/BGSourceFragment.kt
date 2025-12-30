@@ -57,7 +57,7 @@ class BGSourceFragment : DaggerFragment(), MenuProvider {
     @Inject lateinit var profileUtil: ProfileUtil
 
     private val disposable = CompositeDisposable()
-    private val millsToThePast = T.Companion.hours(36).msecs()
+    private var millsToThePast = T.hours(36).msecs()
     private lateinit var actionHelper: ActionModeHelper<GV>
     private var _binding: SourceFragmentBinding? = null
     private var adapter: BgListAdapter? = null
@@ -167,7 +167,7 @@ class BGSourceFragment : DaggerFragment(), MenuProvider {
             if (position > 0) {
                 val previous = getItem(position - 1).gv
                 val diff = previous.timestamp - glucoseValue.timestamp
-                if (diff < T.Companion.secs(20).msecs())
+                if (diff < T.secs(20).msecs())
                     holder.binding.root.setBackgroundColor(rh.gac(context, app.aaps.core.ui.R.attr.bgsourceError))
             }
 

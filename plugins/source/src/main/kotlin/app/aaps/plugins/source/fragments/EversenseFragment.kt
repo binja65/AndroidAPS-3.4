@@ -5,6 +5,9 @@ import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import app.aaps.plugins.source.R
+import com.nightscout.eversense.EversenseCGMPlugin
+import com.nightscout.eversense.callbacks.EversenseScanCallback
+import com.nightscout.eversense.models.EversenseScanResult
 
 class EversenseFragment : PreferenceFragmentCompat() {
 
@@ -22,6 +25,14 @@ class EversenseFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("eversense_connect")?.setOnPreferenceClickListener {
             Toast.makeText(context, "Scanning for Smart Transmitter...", Toast.LENGTH_SHORT).show()
+
+            EversenseCGMPlugin.instance.startScan(object : EversenseScanCallback {
+                override fun onResult(var0: EversenseScanResult) {
+                    if (var0.name.startsWith("DEMO")) {
+                        EversenseCGMPlugin.instance.connect(var0.device)
+                    }
+                }
+            })
             true
         }
     }
