@@ -1,6 +1,6 @@
 package com.nightscout.eversense
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanFilter
@@ -10,24 +10,33 @@ import android.content.SharedPreferences
 import android.os.ParcelUuid
 import android.util.Log
 import com.nightscout.eversense.callbacks.EversenseScanCallback
-import com.nightscout.eversense.enums.StorageKeys
+import com.nightscout.eversense.callbacks.EversenseWatcher
 
 class EversenseCGMPlugin {
     private var context: Context? = null
 
     private var bluetoothManager: BluetoothManager? = null
     private var preferences: SharedPreferences? = null
+    private var gattCallback: EversenseGattCallback? = null
 
     private var scanner: EversenseScanner? = null
-    private val gattCallback = EversenseGattCallback()
+    var watchers: List<EversenseWatcher> = listOf()
 
     fun setContext(context: Context) {
         this.context = context
 
+        val preference = context.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+
         bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        preferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+        preferences = preference
+        gattCallback = EversenseGattCallback(this, preference)
     }
 
+    fun addWatcher(watcher: EversenseWatcher) {
+        this.watchers += watcher
+    }
+
+    @SuppressLint("MissingPermission")
     fun startScan(callback: EversenseScanCallback) {
         val bluetoothScanner = this.bluetoothManager?.adapter?.bluetoothLeScanner ?:run {
             Log.e(TAG, "No bluetooth manager available. Make sure setContext has been called")
@@ -42,9 +51,15 @@ class EversenseCGMPlugin {
         bluetoothScanner.startScan(filters, settings, scanner)
     }
 
+    @SuppressLint("MissingPermission")
     fun connect(device: BluetoothDevice?): Boolean {
         val bluetoothManager = this.bluetoothManager ?:run {
             Log.e(TAG, "No bluetooth manager available. Make sure setContext has been called")
+            return false
+        }
+
+        val gattCallback = this.gattCallback ?:run {
+            Log.e(TAG, "No gattCallback available. Make sure setContext has been called")
             return false
         }
 
@@ -73,6 +88,7 @@ class EversenseCGMPlugin {
 
     companion object {
         private val TAG = "EversenseCGMManager"
+
         val instance:EversenseCGMPlugin by lazy {
             EversenseCGMPlugin()
         }

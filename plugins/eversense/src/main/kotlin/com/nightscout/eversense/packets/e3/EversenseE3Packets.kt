@@ -105,5 +105,12 @@ class EversenseE3Packets {
         const val WriteSingleMiscEventLogRecordResponseId = 164.toByte()
         const val WriteTwoByteSerialFlashRegisterCommandId = 45.toByte()
         const val WriteTwoByteSerialFlashRegisterResponseId = 173.toByte()
+
+        fun isPushPacket(data: Byte): Boolean {
+            return when (data) {
+                KeepAlivePush -> true
+                else -> false
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.nightscout.eversense.packets
 
 import android.util.Log
 import com.nightscout.eversense.enums.EversenseSecurityType
+import com.nightscout.eversense.packets.e3.EversenseE3Packets
 
 abstract class EversenseBasePacket : Object() {
     abstract fun getRequestData(): ByteArray
@@ -11,6 +12,21 @@ abstract class EversenseBasePacket : Object() {
 
     fun getAnnotation(): EversensePacket? {
         return this.javaClass.annotations.find { it.annotationClass == EversensePacket::class } as? EversensePacket
+    }
+
+    protected fun getStartIndex(): Int {
+        val annotation = getAnnotation() ?:run {
+            Log.e("EversenseBasePacket", this.javaClass.name + " does not have the EversensePacket annotation...")
+            return 0
+        }
+
+        return when(annotation.responseId) {
+            EversenseE3Packets.ReadSingleByteSerialFlashRegisterResponseId,
+            EversenseE3Packets.ReadTwoByteSerialFlashRegisterResponseId,
+            EversenseE3Packets.ReadFourByteSerialFlashRegisterResponseId -> 3
+
+            else -> 0
+        }
     }
 
     fun appendData(data: ByteArray) {
