@@ -247,3 +247,38 @@ object TextFieldPreferenceDefaults {
             )
         }
 }
+
+/**
+ * Composable string text field preference backed by SP, for use inside card sections.
+ */
+@Composable
+fun StringTextFieldPreferenceItem(
+    sp: SP,
+    key: String,
+    defaultValue: String,
+    titleResId: Int,
+    summaryResId: Int? = null,
+    enabled: Boolean = true,
+    isPassword: Boolean = false,
+) {
+    val state = rememberSPStringState(sp, key, defaultValue)
+    val value by state
+    TextFieldPreference(
+        state = state,
+        title = { Text(stringResource(titleResId)) },
+        textToValue = { it },
+        enabled = enabled,
+        summary = when {
+            isPassword && value.isNotEmpty() -> {
+                { Text("••••••••") }
+            }
+            value.isNotEmpty() -> {
+                { Text(value) }
+            }
+            summaryResId != null -> {
+                { Text(stringResource(summaryResId)) }
+            }
+            else -> null
+        },
+    )
+}

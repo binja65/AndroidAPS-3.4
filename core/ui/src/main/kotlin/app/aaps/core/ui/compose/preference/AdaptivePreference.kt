@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.DoublePreferenceKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
@@ -25,6 +26,9 @@ import app.aaps.core.keys.interfaces.IntentPreferenceKey
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.StringPreferenceKey
+import app.aaps.core.keys.interfaces.UnitDoublePreferenceKey
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Data class holding visibility and enabled state for a preference
@@ -1079,5 +1083,97 @@ fun AdaptiveStringListPreferenceItem(
         valueToText = { value ->
             androidx.compose.ui.text.AnnotatedString(entries[value] ?: value)
         }
+    )
+}
+
+/**
+ * State wrapper for unit double preferences that handles unit conversion.
+ */
+@Stable
+class UnitDoublePreferenceState(
+    private val preferences: Preferences,
+    private val profileUtil: ProfileUtil,
+    private val key: UnitDoublePreferenceKey,
+    private val _displayValue: MutableState<String>
+) {
+    val displayValue: String
+        get() = _displayValue.value
+
+    fun updateDisplayValue(newValue: String) {
+        _displayValue.value = newValue
+        // Convert from display units back to mg/dL for storage
+        val displayDouble = newValue.toDoubleOrNull() ?: return
+        val mgdlValue = profileUtil.convertToMgdlDetect(displayDouble)
+        preferences.put(key, mgdlValue)
+    }
+}
+
+@Composable
+fun rememberUnitDoublePreferenceState(
+    preferences: Preferences,
+    profileUtil: ProfileUtil,
+    key: UnitDoublePreferenceKey
+): UnitDoublePreferenceState {
+    // Get stored value (in mg/dL) and convert to display units
+    val storedValue = preferences.get(key)
+    val displayValue = profileUtil.valueInCurrentUnitsDetect(storedValue)
+    // Check if using mg/dL by comparing converted values (mg/dL stays the same, mmol/L gets divided)
+    val isMgdl = displayValue == storedValue || (storedValue > 0 && displayValue / storedValue > 0.9)
+    val precision = if (isMgdl) 0 else 1
+    val formatted = BigDecimal(displayValue).setScale(precision, RoundingMode.HALF_UP).toPlainString()
+
+    val displayState = remember { mutableStateOf(formatted) }
+
+    return remember(key) {
+        UnitDoublePreferenceState(preferences, profileUtil, key, displayState)
+    }
+}
+
+/**
+ * Composable unit double preference for use inside card sections.
+ * Handles glucose unit conversion (mg/dL <-> mmol/L).
+ */
+@Composable
+fun AdaptiveUnitDoublePreferenceItem(
+    preferences: Preferences,
+    config: Config,
+    profileUtil: ProfileUtil,
+    unitKey: UnitDoublePreferenceKey,
+    titleResId: Int
+) {
+    val visibility = calculatePreferenceVisibility(
+        preferenceKey = unitKey,
+        preferences = preferences,
+        config = config
+    )
+
+    if (!visibility.visible || (preferences.simpleMode && unitKey.defaultedBySM)) return
+
+    val state = rememberUnitDoublePreferenceState(preferences, profileUtil, unitKey)
+    val minDisplay = profileUtil.valueInCurrentUnitsDetect(unitKey.minMgdl.toDouble())
+    val maxDisplay = profileUtil.valueInCurrentUnitsDetect(unitKey.maxMgdl.toDouble())
+    // Check if using mg/dL by comparing converted values
+    val isMgdl = minDisplay == unitKey.minMgdl.toDouble()
+    val precision = if (isMgdl) 0 else 1
+    val unit = if (isMgdl) "mg/dl" else "mmol/L"
+    val minFormatted = BigDecimal(minDisplay).setScale(precision, RoundingMode.HALF_UP).toPlainString()
+    val maxFormatted = BigDecimal(maxDisplay).setScale(precision, RoundingMode.HALF_UP).toPlainString()
+
+    val textState = remember { mutableStateOf(state.displayValue) }
+
+    TextFieldPreference(
+        state = textState,
+        title = { Text(stringResource(titleResId)) },
+        textToValue = { text ->
+            val value = text.toDoubleOrNull()
+            if (value != null && value >= minDisplay && value <= maxDisplay) {
+                state.updateDisplayValue(text)
+                text
+            } else {
+                null
+            }
+        },
+        enabled = visibility.enabled,
+        summary = { Text("${state.displayValue} $unit ($minFormatted-$maxFormatted)") }
     )
 }

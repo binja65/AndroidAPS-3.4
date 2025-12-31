@@ -591,6 +591,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
     override fun getPreferenceScreenContent(): Any = OpenAPSSMBPreferencesCompose(
         preferences = preferences,
         config = config,
+        profileUtil = profileUtil,
         linkToDocsUrl = rh.gs(R.string.openapsama_link_to_preference_json_doc)
     )
 

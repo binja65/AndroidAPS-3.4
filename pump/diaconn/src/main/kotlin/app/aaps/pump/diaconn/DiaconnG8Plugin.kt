@@ -511,7 +511,11 @@ class DiaconnG8Plugin @Inject constructor(
 
     override fun clearAllTables() = diaconnHistoryDatabase.clearAllTables()
 
-    override fun getPreferenceScreenContent(): Any = DiaconnG8PreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = DiaconnG8PreferencesCompose(
+        preferences = preferences,
+        config = config,
+        btSelectorActivityClass = DiaconnG8BLEScanActivity::class.java
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return

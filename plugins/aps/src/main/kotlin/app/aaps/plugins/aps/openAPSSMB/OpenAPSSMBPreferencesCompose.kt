@@ -2,18 +2,21 @@ package app.aaps.plugins.aps.openAPSSMB
 
 import androidx.compose.foundation.lazy.LazyListScope
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.IntentKey
+import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveDoublePreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveUnitDoublePreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveUrlPreferenceItem
+import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.plugins.aps.R
 
 /**
@@ -22,6 +25,7 @@ import app.aaps.plugins.aps.R
 class OpenAPSSMBPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config,
+    private val profileUtil: ProfileUtil,
     private val linkToDocsUrl: String? = null
 ) : PreferenceScreenContent {
 
@@ -78,7 +82,13 @@ class OpenAPSSMBPreferencesCompose(
                 titleResId = R.string.dyn_isf_adjust_title
             )
 
-            // Note: UnitPreference (ApsLgsThreshold) not yet supported in Compose
+            AdaptiveUnitDoublePreferenceItem(
+                preferences = preferences,
+                config = config,
+                profileUtil = profileUtil,
+                unitKey = UnitDoubleKey.ApsLgsThreshold,
+                titleResId = R.string.lgs_threshold_title
+            )
 
             AdaptiveSwitchPreferenceItem(
                 preferences = preferences,

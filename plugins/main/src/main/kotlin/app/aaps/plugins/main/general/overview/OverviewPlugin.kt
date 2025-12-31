@@ -15,6 +15,7 @@ import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.nsclient.NSSettingsStatus
 import app.aaps.core.interfaces.overview.Overview
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.overview.OverviewData
 import app.aaps.core.interfaces.overview.OverviewMenus
 import app.aaps.core.interfaces.plugin.ActivePlugin
@@ -79,7 +80,8 @@ class OverviewPlugin @Inject constructor(
     private val uiInteraction: UiInteraction,
     private val nsSettingStatus: NSSettingsStatus,
     private val config: Config,
-    private val activePlugin: ActivePlugin
+    private val activePlugin: ActivePlugin,
+    private val profileUtil: ProfileUtil
 ) : PluginBaseWithPreferences(
     pluginDescription = PluginDescription()
         .mainType(PluginType.GENERAL)
@@ -230,6 +232,9 @@ class OverviewPlugin @Inject constructor(
         activePlugin = activePlugin,
         nsSettingStatus = nsSettingStatus,
         preferences = preferences,
+        config = config,
+        profileUtil = profileUtil,
+        context = context,
         quickWizardListActivity = uiInteraction.quickWizardListActivity
     )
 

@@ -899,7 +899,11 @@ class OmnipodErosPumpPlugin @Inject constructor(
         erosHistoryDatabase.clearAllTables()
     }
 
-    override fun getPreferenceScreenContent(): Any = OmnipodErosPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = OmnipodErosPreferencesCompose(
+        preferences = preferences,
+        config = config,
+        rileyLinkConfigActivityClass = RileyLinkBLEConfigActivity::class.java
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return

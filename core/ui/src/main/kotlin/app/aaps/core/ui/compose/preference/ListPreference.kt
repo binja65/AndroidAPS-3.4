@@ -325,3 +325,31 @@ object ListPreferenceDefaults {
         )
     }
 }
+
+/**
+ * Composable string list preference backed by SP, for use inside card sections.
+ *
+ * @param entries Map of value to display text resource ID
+ */
+@Composable
+fun StringListPreferenceItem(
+    sp: SP,
+    key: String,
+    defaultValue: String,
+    entries: Map<String, Int>,
+    titleResId: Int,
+    type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
+) {
+    val state = rememberSPStringState(sp, key, defaultValue)
+    val value by state
+    // Pre-resolve resource strings during composition to use in non-composable lambda
+    val resolvedEntries = entries.mapValues { (_, resId) -> stringResource(resId) }
+    ListPreference(
+        state = state,
+        values = entries.keys.toList(),
+        title = { Text(stringResource(titleResId)) },
+        summary = { Text(resolvedEntries[value] ?: value) },
+        type = type,
+        valueToText = { v -> AnnotatedString(resolvedEntries[v] ?: v) },
+    )
+}

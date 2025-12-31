@@ -24,6 +24,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -156,10 +157,10 @@ fun CollapsibleCardSectionContent(
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column {
@@ -167,7 +168,8 @@ fun CollapsibleCardSectionContent(
                 titleResId = titleResId,
                 summaryItems = summaryItems,
                 expanded = expanded,
-                onToggle = onToggle
+                onToggle = onToggle,
+                insideCard = true
             )
 
             AnimatedVisibility(
@@ -185,6 +187,8 @@ fun CollapsibleCardSectionContent(
 
 /**
  * Internal composable for clickable category header with expand/collapse icon
+ *
+ * @param insideCard If true, uses symmetric padding suitable for card headers
  */
 @Composable
 internal fun ClickablePreferenceCategoryHeader(
@@ -192,7 +196,8 @@ internal fun ClickablePreferenceCategoryHeader(
     summaryItems: List<Int> = emptyList(),
     expanded: Boolean,
     onToggle: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    insideCard: Boolean = false
 ) {
     val theme = LocalPreferenceTheme.current
     val rotationAngle by animateFloatAsState(
@@ -206,11 +211,18 @@ internal fun ClickablePreferenceCategoryHeader(
         summaryItems.joinToString(", ") { context.getString(it) }
     } else null
 
+    // Use symmetric padding for card headers
+    val headerPadding = if (insideCard) {
+        PaddingValues(horizontal = 16.dp, vertical = 16.dp)
+    } else {
+        theme.categoryPadding
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onToggle)
-            .padding(theme.categoryPadding),
+            .padding(headerPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CompositionLocalProvider(LocalContentColor provides theme.categoryColor) {

@@ -1,262 +1,294 @@
 package app.aaps.plugins.sync.nsclientV3
 
 import androidx.compose.foundation.lazy.LazyListScope
-import app.aaps.core.interfaces.sharedPreferences.SP
+import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveStringPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.collapsibleSection
-import app.aaps.core.ui.compose.preference.stringTextFieldPreference
-import app.aaps.core.ui.compose.preference.switchPreference
 import app.aaps.plugins.sync.R
 
 /**
  * Compose implementation of NSClientV3 preferences.
  */
 class NSClientV3PreferencesCompose(
-    private val sp: SP
+    private val preferences: Preferences,
+    private val config: Config
 ) : PreferenceScreenContent {
 
     override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
         // Main NSClient category
-        collapsibleSection(
-            sectionState = sectionState,
-            sectionKey = "${keyPrefix}_ns_client_settings",
-            titleResId = R.string.ns_client_v3_title
-        ) {
-            // Nightscout URL
-            stringTextFieldPreference(
-                sp = sp,
-                key = StringKey.NsClientUrl.key,
-                defaultValue = StringKey.NsClientUrl.defaultValue,
-                titleResId = R.string.ns_client_url_title,
-                summaryResId = R.string.ns_client_url_dialog_message
-            )
+        val nsClientSettingsKey = "${keyPrefix}_ns_client_settings"
+        item {
+            val isExpanded = sectionState?.isExpanded(nsClientSettingsKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.ns_client_v3_title,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(nsClientSettingsKey) }
+            ) {
+                AdaptiveStringPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    stringKey = StringKey.NsClientUrl,
+                    titleResId = R.string.ns_client_url_title,
+                    summaryResId = R.string.ns_client_url_dialog_message
+                )
 
-            // Access Token
-            stringTextFieldPreference(
-                sp = sp,
-                key = StringKey.NsClientAccessToken.key,
-                defaultValue = StringKey.NsClientAccessToken.defaultValue,
-                titleResId = R.string.nsclient_token_title,
-                summaryResId = R.string.nsclient_token_dialog_message,
-                isPassword = true
-            )
+                AdaptiveStringPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    stringKey = StringKey.NsClientAccessToken,
+                    titleResId = R.string.nsclient_token_title,
+                    summaryResId = R.string.nsclient_token_dialog_message,
+                    isPassword = true
+                )
 
-            // Use WebSockets
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClient3UseWs.key,
-                defaultValue = BooleanKey.NsClient3UseWs.defaultValue,
-                titleResId = R.string.ns_use_ws_title,
-                summaryResId = R.string.ns_use_ws_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClient3UseWs,
+                    titleResId = R.string.ns_use_ws_title,
+                    summaryResId = R.string.ns_use_ws_summary
+                )
+            }
         }
 
         // Synchronization category
-        collapsibleSection(
-            sectionState = sectionState,
-            sectionKey = "${keyPrefix}_ns_client_synchronization",
-            titleResId = R.string.ns_sync_options
-        ) {
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientUploadData.key,
-                defaultValue = BooleanKey.NsClientUploadData.defaultValue,
-                titleResId = R.string.ns_upload,
-                summaryResId = R.string.ns_upload_summary
-            )
+        val synchronizationKey = "${keyPrefix}_ns_client_synchronization"
+        item {
+            val isExpanded = sectionState?.isExpanded(synchronizationKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.ns_sync_options,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(synchronizationKey) }
+            ) {
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientUploadData,
+                    titleResId = R.string.ns_upload,
+                    summaryResId = R.string.ns_upload_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.BgSourceUploadToNs.key,
-                defaultValue = BooleanKey.BgSourceUploadToNs.defaultValue,
-                titleResId = app.aaps.core.ui.R.string.do_ns_upload_title
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.BgSourceUploadToNs,
+                    titleResId = app.aaps.core.ui.R.string.do_ns_upload_title
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptCgmData.key,
-                defaultValue = BooleanKey.NsClientAcceptCgmData.defaultValue,
-                titleResId = R.string.ns_receive_cgm,
-                summaryResId = R.string.ns_receive_cgm_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptCgmData,
+                    titleResId = R.string.ns_receive_cgm,
+                    summaryResId = R.string.ns_receive_cgm_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptProfileStore.key,
-                defaultValue = BooleanKey.NsClientAcceptProfileStore.defaultValue,
-                titleResId = R.string.ns_receive_profile_store,
-                summaryResId = R.string.ns_receive_profile_store_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptProfileStore,
+                    titleResId = R.string.ns_receive_profile_store,
+                    summaryResId = R.string.ns_receive_profile_store_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptTempTarget.key,
-                defaultValue = BooleanKey.NsClientAcceptTempTarget.defaultValue,
-                titleResId = R.string.ns_receive_temp_target,
-                summaryResId = R.string.ns_receive_temp_target_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptTempTarget,
+                    titleResId = R.string.ns_receive_temp_target,
+                    summaryResId = R.string.ns_receive_temp_target_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptProfileSwitch.key,
-                defaultValue = BooleanKey.NsClientAcceptProfileSwitch.defaultValue,
-                titleResId = R.string.ns_receive_profile_switch,
-                summaryResId = R.string.ns_receive_profile_switch_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptProfileSwitch,
+                    titleResId = R.string.ns_receive_profile_switch,
+                    summaryResId = R.string.ns_receive_profile_switch_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptInsulin.key,
-                defaultValue = BooleanKey.NsClientAcceptInsulin.defaultValue,
-                titleResId = R.string.ns_receive_insulin,
-                summaryResId = R.string.ns_receive_insulin_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptInsulin,
+                    titleResId = R.string.ns_receive_insulin,
+                    summaryResId = R.string.ns_receive_insulin_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptCarbs.key,
-                defaultValue = BooleanKey.NsClientAcceptCarbs.defaultValue,
-                titleResId = R.string.ns_receive_carbs,
-                summaryResId = R.string.ns_receive_carbs_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptCarbs,
+                    titleResId = R.string.ns_receive_carbs,
+                    summaryResId = R.string.ns_receive_carbs_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptTherapyEvent.key,
-                defaultValue = BooleanKey.NsClientAcceptTherapyEvent.defaultValue,
-                titleResId = R.string.ns_receive_therapy_events,
-                summaryResId = R.string.ns_receive_therapy_events_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptTherapyEvent,
+                    titleResId = R.string.ns_receive_therapy_events,
+                    summaryResId = R.string.ns_receive_therapy_events_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptRunningMode.key,
-                defaultValue = BooleanKey.NsClientAcceptRunningMode.defaultValue,
-                titleResId = R.string.ns_receive_running_mode,
-                summaryResId = R.string.ns_receive_running_mode_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptRunningMode,
+                    titleResId = R.string.ns_receive_running_mode,
+                    summaryResId = R.string.ns_receive_running_mode_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientAcceptTbrEb.key,
-                defaultValue = BooleanKey.NsClientAcceptTbrEb.defaultValue,
-                titleResId = R.string.ns_receive_tbr_eb,
-                summaryResId = R.string.ns_receive_tbr_eb_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientAcceptTbrEb,
+                    titleResId = R.string.ns_receive_tbr_eb,
+                    summaryResId = R.string.ns_receive_tbr_eb_summary
+                )
+            }
         }
 
         // Alarm options category
-        collapsibleSection(
-            sectionState = sectionState,
-            sectionKey = "${keyPrefix}_ns_client_alarm_options",
-            titleResId = R.string.ns_alarm_options
-        ) {
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientNotificationsFromAlarms.key,
-                defaultValue = BooleanKey.NsClientNotificationsFromAlarms.defaultValue,
-                titleResId = R.string.ns_alarms
-            )
+        val alarmOptionsKey = "${keyPrefix}_ns_client_alarm_options"
+        item {
+            val isExpanded = sectionState?.isExpanded(alarmOptionsKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.ns_alarm_options,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(alarmOptionsKey) }
+            ) {
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientNotificationsFromAlarms,
+                    titleResId = R.string.ns_alarms
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientNotificationsFromAnnouncements.key,
-                defaultValue = BooleanKey.NsClientNotificationsFromAnnouncements.defaultValue,
-                titleResId = R.string.ns_announcements
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientNotificationsFromAnnouncements,
+                    titleResId = R.string.ns_announcements
+                )
 
-            // IntKey.NsClientAlarmStaleData and IntKey.NsClientUrgentAlarmStaleData
-            // These would need AdaptiveIntPreference compose equivalent
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = IntKey.NsClientAlarmStaleData,
+                    titleResId = R.string.ns_alarm_stale_data_value_label
+                )
+
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = IntKey.NsClientUrgentAlarmStaleData,
+                    titleResId = R.string.ns_alarm_urgent_stale_data_value_label
+                )
+            }
         }
 
         // Connection settings category
-        collapsibleSection(
-            sectionState = sectionState,
-            sectionKey = "${keyPrefix}_ns_client_connection_options",
-            titleResId = R.string.connection_settings_title
-        ) {
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientUseCellular.key,
-                defaultValue = BooleanKey.NsClientUseCellular.defaultValue,
-                titleResId = R.string.ns_cellular
-            )
+        val connectionOptionsKey = "${keyPrefix}_ns_client_connection_options"
+        item {
+            val isExpanded = sectionState?.isExpanded(connectionOptionsKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.connection_settings_title,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(connectionOptionsKey) }
+            ) {
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientUseCellular,
+                    titleResId = R.string.ns_cellular
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientUseRoaming.key,
-                defaultValue = BooleanKey.NsClientUseRoaming.defaultValue,
-                titleResId = R.string.ns_allow_roaming
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientUseRoaming,
+                    titleResId = R.string.ns_allow_roaming
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientUseWifi.key,
-                defaultValue = BooleanKey.NsClientUseWifi.defaultValue,
-                titleResId = R.string.ns_wifi
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientUseWifi,
+                    titleResId = R.string.ns_wifi
+                )
 
-            stringTextFieldPreference(
-                sp = sp,
-                key = StringKey.NsClientWifiSsids.key,
-                defaultValue = StringKey.NsClientWifiSsids.defaultValue,
-                titleResId = R.string.ns_wifi_ssids,
-                summaryResId = R.string.ns_wifi_allowed_ssids
-            )
+                AdaptiveStringPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    stringKey = StringKey.NsClientWifiSsids,
+                    titleResId = R.string.ns_wifi_ssids,
+                    summaryResId = R.string.ns_wifi_allowed_ssids
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientUseOnBattery.key,
-                defaultValue = BooleanKey.NsClientUseOnBattery.defaultValue,
-                titleResId = R.string.ns_battery
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientUseOnBattery,
+                    titleResId = R.string.ns_battery
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientUseOnCharging.key,
-                defaultValue = BooleanKey.NsClientUseOnCharging.defaultValue,
-                titleResId = R.string.ns_charging
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientUseOnCharging,
+                    titleResId = R.string.ns_charging
+                )
+            }
         }
 
         // Advanced settings category
-        collapsibleSection(
-            sectionState = sectionState,
-            sectionKey = "${keyPrefix}_ns_client_advanced",
-            titleResId = app.aaps.core.ui.R.string.advanced_settings_title
-        ) {
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientLogAppStart.key,
-                defaultValue = BooleanKey.NsClientLogAppStart.defaultValue,
-                titleResId = R.string.ns_log_app_started_event
-            )
+        val advancedKey = "${keyPrefix}_ns_client_advanced"
+        item {
+            val isExpanded = sectionState?.isExpanded(advancedKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(advancedKey) }
+            ) {
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientLogAppStart,
+                    titleResId = R.string.ns_log_app_started_event
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientCreateAnnouncementsFromErrors.key,
-                defaultValue = BooleanKey.NsClientCreateAnnouncementsFromErrors.defaultValue,
-                titleResId = R.string.ns_create_announcements_from_errors_title,
-                summaryResId = R.string.ns_create_announcements_from_errors_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientCreateAnnouncementsFromErrors,
+                    titleResId = R.string.ns_create_announcements_from_errors_title,
+                    summaryResId = R.string.ns_create_announcements_from_errors_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientCreateAnnouncementsFromCarbsReq.key,
-                defaultValue = BooleanKey.NsClientCreateAnnouncementsFromCarbsReq.defaultValue,
-                titleResId = R.string.ns_create_announcements_from_carbs_req_title,
-                summaryResId = R.string.ns_create_announcements_from_carbs_req_summary
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientCreateAnnouncementsFromCarbsReq,
+                    titleResId = R.string.ns_create_announcements_from_carbs_req_title,
+                    summaryResId = R.string.ns_create_announcements_from_carbs_req_summary
+                )
 
-            switchPreference(
-                sp = sp,
-                key = BooleanKey.NsClientSlowSync.key,
-                defaultValue = BooleanKey.NsClientSlowSync.defaultValue,
-                titleResId = R.string.ns_sync_slow
-            )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = BooleanKey.NsClientSlowSync,
+                    titleResId = R.string.ns_sync_slow
+                )
+            }
         }
     }
 }

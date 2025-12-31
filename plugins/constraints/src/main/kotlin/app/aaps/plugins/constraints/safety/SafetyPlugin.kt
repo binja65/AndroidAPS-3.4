@@ -207,5 +207,5 @@ class SafetyPlugin @Inject constructor(
         }
     }
 
-    override fun getPreferenceScreenContent(): Any = SafetyPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = SafetyPreferencesCompose(preferences, config, hardLimits)
 }

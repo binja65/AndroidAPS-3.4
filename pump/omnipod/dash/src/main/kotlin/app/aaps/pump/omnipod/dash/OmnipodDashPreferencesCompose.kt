@@ -10,6 +10,7 @@ import app.aaps.core.ui.compose.preference.PreferenceScreenContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.pump.omnipod.common.keys.OmnipodBooleanPreferenceKey
 import app.aaps.pump.omnipod.common.keys.OmnipodIntPreferenceKey
+import app.aaps.pump.omnipod.dash.keys.DashBooleanPreferenceKey
 
 /**
  * Compose implementation of Omnipod DASH preferences.
@@ -20,14 +21,116 @@ class OmnipodDashPreferencesCompose(
 ) : PreferenceScreenContent {
 
     override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
-        // Omnipod DASH pump settings category
-        val sectionKey = "${keyPrefix}_omnipod_dash_settings"
+        // Beep Category
+        val beepKey = "${keyPrefix}_omnipod_dash_beeps"
         item {
-            val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
+            val isExpanded = sectionState?.isExpanded(beepKey) ?: true
             CollapsibleCardSectionContent(
-                titleResId = R.string.omnipod_dash_name,
+                titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_confirmation_beeps,
                 expanded = isExpanded,
-                onToggle = { sectionState?.toggle(sectionKey) }
+                onToggle = { sectionState?.toggle(beepKey) }
+            ) {
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.BolusBeepsEnabled,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_bolus_beeps_enabled
+                )
+
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.BasalBeepsEnabled,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_basal_beeps_enabled
+                )
+
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.SmbBeepsEnabled,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_smb_beeps_enabled
+                )
+
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.TbrBeepsEnabled,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_tbr_beeps_enabled
+                )
+
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = DashBooleanPreferenceKey.UseBonding,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_dash_use_bonding
+                )
+            }
+        }
+
+        // Alerts Category
+        val alertsKey = "${keyPrefix}_omnipod_dash_alerts"
+        item {
+            val isExpanded = sectionState?.isExpanded(alertsKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_alerts,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(alertsKey) }
+            ) {
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.ExpirationReminder,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_reminder_enabled,
+                    summaryResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_reminder_enabled_summary
+                )
+
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = OmnipodIntPreferenceKey.ExpirationReminderHours,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_reminder_hours_before_expiry
+                )
+
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.ExpirationAlarm,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_alarm_enabled,
+                    summaryResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_alarm_enabled_summary
+                )
+
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = OmnipodIntPreferenceKey.ExpirationAlarmHours,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_alarm_hours_before_shutdown
+                )
+
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = OmnipodBooleanPreferenceKey.LowReservoirAlert,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_low_reservoir_alert_enabled
+                )
+
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = OmnipodIntPreferenceKey.LowReservoirAlertUnits,
+                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_low_reservoir_alert_units
+                )
+
+            }
+        }
+
+        // Notifications Category
+        val notificationsKey = "${keyPrefix}_omnipod_dash_notifications"
+        item {
+            val isExpanded = sectionState?.isExpanded(notificationsKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_notifications,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(notificationsKey) }
             ) {
                 AdaptiveSwitchPreferenceItem(
                     preferences = preferences,
@@ -53,22 +156,8 @@ class OmnipodDashPreferencesCompose(
                 AdaptiveSwitchPreferenceItem(
                     preferences = preferences,
                     config = config,
-                    booleanKey = OmnipodBooleanPreferenceKey.AutomaticallyAcknowledgeAlerts,
-                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_automatically_silence_alerts
-                )
-
-                AdaptiveIntPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    intKey = OmnipodIntPreferenceKey.ExpirationReminderHours,
-                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_reminder_hours_before_expiry
-                )
-
-                AdaptiveIntPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    intKey = OmnipodIntPreferenceKey.LowReservoirAlertUnits,
-                    titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_low_reservoir_alert_units
+                    booleanKey = DashBooleanPreferenceKey.SoundDeliverySuspendedNotification,
+                    titleResId = R.string.omnipod_common_preferences_notification_delivery_suspended_sound_enabled
                 )
             }
         }

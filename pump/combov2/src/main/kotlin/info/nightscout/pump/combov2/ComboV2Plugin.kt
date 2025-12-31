@@ -2277,7 +2277,7 @@ class ComboV2Plugin @Inject constructor(
             else                     -> false
         }
 
-    override fun getPreferenceScreenContent(): Any = ComboV2PreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = ComboV2PreferencesCompose(preferences, config) { /* Unpair handled via dialog in preference screen */ }
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return

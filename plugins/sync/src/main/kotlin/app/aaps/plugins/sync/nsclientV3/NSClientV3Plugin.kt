@@ -899,5 +899,5 @@ class NSClientV3Plugin @Inject constructor(
         }
     }
 
-    override fun getPreferenceScreenContent(): Any = NSClientV3PreferencesCompose(sp)
+    override fun getPreferenceScreenContent(): Any = NSClientV3PreferencesCompose(preferences, config)
 }

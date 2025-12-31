@@ -1060,7 +1060,7 @@ class LoopPlugin @Inject constructor(
         )
     }
 
-    override fun getPreferenceScreenContent(): Any = LoopPreferencesCompose(sp)
+    override fun getPreferenceScreenContent(): Any = LoopPreferencesCompose(preferences, config)
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return

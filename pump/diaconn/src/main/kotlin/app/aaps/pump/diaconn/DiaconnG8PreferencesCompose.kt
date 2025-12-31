@@ -1,11 +1,18 @@
 package app.aaps.pump.diaconn
 
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
 import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
+import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.pump.diaconn.keys.DiaconnBooleanKey
@@ -16,7 +23,8 @@ import app.aaps.pump.diaconn.keys.DiaconnIntKey
  */
 class DiaconnG8PreferencesCompose(
     private val preferences: Preferences,
-    private val config: Config
+    private val config: Config,
+    private val btSelectorActivityClass: Class<out Activity>? = null
 ) : PreferenceScreenContent {
 
     companion object {
@@ -34,6 +42,14 @@ class DiaconnG8PreferencesCompose(
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {
+                // Bluetooth device selector
+                btSelectorActivityClass?.let { activityClass ->
+                    BtSelectorPreferenceItem(
+                        titleResId = R.string.selectedpump,
+                        activityClass = activityClass
+                    )
+                }
+
                 AdaptiveListIntPreferenceItem(
                     preferences = preferences,
                     config = config,
@@ -80,4 +96,21 @@ class DiaconnG8PreferencesCompose(
             }
         }
     }
+}
+
+/**
+ * Composable preference for launching BLE scan activity.
+ */
+@Composable
+private fun BtSelectorPreferenceItem(
+    titleResId: Int,
+    activityClass: Class<out Activity>
+) {
+    val context = LocalContext.current
+    Preference(
+        title = { Text(stringResource(titleResId)) },
+        onClick = {
+            context.startActivity(Intent(context, activityClass))
+        }
+    )
 }

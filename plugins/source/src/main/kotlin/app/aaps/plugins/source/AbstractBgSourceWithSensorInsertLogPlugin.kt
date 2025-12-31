@@ -13,10 +13,10 @@ import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.source.BgSource
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.adaptiveSwitchPreference
-import app.aaps.core.ui.compose.preference.collapsibleSection
 import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 
 abstract class AbstractBgSourceWithSensorInsertLogPlugin(
@@ -52,27 +52,29 @@ abstract class AbstractBgSourceWithSensorInsertLogPlugin(
             get() = "AbstractBgSourceWithSensor_$pluginName"
 
         override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
-            collapsibleSection(
-                sectionState = sectionState,
-                sectionKey = "${keyPrefix}_bg_source_with_sensor_upload_settings",
-                titleResId = R.string.bgsource_settings
-            ) {
-                adaptiveSwitchPreference(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = BooleanKey.BgSourceUploadToNs,
-                    titleResId = app.aaps.core.ui.R.string.do_ns_upload_title,
-                    keyPrefix = keyPrefix
-                )
+            val sectionKey = "${keyPrefix}_bg_source_with_sensor_upload_settings"
+            item {
+                val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
+                CollapsibleCardSectionContent(
+                    titleResId = R.string.bgsource_settings,
+                    expanded = isExpanded,
+                    onToggle = { sectionState?.toggle(sectionKey) }
+                ) {
+                    AdaptiveSwitchPreferenceItem(
+                        preferences = preferences,
+                        config = config,
+                        booleanKey = BooleanKey.BgSourceUploadToNs,
+                        titleResId = app.aaps.core.ui.R.string.do_ns_upload_title
+                    )
 
-                adaptiveSwitchPreference(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = BooleanKey.BgSourceCreateSensorChange,
-                    titleResId = R.string.bgsource_log_sensor_change_title,
-                    summaryResId = R.string.bgsource_log_sensor_change_summary,
-                    keyPrefix = keyPrefix
-                )
+                    AdaptiveSwitchPreferenceItem(
+                        preferences = preferences,
+                        config = config,
+                        booleanKey = BooleanKey.BgSourceCreateSensorChange,
+                        titleResId = R.string.bgsource_log_sensor_change_title,
+                        summaryResId = R.string.bgsource_log_sensor_change_summary
+                    )
+                }
             }
         }
     }
