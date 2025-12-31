@@ -1342,5 +1342,5 @@ class SmsCommunicatorPlugin @Inject constructor(
         }
     }
 
-    override fun getPreferenceScreenContent(): Any = SmsCommunicatorPreferencesCompose(sp)
+    override fun getPreferenceScreenContent(): Any = SmsCommunicatorPreferencesCompose(sp, preferences)
 }

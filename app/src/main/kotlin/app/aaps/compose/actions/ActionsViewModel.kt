@@ -1,6 +1,5 @@
 package app.aaps.compose.actions
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.aaps.core.data.model.RM
@@ -72,11 +71,6 @@ class ActionsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ActionsUiState())
     val uiState: StateFlow<ActionsUiState> = _uiState.asStateFlow()
 
-    // Colors for status items
-    private val colorNormal = Color(0xFF4CAF50) // Green
-    private val colorWarning = Color(0xFFFFC107) // Amber
-    private val colorCritical = Color(0xFFF44336) // Red
-    private val colorDefault = Color.Unspecified
 
     init {
         setupEventListeners()
@@ -229,10 +223,10 @@ class ActionsViewModel @Inject constructor(
         return StatusItem(
             label = rh.gs(app.aaps.plugins.main.R.string.sensor_label),
             age = event?.let { formatAge(it.timestamp) } ?: "-",
-            ageColor = event?.let { getAgeColor(it.timestamp, IntKey.OverviewSageWarning, IntKey.OverviewSageCritical) } ?: colorDefault,
+            ageStatus = event?.let { getAgeStatus(it.timestamp, IntKey.OverviewSageWarning, IntKey.OverviewSageCritical) } ?: StatusLevel.UNSPECIFIED,
             agePercent = event?.let { getAgePercent(it.timestamp, IntKey.OverviewSageCritical) } ?: 0f,
             level = level,
-            levelColor = if (levelPercent >= 0) getLevelColor((levelPercent * 100).toDouble(), IntKey.OverviewSbatWarning, IntKey.OverviewSbatCritical) else colorDefault,
+            levelStatus = if (levelPercent >= 0) getLevelStatus((levelPercent * 100).toDouble(), IntKey.OverviewSbatWarning, IntKey.OverviewSbatCritical) else StatusLevel.UNSPECIFIED,
             levelPercent = if (levelPercent >= 0) 1f - levelPercent else -1f, // Invert: 100% battery = 0% toward empty
             iconRes = app.aaps.core.objects.R.drawable.ic_cp_age_sensor
         )
@@ -257,10 +251,10 @@ class ActionsViewModel @Inject constructor(
         return StatusItem(
             label = rh.gs(app.aaps.plugins.main.R.string.insulin_label),
             age = event?.let { formatAge(it.timestamp) } ?: "-",
-            ageColor = event?.let { getAgeColor(it.timestamp, IntKey.OverviewIageWarning, IntKey.OverviewIageCritical) } ?: colorDefault,
+            ageStatus = event?.let { getAgeStatus(it.timestamp, IntKey.OverviewIageWarning, IntKey.OverviewIageCritical) } ?: StatusLevel.UNSPECIFIED,
             agePercent = event?.let { getAgePercent(it.timestamp, IntKey.OverviewIageCritical) } ?: 0f,
             level = level,
-            levelColor = if (reservoirLevel > 0) getLevelColor(reservoirLevel, IntKey.OverviewResWarning, IntKey.OverviewResCritical) else colorDefault,
+            levelStatus = if (reservoirLevel > 0) getLevelStatus(reservoirLevel, IntKey.OverviewResWarning, IntKey.OverviewResCritical) else StatusLevel.UNSPECIFIED,
             levelPercent = -1f, // No progress bar - reservoir sizes vary by pump
             iconRes = app.aaps.core.objects.R.drawable.ic_cp_age_insulin
         )
@@ -285,10 +279,10 @@ class ActionsViewModel @Inject constructor(
         return StatusItem(
             label = label,
             age = event?.let { formatAge(it.timestamp) } ?: "-",
-            ageColor = event?.let { getAgeColor(it.timestamp, IntKey.OverviewCageWarning, IntKey.OverviewCageCritical) } ?: colorDefault,
+            ageStatus = event?.let { getAgeStatus(it.timestamp, IntKey.OverviewCageWarning, IntKey.OverviewCageCritical) } ?: StatusLevel.UNSPECIFIED,
             agePercent = event?.let { getAgePercent(it.timestamp, IntKey.OverviewCageCritical) } ?: 0f,
             level = if (usage > 0) decimalFormatter.to0Decimal(usage, insulinUnit) else null,
-            levelColor = colorDefault, // Usage doesn't have warning thresholds
+            levelStatus = StatusLevel.UNSPECIFIED, // Usage doesn't have warning thresholds
             levelPercent = -1f,
             iconRes = iconRes
         )
@@ -313,10 +307,10 @@ class ActionsViewModel @Inject constructor(
         return StatusItem(
             label = rh.gs(app.aaps.plugins.main.R.string.pb_label),
             age = event?.let { formatAge(it.timestamp) } ?: "-",
-            ageColor = event?.let { getAgeColor(it.timestamp, IntKey.OverviewBageWarning, IntKey.OverviewBageCritical) } ?: colorDefault,
+            ageStatus = event?.let { getAgeStatus(it.timestamp, IntKey.OverviewBageWarning, IntKey.OverviewBageCritical) } ?: StatusLevel.UNSPECIFIED,
             agePercent = event?.let { getAgePercent(it.timestamp, IntKey.OverviewBageCritical) } ?: 0f,
             level = level,
-            levelColor = if (batteryLevel != null) getLevelColor(batteryLevel.toDouble(), IntKey.OverviewBattWarning, IntKey.OverviewBattCritical) else colorDefault,
+            levelStatus = if (batteryLevel != null) getLevelStatus(batteryLevel.toDouble(), IntKey.OverviewBattWarning, IntKey.OverviewBattCritical) else StatusLevel.UNSPECIFIED,
             levelPercent = batteryLevel?.let { 1f - (it / 100f) } ?: -1f, // Invert: 100% battery = 0% toward empty
             iconRes = app.aaps.core.objects.R.drawable.ic_cp_age_battery
         )
@@ -333,14 +327,14 @@ class ActionsViewModel @Inject constructor(
         }
     }
 
-    private fun getAgeColor(timestamp: Long, warnKey: IntKey, urgentKey: IntKey): Color {
+    private fun getAgeStatus(timestamp: Long, warnKey: IntKey, urgentKey: IntKey): StatusLevel {
         val warnHours = preferences.get(warnKey)
         val urgentHours = preferences.get(urgentKey)
         val ageHours = (System.currentTimeMillis() - timestamp) / (1000 * 60 * 60)
         return when {
-            ageHours >= urgentHours -> colorCritical
-            ageHours >= warnHours   -> colorWarning
-            else                    -> colorNormal
+            ageHours >= urgentHours -> StatusLevel.CRITICAL
+            ageHours >= warnHours   -> StatusLevel.WARNING
+            else                    -> StatusLevel.NORMAL
         }
     }
 
@@ -351,13 +345,13 @@ class ActionsViewModel @Inject constructor(
         return (ageHours / urgentHours).coerceIn(0.0, 1.0).toFloat()
     }
 
-    private fun getLevelColor(level: Double, warnKey: IntKey, criticalKey: IntKey): Color {
+    private fun getLevelStatus(level: Double, warnKey: IntKey, criticalKey: IntKey): StatusLevel {
         val warn = preferences.get(warnKey)
         val critical = preferences.get(criticalKey)
         return when {
-            level <= critical -> colorCritical
-            level <= warn     -> colorWarning
-            else              -> colorNormal
+            level <= critical -> StatusLevel.CRITICAL
+            level <= warn     -> StatusLevel.WARNING
+            else              -> StatusLevel.NORMAL
         }
     }
 

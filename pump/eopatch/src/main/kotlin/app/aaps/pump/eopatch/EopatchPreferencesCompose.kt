@@ -3,10 +3,13 @@ package app.aaps.pump.eopatch
 import androidx.compose.foundation.lazy.LazyListScope
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
-import app.aaps.core.ui.compose.preference.adaptiveSwitchPreference
-import app.aaps.core.ui.compose.preference.preferenceCategory
+import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.pump.eopatch.keys.EopatchBooleanKey
+import app.aaps.pump.eopatch.keys.EopatchIntKey
 
 /**
  * Compose implementation of Eopatch preferences.
@@ -16,32 +19,48 @@ class EopatchPreferencesCompose(
     private val config: Config
 ) : PreferenceScreenContent {
 
-    override fun LazyListScope.preferenceItems() {
+    companion object {
+        private val lowReservoirEntries = listOf("10 U", "15 U", "20 U", "25 U", "30 U", "35 U", "40 U", "45 U", "50 U")
+        private val lowReservoirValues = listOf(10, 15, 20, 25, 30, 35, 40, 45, 50)
+        private val expirationReminderEntries = (1..24).map { "$it hr" }
+        private val expirationReminderValues = (1..24).toList()
+    }
+
+    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
         // Eopatch pump settings category
-        preferenceCategory(
-            key = "eopatch_settings",
-            titleResId = R.string.eopatch
-        )
+        val sectionKey = "${keyPrefix}_eopatch_settings"
+        item {
+            val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.eopatch,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(sectionKey) }
+            ) {
+                AdaptiveListIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = EopatchIntKey.LowReservoirReminder,
+                    titleResId = R.string.low_reservoir,
+                    entries = lowReservoirEntries,
+                    entryValues = lowReservoirValues
+                )
 
-        adaptiveSwitchPreference(
-            preferences = preferences,
-            config = config,
-            booleanKey = EopatchBooleanKey.LowReservoirReminder,
-            titleResId = R.string.key_low_reservoir_reminders
-        )
+                AdaptiveListIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = EopatchIntKey.ExpirationReminder,
+                    titleResId = R.string.patch_expiration_reminders,
+                    entries = expirationReminderEntries,
+                    entryValues = expirationReminderValues
+                )
 
-        adaptiveSwitchPreference(
-            preferences = preferences,
-            config = config,
-            booleanKey = EopatchBooleanKey.ExpirationReminder,
-            titleResId = R.string.key_expiration_reminders
-        )
-
-        adaptiveSwitchPreference(
-            preferences = preferences,
-            config = config,
-            booleanKey = EopatchBooleanKey.BuzzerReminder,
-            titleResId = R.string.key_buzzer_reminders
-        )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = EopatchBooleanKey.BuzzerReminder,
+                    titleResId = R.string.patch_buzzer_reminders
+                )
+            }
+        }
     }
 }

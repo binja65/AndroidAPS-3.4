@@ -22,6 +22,7 @@ import app.aaps.core.interfaces.receivers.Intents
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.source.BgSource
 import app.aaps.core.interfaces.source.XDripSource
+import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.interfaces.Preferences
@@ -37,6 +38,8 @@ import kotlin.math.round
 class XdripSourcePlugin @Inject constructor(
     rh: ResourceHelper,
     aapsLogger: AAPSLogger,
+    preferences: Preferences,
+    config: Config,
     persistenceLayer: PersistenceLayer,
     dateUtil: DateUtil,
     profileUtil: ProfileUtil
@@ -59,7 +62,7 @@ class XdripSourcePlugin @Inject constructor(
         .pluginName(R.string.source_xdrip)
         .preferencesVisibleInSimpleMode(false)
         .description(R.string.description_source_xdrip),
-    aapsLogger, rh
+    aapsLogger, rh, preferences, config
 ), BgSource, XDripSource {
 
     @VisibleForTesting

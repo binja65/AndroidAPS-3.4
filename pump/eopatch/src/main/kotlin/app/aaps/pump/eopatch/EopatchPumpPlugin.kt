@@ -65,7 +65,7 @@ import kotlin.math.abs
 class EopatchPumpPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val config: Config,
     commandQueue: CommandQueue,
     private val aapsSchedulers: AapsSchedulers,

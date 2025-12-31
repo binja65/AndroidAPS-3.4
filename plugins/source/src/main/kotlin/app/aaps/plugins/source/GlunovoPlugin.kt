@@ -22,6 +22,7 @@ import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.source.BgSource
+import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.keys.interfaces.Preferences
@@ -36,6 +37,7 @@ class GlunovoPlugin @Inject constructor(
     resourceHelper: ResourceHelper,
     aapsLogger: AAPSLogger,
     preferences: Preferences,
+    config: Config,
     private val context: Context,
     private val persistenceLayer: PersistenceLayer,
     private val dateUtil: DateUtil,
@@ -62,7 +64,7 @@ class GlunovoPlugin @Inject constructor(
         .preferencesVisibleInSimpleMode(false)
         .description(R.string.description_source_glunovo),
     ownPreferences = listOf(GlunovoLongKey::class.java),
-    aapsLogger, resourceHelper, preferences
+    aapsLogger, resourceHelper, preferences, config
 ), BgSource {
 
     @VisibleForTesting

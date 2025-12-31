@@ -64,7 +64,7 @@ open class VirtualPumpPlugin @Inject constructor(
     private var fabricPrivacy: FabricPrivacy,
     rh: ResourceHelper,
     private val aapsSchedulers: AapsSchedulers,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val profileFunction: ProfileFunction,
     commandQueue: CommandQueue,
     private val pumpSync: PumpSync,

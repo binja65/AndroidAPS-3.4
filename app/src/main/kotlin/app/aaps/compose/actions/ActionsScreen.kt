@@ -29,7 +29,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.aaps.core.interfaces.pump.actions.CustomAction
+import app.aaps.core.ui.compose.AapsTheme
 
 /**
  * Material 3 Expressive Actions Screen
@@ -199,8 +199,25 @@ private fun StatusSection(
     }
 }
 
+/**
+ * Maps a StatusLevel to the appropriate color from the theme.
+ */
+@Composable
+private fun statusLevelToColor(status: StatusLevel): androidx.compose.ui.graphics.Color {
+    val colors = AapsTheme.generalColors
+    return when (status) {
+        StatusLevel.NORMAL      -> colors.statusNormal
+        StatusLevel.WARNING     -> colors.statusWarning
+        StatusLevel.CRITICAL    -> colors.statusCritical
+        StatusLevel.UNSPECIFIED -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+}
+
 @Composable
 private fun StatusRow(item: StatusItem) {
+    val ageColor = statusLevelToColor(item.ageStatus)
+    val levelColor = statusLevelToColor(item.levelStatus)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -225,18 +242,18 @@ private fun StatusRow(item: StatusItem) {
         // Age with vertical progress
         StatusValueWithProgress(
             value = item.age,
-            valueColor = item.ageColor,
+            valueColor = ageColor,
             progress = item.agePercent,
-            progressColor = item.ageColor
+            progressColor = ageColor
         )
 
         // Level with vertical progress (if available)
         if (item.level != null) {
             StatusValueWithProgress(
                 value = item.level,
-                valueColor = item.levelColor,
+                valueColor = levelColor,
                 progress = item.levelPercent,
-                progressColor = item.levelColor
+                progressColor = levelColor
             )
         }
     }
@@ -245,9 +262,9 @@ private fun StatusRow(item: StatusItem) {
 @Composable
 private fun StatusValueWithProgress(
     value: String,
-    valueColor: Color,
+    valueColor: androidx.compose.ui.graphics.Color,
     progress: Float,
-    progressColor: Color
+    progressColor: androidx.compose.ui.graphics.Color
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -257,8 +274,7 @@ private fun StatusValueWithProgress(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
-            color = valueColor.takeIf { it != Color.Unspecified }
-                ?: MaterialTheme.colorScheme.onSurfaceVariant
+            color = valueColor
         )
         if (progress >= 0) {
             LinearProgressIndicator(
@@ -266,8 +282,7 @@ private fun StatusValueWithProgress(
                 modifier = Modifier
                     .width(56.dp)
                     .height(6.dp),
-                color = progressColor.takeIf { it != Color.Unspecified }
-                    ?: MaterialTheme.colorScheme.primary,
+                color = progressColor,
                 trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 strokeCap = StrokeCap.Round
             )

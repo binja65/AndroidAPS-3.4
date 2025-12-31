@@ -1,7 +1,16 @@
 package app.aaps.compose.actions
 
-import androidx.compose.ui.graphics.Color
 import app.aaps.core.interfaces.pump.actions.CustomAction
+
+/**
+ * Status severity level for theming
+ */
+enum class StatusLevel {
+    NORMAL,
+    WARNING,
+    CRITICAL,
+    UNSPECIFIED
+}
 
 /**
  * UI state for the Actions screen
@@ -40,10 +49,10 @@ data class ActionsUiState(
 data class StatusItem(
     val label: String,
     val age: String,
-    val ageColor: Color = Color.Unspecified,
+    val ageStatus: StatusLevel = StatusLevel.UNSPECIFIED,
     val agePercent: Float = -1f, // 0-1 progress toward critical threshold
     val level: String? = null,
-    val levelColor: Color = Color.Unspecified,
+    val levelStatus: StatusLevel = StatusLevel.UNSPECIFIED,
     val levelPercent: Float = -1f, // -1 means no level, 0-1 for progress (inverted: 100% = empty/critical)
     val iconRes: Int
 )

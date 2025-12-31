@@ -74,7 +74,7 @@ import kotlin.math.max
 class DiaconnG8Plugin @Inject constructor(
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val config: Config,
     commandQueue: CommandQueue,
     private val rxBus: RxBus,

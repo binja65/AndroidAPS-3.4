@@ -5,10 +5,11 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptiveDoublePreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
+import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
-import app.aaps.core.ui.compose.preference.adaptiveDoublePreference
-import app.aaps.core.ui.compose.preference.adaptiveIntPreference
-import app.aaps.core.ui.compose.preference.preferenceCategory
+import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.plugins.constraints.R
 
 /**
@@ -19,32 +20,37 @@ class SafetyPreferencesCompose(
     private val config: Config
 ) : PreferenceScreenContent {
 
-    override fun LazyListScope.preferenceItems() {
+    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
         // Safety category
-        preferenceCategory(
-            key = "safety_settings",
-            titleResId = R.string.treatmentssafety_title
-        )
+        val sectionKey = "${keyPrefix}_safety_settings"
+        item {
+            val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.treatmentssafety_title,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(sectionKey) }
+            ) {
+                // TODO: Patient age preference needs AdaptiveListPreference compose equivalent
+                // Would use StringKey.SafetyAge
 
-        // TODO: Patient age preference needs AdaptiveListPreference compose equivalent
-        // Would use StringKey.SafetyAge
+                // Max bolus - using adaptive preference with validation
+                AdaptiveDoublePreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    doubleKey = DoubleKey.SafetyMaxBolus,
+                    titleResId = app.aaps.core.ui.R.string.max_bolus_title,
+                    unit = " U"
+                )
 
-        // Max bolus - using adaptive preference with validation
-        adaptiveDoublePreference(
-            preferences = preferences,
-            config = config,
-            doubleKey = DoubleKey.SafetyMaxBolus,
-            titleResId = app.aaps.core.ui.R.string.max_bolus_title,
-            unit = " U"
-        )
-
-        // Max carbs - using adaptive preference with validation
-        adaptiveIntPreference(
-            preferences = preferences,
-            config = config,
-            intKey = IntKey.SafetyMaxCarbs,
-            titleResId = app.aaps.core.ui.R.string.max_carbs_title,
-            unit = " g"
-        )
+                // Max carbs - using adaptive preference with validation
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = IntKey.SafetyMaxCarbs,
+                    titleResId = app.aaps.core.ui.R.string.max_carbs_title,
+                    unit = " g"
+                )
+            }
+        }
     }
 }

@@ -3,10 +3,11 @@ package info.nightscout.pump.combov2
 import androidx.compose.foundation.lazy.LazyListScope
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
-import app.aaps.core.ui.compose.preference.adaptiveIntPreference
-import app.aaps.core.ui.compose.preference.adaptiveSwitchPreference
-import app.aaps.core.ui.compose.preference.preferenceCategory
+import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import info.nightscout.pump.combov2.keys.ComboBooleanKey
 import info.nightscout.pump.combov2.keys.ComboIntKey
 
@@ -18,25 +19,30 @@ class ComboV2PreferencesCompose(
     private val config: Config
 ) : PreferenceScreenContent {
 
-    override fun LazyListScope.preferenceItems() {
+    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
         // ComboV2 pump settings category
-        preferenceCategory(
-            key = "combov2_settings",
-            titleResId = R.string.combov2_plugin_name
-        )
+        val sectionKey = "${keyPrefix}_combov2_settings"
+        item {
+            val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
+            CollapsibleCardSectionContent(
+                titleResId = R.string.combov2_plugin_name,
+                expanded = isExpanded,
+                onToggle = { sectionState?.toggle(sectionKey) }
+            ) {
+                AdaptiveIntPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    intKey = ComboIntKey.DiscoveryDuration,
+                    titleResId = R.string.combov2_discovery_duration
+                )
 
-        adaptiveSwitchPreference(
-            preferences = preferences,
-            config = config,
-            booleanKey = ComboBooleanKey.AutomaticReservoirEntry,
-            titleResId = R.string.combov2_automatic_reservoir_entry
-        )
-
-        adaptiveIntPreference(
-            preferences = preferences,
-            config = config,
-            intKey = ComboIntKey.BolusSpeed,
-            titleResId = R.string.combov2_bolus_speed
-        )
+                AdaptiveSwitchPreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    booleanKey = ComboBooleanKey.AutomaticReservoirEntry,
+                    titleResId = R.string.combov2_automatic_reservoir_entry
+                )
+            }
+        }
     }
 }

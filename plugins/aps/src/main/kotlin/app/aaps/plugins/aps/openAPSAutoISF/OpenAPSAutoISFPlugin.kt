@@ -939,7 +939,11 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         return new_SMB
     }
 
-    override fun getPreferenceScreenContent(): Any = OpenAPSAutoISFPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = OpenAPSAutoISFPreferencesCompose(
+        preferences = preferences,
+        config = config,
+        linkToDocsUrl = rh.gs(R.string.openapsama_link_to_preference_json_doc)
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null &&

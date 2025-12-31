@@ -102,3 +102,24 @@ fun SwitchPreference(
         },
     )
 }
+
+/**
+ * Composable switch preference backed by SP, for use inside card sections.
+ */
+@Composable
+fun SwitchPreferenceItem(
+    sp: SP,
+    key: String,
+    defaultValue: Boolean,
+    titleResId: Int,
+    summaryResId: Int? = null,
+    enabled: Boolean = true,
+) {
+    val state = rememberSPBooleanState(sp, key, defaultValue)
+    SwitchPreference(
+        state = state,
+        title = { Text(stringResource(titleResId)) },
+        enabled = enabled,
+        summary = summaryResId?.let { { Text(stringResource(it)) } },
+    )
+}

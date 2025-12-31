@@ -588,7 +588,11 @@ open class OpenAPSSMBPlugin @Inject constructor(
             .store(IntKey.ApsDynIsfAdjustmentFactor, preferences)
     }
 
-    override fun getPreferenceScreenContent(): Any = OpenAPSSMBPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = OpenAPSSMBPreferencesCompose(
+        preferences = preferences,
+        config = config,
+        linkToDocsUrl = rh.gs(R.string.openapsama_link_to_preference_json_doc)
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "absorption_smb_advanced") return

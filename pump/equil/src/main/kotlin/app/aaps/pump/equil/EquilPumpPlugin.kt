@@ -70,7 +70,7 @@ import javax.inject.Singleton
 class EquilPumpPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val config: Config,
     commandQueue: CommandQueue,
     private val aapsSchedulers: AapsSchedulers,
@@ -459,7 +459,7 @@ class EquilPumpPlugin @Inject constructor(
         fun toDuration(dateTime: DateTime): Duration = Duration(dateTime.toLocalTime().millisOfDay.toLong())
     }
 
-    override fun getPreferenceScreenContent(): Any = EquilPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = EquilPreferencesCompose(preferences, config, rh)
 
     override fun addPreferenceScreen(
         preferenceManager: PreferenceManager,

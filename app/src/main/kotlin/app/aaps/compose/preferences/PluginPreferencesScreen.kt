@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,6 +22,7 @@ import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.ui.compose.preference.PreferenceScreenContent
 import app.aaps.core.ui.compose.preference.ProvidePreferenceTheme
 import app.aaps.core.ui.compose.preference.addPreferenceContent
+import app.aaps.core.ui.compose.preference.rememberPreferenceSectionState
 import app.aaps.core.ui.compose.preference.verticalScrollIndicators
 
 /**
@@ -56,16 +56,13 @@ fun PluginPreferencesScreen(
                                 contentDescription = stringResource(app.aaps.core.ui.R.string.back)
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    }
                 )
             }
         ) { paddingValues ->
             if (preferenceContent != null) {
                 val listState = rememberLazyListState()
+                val sectionState = rememberPreferenceSectionState()
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -73,7 +70,7 @@ fun PluginPreferencesScreen(
                         .verticalScrollIndicators(listState),
                     state = listState
                 ) {
-                    addPreferenceContent(preferenceContent)
+                    addPreferenceContent(preferenceContent, sectionState)
                 }
             } else {
                 // Fallback for plugins without compose preferences
@@ -107,6 +104,7 @@ fun AllPreferencesScreen(
 ) {
     val preferenceContents = plugins
         .mapNotNull { it.getPreferenceScreenContent() as? PreferenceScreenContent }
+        .distinctBy { it.keyPrefix }
 
     ProvidePreferenceTheme {
         Scaffold(
@@ -114,7 +112,7 @@ fun AllPreferencesScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = stringResource(app.aaps.core.ui.R.string.nav_plugin_preferences),
+                            text = stringResource(app.aaps.core.ui.R.string.settings),
                             style = MaterialTheme.typography.titleLarge
                         )
                     },
@@ -125,15 +123,12 @@ fun AllPreferencesScreen(
                                 contentDescription = stringResource(app.aaps.core.ui.R.string.back)
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    }
                 )
             }
         ) { paddingValues ->
             val listState = rememberLazyListState()
+            val sectionState = rememberPreferenceSectionState()
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -142,7 +137,7 @@ fun AllPreferencesScreen(
                 state = listState
             ) {
                 preferenceContents.forEach { content ->
-                    addPreferenceContent(content)
+                    addPreferenceContent(content, sectionState)
                 }
             }
         }

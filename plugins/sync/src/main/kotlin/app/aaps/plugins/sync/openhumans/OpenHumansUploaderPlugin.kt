@@ -67,7 +67,7 @@ import javax.inject.Singleton
 class OpenHumansUploaderPlugin @Inject internal constructor(
     rh: ResourceHelper,
     aapsLogger: AAPSLogger,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val config: Config,
     private val context: Context,
     private val persistenceLayer: PersistenceLayer,

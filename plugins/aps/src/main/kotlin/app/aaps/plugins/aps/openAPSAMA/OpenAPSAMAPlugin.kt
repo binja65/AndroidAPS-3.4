@@ -313,7 +313,11 @@ class OpenAPSAMAPlugin @Inject constructor(
     override fun configuration(): JsonObject = JsonObject(emptyMap())
     override fun applyConfiguration(configuration: JsonObject) {}
 
-    override fun getPreferenceScreenContent(): Any = OpenAPSAMAPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = OpenAPSAMAPreferencesCompose(
+        preferences = preferences,
+        config = config,
+        linkToDocsUrl = rh.gs(R.string.openapsama_link_to_preference_json_doc)
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "absorption_ama_advanced") return

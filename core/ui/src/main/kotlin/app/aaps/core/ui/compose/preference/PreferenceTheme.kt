@@ -26,6 +26,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -34,6 +36,8 @@ class PreferenceTheme(
     val categoryPadding: PaddingValues,
     val categoryColor: Color,
     val categoryTextStyle: TextStyle,
+    val summaryCategoryColor: Color,
+    val summaryCategoryTextStyle: TextStyle,
     val padding: PaddingValues,
     val horizontalSpacing: Dp,
     val verticalSpacing: Dp,
@@ -52,7 +56,9 @@ fun preferenceTheme(
     categoryPadding: PaddingValues =
         PaddingValues(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 8.dp),
     categoryColor: Color = MaterialTheme.colorScheme.secondary,
-    categoryTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
+    categoryTextStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+    summaryCategoryColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    summaryCategoryTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
     padding: PaddingValues = PaddingValues(16.dp),
     horizontalSpacing: Dp = 16.dp,
     verticalSpacing: Dp = 16.dp,
@@ -69,6 +75,8 @@ fun preferenceTheme(
         categoryPadding = categoryPadding,
         categoryColor = categoryColor,
         categoryTextStyle = categoryTextStyle,
+        summaryCategoryColor = summaryCategoryColor,
+        summaryCategoryTextStyle = summaryCategoryTextStyle,
         padding = padding,
         horizontalSpacing = horizontalSpacing,
         verticalSpacing = verticalSpacing,

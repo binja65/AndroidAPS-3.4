@@ -116,7 +116,7 @@ import kotlin.math.floor
 class MedtronicPumpPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val config: Config,
     commandQueue: CommandQueue,
     rxBus: RxBus,

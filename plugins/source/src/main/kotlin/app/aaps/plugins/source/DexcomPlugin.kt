@@ -39,6 +39,7 @@ class DexcomPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
     private val context: Context,
     config: Config,
+    preferences: Preferences,
     persistenceLayer: PersistenceLayer,
     dateUtil: DateUtil,
     profileUtil: ProfileUtil
@@ -62,7 +63,7 @@ class DexcomPlugin @Inject constructor(
         .shortName(R.string.dexcom_short)
         .preferencesVisibleInSimpleMode(false)
         .description(R.string.description_source_dexcom),
-    aapsLogger, rh
+    aapsLogger, rh, preferences, config
 ), BgSource, DexcomBoyda {
 
     init {

@@ -55,7 +55,7 @@ abstract class AbstractDanaRPlugin protected constructor(
     protected var danaPump: DanaPump,
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
-    protected val preferences: Preferences,
+    preferences: Preferences,
     protected val config: Config,
     commandQueue: CommandQueue,
     protected var constraintChecker: ConstraintsChecker,
