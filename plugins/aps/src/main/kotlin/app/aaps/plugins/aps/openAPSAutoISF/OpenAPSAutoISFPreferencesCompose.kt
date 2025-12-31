@@ -32,6 +32,12 @@ class OpenAPSAutoISFPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(autoIsfSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.openaps_auto_isf,
+                summaryItems = listOf(
+                    R.string.openapsma_max_basal_title,
+                    R.string.openapssmb_max_iob_title,
+                    R.string.enable_smb,
+                    R.string.enable_uam
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(autoIsfSettingsKey) }
             ) {
@@ -187,6 +193,11 @@ class OpenAPSAutoISFPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(advancedSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                summaryItems = listOf(
+                    R.string.always_use_short_avg,
+                    R.string.openapsama_max_daily_safety_multiplier,
+                    R.string.openapsama_current_basal_safety_multiplier
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(advancedSettingsKey) }
             ) {
@@ -229,6 +240,12 @@ class OpenAPSAutoISFPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(autoIsfKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.autoISF_settings_title,
+                summaryItems = listOf(
+                    R.string.openapsama_enable_autoISF,
+                    R.string.openapsama_autoISF_min,
+                    R.string.openapsama_autoISF_max,
+                    R.string.openapsama_iob_threshold_percent
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(autoIsfKey) }
             ) {
@@ -311,6 +328,12 @@ class OpenAPSAutoISFPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(smbDeliveryKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.smb_delivery_settings_title,
+                summaryItems = listOf(
+                    R.string.openapsama_smb_delivery_ratio,
+                    R.string.openapsama_smb_delivery_ratio_min,
+                    R.string.openapsama_smb_delivery_ratio_max,
+                    R.string.openapsama_smb_max_range_extension
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(smbDeliveryKey) }
             ) {

@@ -31,6 +31,12 @@ class ComboV2PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.combov2_title,
+                summaryItems = listOf(
+                    R.string.combov2_pair_with_pump_title,
+                    R.string.combov2_discovery_duration,
+                    R.string.combov2_automatic_reservoir_entry,
+                    R.string.combov2_automatic_battery_entry
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

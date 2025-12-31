@@ -36,6 +36,11 @@ class EquilPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.equil_name,
+                summaryItems = listOf(
+                    R.string.equil_settings_alarm_battery,
+                    R.string.equil_settings_alarm_insulin,
+                    R.string.equil_tone
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

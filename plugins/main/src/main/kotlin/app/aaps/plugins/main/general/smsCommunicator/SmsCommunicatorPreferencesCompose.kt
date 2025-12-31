@@ -32,6 +32,12 @@ class SmsCommunicatorPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(smsSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.smscommunicator,
+                summaryItems = listOf(
+                    R.string.smscommunicator_allowednumbers,
+                    R.string.smscommunicator_remote_commands_allowed,
+                    R.string.smscommunicator_otp_pin,
+                    R.string.smscommunicator_pump_unreachable
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(smsSettingsKey) }
             ) {

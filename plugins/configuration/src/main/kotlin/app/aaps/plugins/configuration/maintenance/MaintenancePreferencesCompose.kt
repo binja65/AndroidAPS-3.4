@@ -29,6 +29,10 @@ class MaintenancePreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey1) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.maintenance_settings,
+                summaryItems = listOf(
+                    R.string.maintenance_email,
+                    R.string.maintenance_amount
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey1) }
             ) {
@@ -54,6 +58,10 @@ class MaintenancePreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey2) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.data_choices,
+                summaryItems = listOf(
+                    R.string.fabric_upload,
+                    R.string.identification
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey2) }
             ) {
@@ -79,6 +87,9 @@ class MaintenancePreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey3) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.unattended_settings_export,
+                summaryItems = listOf(
+                    R.string.unattended_settings_export
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey3) }
             ) {

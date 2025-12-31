@@ -28,6 +28,12 @@ class TidepoolPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(connectionOptionsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.connection_settings_title,
+                summaryItems = listOf(
+                    R.string.ns_cellular,
+                    R.string.ns_wifi,
+                    R.string.ns_wifi_ssids,
+                    R.string.ns_battery
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(connectionOptionsKey) }
             ) {
@@ -81,6 +87,9 @@ class TidepoolPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(advancedKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                summaryItems = listOf(
+                    R.string.title_tidepool_dev_servers
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(advancedKey) }
             ) {

@@ -22,6 +22,7 @@ class AutomationPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(automationSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.automation,
+                summaryItems = listOf(R.string.locationservice),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(automationSettingsKey) }
             ) {

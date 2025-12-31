@@ -58,6 +58,7 @@ abstract class AbstractBgSourcePlugin(
                 val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
                 CollapsibleCardSectionContent(
                     titleResId = R.string.bgsource_settings,
+                    summaryItems = listOf(app.aaps.core.ui.R.string.do_ns_upload_title),
                     expanded = isExpanded,
                     onToggle = { sectionState?.toggle(sectionKey) }
                 ) {

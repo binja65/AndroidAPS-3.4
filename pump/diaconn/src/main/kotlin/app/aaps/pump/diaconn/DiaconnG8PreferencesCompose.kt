@@ -39,6 +39,12 @@ class DiaconnG8PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.diaconn_g8_pump,
+                summaryItems = listOf(
+                    R.string.selectedpump,
+                    R.string.bolusspeed,
+                    R.string.diaconn_g8_loginsulinchange_title,
+                    R.string.diaconn_g8_logcanulachange_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

@@ -25,6 +25,10 @@ class OpenHumansPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(openHumansSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.open_humans,
+                summaryItems = listOf(
+                    R.string.only_upload_if_connected_to_wifi,
+                    R.string.only_upload_if_charging
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(openHumansSettingsKey) }
             ) {

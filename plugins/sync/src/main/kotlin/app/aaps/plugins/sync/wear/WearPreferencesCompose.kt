@@ -26,6 +26,10 @@ class WearPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(wearSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.wear_settings,
+                summaryItems = listOf(
+                    R.string.wearcontrol_title,
+                    R.string.wear_broadcast_data
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(wearSettingsKey) }
             ) {
@@ -57,6 +61,12 @@ class WearPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(wizardSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.wear_wizard_settings,
+                summaryItems = listOf(
+                    app.aaps.core.ui.R.string.bg_label,
+                    app.aaps.core.ui.R.string.tt_label,
+                    app.aaps.core.ui.R.string.treatments_wizard_cob_label,
+                    app.aaps.core.ui.R.string.iob_label
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(wizardSettingsKey) }
             ) {
@@ -103,6 +113,9 @@ class WearPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(customWatchfaceKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.wear_custom_watchface_settings,
+                summaryItems = listOf(
+                    R.string.wear_custom_watchface_authorization_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(customWatchfaceKey) }
             ) {
@@ -122,6 +135,9 @@ class WearPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(generalSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.wear_general_settings,
+                summaryItems = listOf(
+                    R.string.wear_notifysmb_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(generalSettingsKey) }
             ) {

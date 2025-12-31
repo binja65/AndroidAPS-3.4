@@ -31,6 +31,11 @@ class SafetyPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.treatmentssafety_title,
+                summaryItems = listOf(
+                    app.aaps.core.ui.R.string.patient_type,
+                    app.aaps.core.ui.R.string.max_bolus_title,
+                    app.aaps.core.ui.R.string.max_carbs_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

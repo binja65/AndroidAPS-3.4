@@ -75,6 +75,12 @@ class MedtronicPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.medtronic_name,
+                summaryItems = listOf(
+                    R.string.medtronic_serial_number,
+                    R.string.medtronic_pump_type,
+                    R.string.medtronic_pump_frequency,
+                    R.string.medtronic_pump_max_basal
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

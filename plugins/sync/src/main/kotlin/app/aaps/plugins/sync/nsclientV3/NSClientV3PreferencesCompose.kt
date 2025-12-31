@@ -29,6 +29,11 @@ class NSClientV3PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(nsClientSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.ns_client_v3_title,
+                summaryItems = listOf(
+                    R.string.ns_client_url_title,
+                    R.string.nsclient_token_title,
+                    R.string.ns_use_ws_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(nsClientSettingsKey) }
             ) {
@@ -65,6 +70,12 @@ class NSClientV3PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(synchronizationKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.ns_sync_options,
+                summaryItems = listOf(
+                    R.string.ns_upload,
+                    R.string.ns_receive_cgm,
+                    R.string.ns_receive_profile_store,
+                    R.string.ns_receive_temp_target
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(synchronizationKey) }
             ) {
@@ -163,6 +174,11 @@ class NSClientV3PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(alarmOptionsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.ns_alarm_options,
+                summaryItems = listOf(
+                    R.string.ns_alarms,
+                    R.string.ns_announcements,
+                    R.string.ns_alarm_stale_data_value_label
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(alarmOptionsKey) }
             ) {
@@ -202,6 +218,12 @@ class NSClientV3PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(connectionOptionsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.connection_settings_title,
+                summaryItems = listOf(
+                    R.string.ns_cellular,
+                    R.string.ns_wifi,
+                    R.string.ns_wifi_ssids,
+                    R.string.ns_battery
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(connectionOptionsKey) }
             ) {
@@ -256,6 +278,11 @@ class NSClientV3PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(advancedKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                summaryItems = listOf(
+                    R.string.ns_log_app_started_event,
+                    R.string.ns_create_announcements_from_errors_title,
+                    R.string.ns_sync_slow
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(advancedKey) }
             ) {

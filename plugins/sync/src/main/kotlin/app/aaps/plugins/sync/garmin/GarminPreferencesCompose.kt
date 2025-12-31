@@ -29,6 +29,11 @@ class GarminPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(garminSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.garmin,
+                summaryItems = listOf(
+                    R.string.garmin_local_http_server,
+                    R.string.garmin_local_http_server_port,
+                    R.string.garmin_request_key
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(garminSettingsKey) }
             ) {

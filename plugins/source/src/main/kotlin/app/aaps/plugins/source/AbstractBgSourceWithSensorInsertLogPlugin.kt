@@ -57,6 +57,10 @@ abstract class AbstractBgSourceWithSensorInsertLogPlugin(
                 val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
                 CollapsibleCardSectionContent(
                     titleResId = R.string.bgsource_settings,
+                    summaryItems = listOf(
+                        app.aaps.core.ui.R.string.do_ns_upload_title,
+                        R.string.bgsource_log_sensor_change_title
+                    ),
                     expanded = isExpanded,
                     onToggle = { sectionState?.toggle(sectionKey) }
                 ) {

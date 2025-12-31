@@ -43,6 +43,12 @@ class MedtrumPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.medtrum_pump_setting,
+                summaryItems = listOf(
+                    R.string.sn_input_title,
+                    R.string.alarm_setting_title,
+                    R.string.pump_warning_notification_title,
+                    R.string.hourly_max_insulin_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {
@@ -107,6 +113,9 @@ class MedtrumPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(advancedKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                summaryItems = listOf(
+                    R.string.scan_on_connection_error_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(advancedKey) }
             ) {

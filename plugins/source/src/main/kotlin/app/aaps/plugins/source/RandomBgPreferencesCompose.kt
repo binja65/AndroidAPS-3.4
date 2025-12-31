@@ -26,6 +26,10 @@ class RandomBgPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.random_bg,
+                summaryItems = listOf(
+                    app.aaps.core.ui.R.string.do_ns_upload_title,
+                    R.string.bg_generation_interval_minutes
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

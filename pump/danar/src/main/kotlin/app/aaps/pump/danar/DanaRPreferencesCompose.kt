@@ -29,6 +29,11 @@ class DanaRPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.danar_pump_settings,
+                summaryItems = listOf(
+                    R.string.danar_password_title,
+                    R.string.bolusspeed,
+                    R.string.danar_useextended_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

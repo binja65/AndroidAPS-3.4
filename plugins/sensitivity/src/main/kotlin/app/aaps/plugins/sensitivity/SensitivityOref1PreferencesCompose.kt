@@ -24,6 +24,10 @@ class SensitivityOref1PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey1) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.absorption_settings_title,
+                summaryItems = listOf(
+                    R.string.openapsama_min_5m_carb_impact,
+                    R.string.absorption_cutoff_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey1) }
             ) {
@@ -49,6 +53,10 @@ class SensitivityOref1PreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey2) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                summaryItems = listOf(
+                    R.string.openapsama_autosens_max,
+                    R.string.openapsama_autosens_min
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey2) }
             ) {

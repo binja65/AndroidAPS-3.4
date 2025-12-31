@@ -33,6 +33,11 @@ class EopatchPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.eopatch,
+                summaryItems = listOf(
+                    R.string.low_reservoir,
+                    R.string.patch_expiration_reminders,
+                    R.string.patch_buzzer_reminders
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

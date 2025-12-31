@@ -33,6 +33,10 @@ class VirtualPumpPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.virtualpump_settings,
+                summaryItems = listOf(
+                    R.string.virtual_pump_type,
+                    app.aaps.core.ui.R.string.virtualpump_uploadstatus_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

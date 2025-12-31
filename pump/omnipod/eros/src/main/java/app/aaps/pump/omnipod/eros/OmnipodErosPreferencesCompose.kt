@@ -36,6 +36,10 @@ class OmnipodErosPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(rileyLinkKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.omnipod_eros_preferences_category_riley_link,
+                summaryItems = listOf(
+                    app.aaps.pump.common.hw.rileylink.R.string.rileylink_configuration,
+                    app.aaps.pump.common.hw.rileylink.R.string.orange_use_scanning_level
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(rileyLinkKey) }
             ) {
@@ -79,6 +83,11 @@ class OmnipodErosPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(beepKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_confirmation_beeps,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_bolus_beeps_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_basal_beeps_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_smb_beeps_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(beepKey) }
             ) {
@@ -118,6 +127,10 @@ class OmnipodErosPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(alertsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_alerts,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_reminder_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_low_reservoir_alert_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(alertsKey) }
             ) {
@@ -165,6 +178,10 @@ class OmnipodErosPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(notificationsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_notifications,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_notification_uncertain_tbr_sound_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_notification_uncertain_smb_sound_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(notificationsKey) }
             ) {
@@ -197,6 +214,10 @@ class OmnipodErosPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(otherKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_other,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_suspend_delivery_button_enabled,
+                    R.string.omnipod_eros_preferences_pulse_log_button_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(otherKey) }
             ) {

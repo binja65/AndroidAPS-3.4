@@ -27,6 +27,12 @@ class AutotunePreferencesCompose(
             val isExpanded = sectionState?.isExpanded(autotuneSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.autotune_settings,
+                summaryItems = listOf(
+                    R.string.autotune_auto_title,
+                    R.string.autotune_categorize_uam_as_basal_title,
+                    R.string.autotune_default_tune_days_title,
+                    R.string.autotune_circadian_ic_isf_title
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(autotuneSettingsKey) }
             ) {

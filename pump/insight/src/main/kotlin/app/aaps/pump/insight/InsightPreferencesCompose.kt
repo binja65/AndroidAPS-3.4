@@ -29,6 +29,12 @@ class InsightPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.insight_local,
+                summaryItems = listOf(
+                    R.string.insight_pairing,
+                    R.string.enable_tbr_emulation,
+                    R.string.disable_vibration,
+                    R.string.disconnect_delay
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {

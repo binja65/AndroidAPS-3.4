@@ -25,6 +25,9 @@ class LoopPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(loopSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.loop,
+                summaryItems = listOf(
+                    R.string.loop_open_mode_min_change
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(loopSettingsKey) }
             ) {

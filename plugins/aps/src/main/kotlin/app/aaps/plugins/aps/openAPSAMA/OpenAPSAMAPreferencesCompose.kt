@@ -30,6 +30,12 @@ class OpenAPSAMAPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(amaSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.openapsama,
+                summaryItems = listOf(
+                    R.string.openapsma_max_basal_title,
+                    R.string.openapsma_max_iob_title,
+                    R.string.openapsama_use_autosens,
+                    R.string.openapsama_min_5m_carb_impact
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(amaSettingsKey) }
             ) {
@@ -77,6 +83,11 @@ class OpenAPSAMAPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(advancedSettingsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+                summaryItems = listOf(
+                    R.string.always_use_short_avg,
+                    R.string.openapsama_max_daily_safety_multiplier,
+                    R.string.openapsama_current_basal_safety_multiplier
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(advancedSettingsKey) }
             ) {

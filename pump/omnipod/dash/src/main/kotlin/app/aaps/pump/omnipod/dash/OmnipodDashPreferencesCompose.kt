@@ -27,6 +27,11 @@ class OmnipodDashPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(beepKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_confirmation_beeps,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_bolus_beeps_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_basal_beeps_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_smb_beeps_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(beepKey) }
             ) {
@@ -73,6 +78,10 @@ class OmnipodDashPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(alertsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_alerts,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_expiration_reminder_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_low_reservoir_alert_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(alertsKey) }
             ) {
@@ -129,6 +138,10 @@ class OmnipodDashPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(notificationsKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_notifications,
+                summaryItems = listOf(
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_notification_uncertain_tbr_sound_enabled,
+                    app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_notification_uncertain_smb_sound_enabled
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(notificationsKey) }
             ) {

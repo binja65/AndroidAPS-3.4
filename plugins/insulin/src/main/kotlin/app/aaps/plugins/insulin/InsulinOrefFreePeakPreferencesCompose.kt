@@ -23,6 +23,9 @@ class InsulinOrefFreePeakPreferencesCompose(
             val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
             CollapsibleCardSectionContent(
                 titleResId = R.string.insulin_oref_peak,
+                summaryItems = listOf(
+                    R.string.insulin_peak_time
+                ),
                 expanded = isExpanded,
                 onToggle = { sectionState?.toggle(sectionKey) }
             ) {
