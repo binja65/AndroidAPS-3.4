@@ -1,17 +1,18 @@
 package app.aaps.plugins.automation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveStringListPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 
 /**
  * Compose implementation of Automation preferences.
+ * Now fully key-based - UI is auto-generated from preference keys.
  */
 class AutomationPreferencesCompose(
     private val preferences: Preferences,
@@ -20,23 +21,15 @@ class AutomationPreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.automation
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.locationservice
+    override val mainKeys: List<PreferenceKey> = listOf(
+        StringKey.AutomationLocation
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Location service preference
-        val entries = mapOf(
-            "PASSIVE" to stringResource(R.string.use_passive_location),
-            "NETWORK" to stringResource(R.string.use_network_location),
-            "GPS" to stringResource(R.string.use_gps_location)
-        )
-        AdaptiveStringListPreferenceItem(
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            stringKey = StringKey.AutomationLocation,
-            titleResId = R.string.locationservice,
-            entries = entries
+            config = config
         )
     }
 

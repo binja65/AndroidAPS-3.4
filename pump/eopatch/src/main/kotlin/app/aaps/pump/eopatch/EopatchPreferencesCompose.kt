@@ -2,9 +2,10 @@ package app.aaps.pump.eopatch
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -13,6 +14,7 @@ import app.aaps.pump.eopatch.keys.EopatchIntKey
 
 /**
  * Compose implementation of Eopatch preferences.
+ * Note: Low reservoir and expiration reminders require custom entries.
  */
 class EopatchPreferencesCompose(
     private val preferences: Preferences,
@@ -29,13 +31,14 @@ class EopatchPreferencesCompose(
 
     override val titleResId: Int = R.string.eopatch
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.low_reservoir,
-        R.string.patch_expiration_reminders,
-        R.string.patch_buzzer_reminders
+    override val mainKeys: List<PreferenceKey> = listOf(
+        EopatchIntKey.LowReservoirReminder,
+        EopatchIntKey.ExpirationReminder,
+        EopatchBooleanKey.BuzzerReminder
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // Low reservoir - requires custom entries
         AdaptiveListIntPreferenceItem(
             preferences = preferences,
             config = config,
@@ -45,6 +48,7 @@ class EopatchPreferencesCompose(
             entryValues = lowReservoirValues
         )
 
+        // Expiration reminder - requires custom entries
         AdaptiveListIntPreferenceItem(
             preferences = preferences,
             config = config,
@@ -54,11 +58,11 @@ class EopatchPreferencesCompose(
             entryValues = expirationReminderValues
         )
 
-        AdaptiveSwitchPreferenceItem(
+        // Buzzer reminder - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(EopatchBooleanKey.BuzzerReminder),
             preferences = preferences,
-            config = config,
-            booleanKey = EopatchBooleanKey.BuzzerReminder,
-            titleResId = R.string.patch_buzzer_reminders
+            config = config
         )
     }
 

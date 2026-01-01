@@ -36,23 +36,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.aaps.core.keys.interfaces.PreferenceKey
 
 /**
  * Represents a preference subscreen that can be navigated to.
  *
  * @param key Unique key for this subscreen
  * @param titleResId String resource ID for the screen title
+ * @param keys List of preference keys - summaryItems is auto-derived from keys' titleResId (preferred)
+ * @param summaryItems Direct list of string resource IDs for summary (legacy, use keys instead)
  * @param summaryResId Optional string resource ID for summary shown in parent list
- * @param summaryItems Optional list of preference title resource IDs to show as summary
  * @param content Composable lambda that provides the preference content for this subscreen
  */
-data class PreferenceSubScreen(
+class PreferenceSubScreen(
     val key: String,
     val titleResId: Int,
-    val summaryResId: Int? = null,
+    val keys: List<PreferenceKey> = emptyList(),
     val summaryItems: List<Int> = emptyList(),
+    val summaryResId: Int? = null,
     val content: @Composable (PreferenceSectionState?) -> Unit
-)
+) {
+    /** Effective summary items - from keys if provided, otherwise direct summaryItems */
+    fun effectiveSummaryItems(): List<Int> =
+        if (keys.isNotEmpty()) keys.map { it.titleResId }.filter { it != 0 }
+        else summaryItems
+}
 
 /**
  * Interface for plugins that provide navigable preference subscreens.
@@ -72,12 +80,30 @@ interface NavigablePreferenceContent {
     val titleResId: Int
 
     /**
+     * Main preference keys shown at top level.
+     * Summary is auto-derived from keys' titleResId.
+     */
+    val mainKeys: List<PreferenceKey>
+        get() = emptyList()
+
+    /**
      * Optional list of preference title resource IDs to show as summary when collapsed.
      * Used when the card is collapsed to show what preferences are available.
-     * If empty, subscreen titles will be used instead.
+     * If empty, derived from mainKeys + subscreens keys.
      */
     val summaryItems: List<Int>
         get() = emptyList()
+
+    /**
+     * Effective summary items - from mainKeys + subscreens if available, otherwise summaryItems.
+     */
+    fun effectiveSummaryItems(): List<Int> {
+        val fromKeys = mainKeys.map { it.titleResId }.filter { it != 0 } +
+            subscreens.flatMap { it.keys.map { k -> k.titleResId } }.filter { it != 0 }
+        return if (fromKeys.isNotEmpty()) fromKeys else summaryItems.ifEmpty {
+            subscreens.map { it.titleResId }
+        }
+    }
 
     /**
      * Optional main content shown at top level (not in a subscreen).
@@ -187,7 +213,7 @@ fun PreferenceNavigationHost(
                             NavigablePreferenceItem(
                                 titleResId = subScreen.titleResId,
                                 summaryResId = subScreen.summaryResId,
-                                summaryItems = subScreen.summaryItems,
+                                summaryItems = subScreen.effectiveSummaryItems(),
                                 onClick = { currentSubScreen = subScreen.key }
                             )
                         }
@@ -312,13 +338,9 @@ fun LazyListScope.addNavigablePreferenceContent(
     val sectionKey = "${content.keyPrefix}_main"
     item(key = sectionKey) {
         val isExpanded = sectionState?.isExpanded(sectionKey) ?: false
-        // Use content.summaryItems if provided, otherwise fall back to subscreen titles
-        val summaryItems = content.summaryItems.ifEmpty {
-            content.subscreens.map { it.titleResId }
-        }
         CollapsibleCardSectionContent(
             titleResId = content.titleResId,
-            summaryItems = summaryItems,
+            summaryItems = content.effectiveSummaryItems(),
             expanded = isExpanded,
             onToggle = { sectionState?.toggle(sectionKey) }
         ) {
@@ -330,7 +352,7 @@ fun LazyListScope.addNavigablePreferenceContent(
                 val isSubExpanded = sectionState?.isExpanded(subSectionKey) ?: false
                 CollapsibleCardSectionContent(
                     titleResId = subScreen.titleResId,
-                    summaryItems = subScreen.summaryItems,
+                    summaryItems = subScreen.effectiveSummaryItems(),
                     expanded = isSubExpanded,
                     onToggle = { sectionState?.toggle(subSectionKey) }
                 ) {

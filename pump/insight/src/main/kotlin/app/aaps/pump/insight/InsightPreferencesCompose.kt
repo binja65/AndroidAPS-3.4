@@ -2,10 +2,10 @@ package app.aaps.pump.insight
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveActivityPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -16,6 +16,7 @@ import app.aaps.pump.insight.keys.InsightIntentKey
 
 /**
  * Compose implementation of Insight preferences.
+ * Note: Pairing activity requires special handling.
  */
 class InsightPreferencesCompose(
     private val preferences: Preferences,
@@ -24,13 +25,23 @@ class InsightPreferencesCompose(
 
     override val titleResId: Int = R.string.insight_local
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.insight_pairing,
-        R.string.log_reservoir_changes,
-        R.string.enable_tbr_emulation
+    override val mainKeys: List<PreferenceKey> = listOf(
+        InsightBooleanKey.LogReservoirChanges,
+        InsightBooleanKey.LogTubeChanges,
+        InsightBooleanKey.LogSiteChanges,
+        InsightBooleanKey.LogBatteryChanges,
+        InsightBooleanKey.LogOperatingModeChanges,
+        InsightBooleanKey.LogAlerts,
+        InsightBooleanKey.EnableTbrEmulation,
+        InsightBooleanKey.DisableVibration,
+        InsightBooleanKey.DisableVibrationAuto,
+        InsightIntKey.MinRecoveryDuration,
+        InsightIntKey.MaxRecoveryDuration,
+        InsightIntKey.DisconnectDelay
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // Pairing activity - requires activity launch
         AdaptiveActivityPreferenceItem(
             preferences = preferences,
             intentKey = InsightIntentKey.InsightPairing,
@@ -38,91 +49,11 @@ class InsightPreferencesCompose(
             activityClass = InsightPairingInformationActivity::class.java
         )
 
-        AdaptiveSwitchPreferenceItem(
+        // All other preferences - can use key-based
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.LogReservoirChanges,
-            titleResId = R.string.log_reservoir_changes
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.LogTubeChanges,
-            titleResId = R.string.log_tube_changes
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.LogSiteChanges,
-            titleResId = R.string.log_site_changes
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.LogBatteryChanges,
-            titleResId = R.string.log_battery_changes
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.LogOperatingModeChanges,
-            titleResId = R.string.log_operating_mode_changes
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.LogAlerts,
-            titleResId = R.string.log_alerts
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.EnableTbrEmulation,
-            titleResId = R.string.enable_tbr_emulation,
-            summaryResId = R.string.enable_tbr_emulation_summary
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.DisableVibration,
-            titleResId = R.string.disable_vibration,
-            summaryResId = R.string.disable_vibration_summary
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = InsightBooleanKey.DisableVibrationAuto,
-            titleResId = R.string.disable_vibration_auto,
-            summaryResId = R.string.disable_vibration_auto_summary
-        )
-
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = InsightIntKey.MinRecoveryDuration,
-            titleResId = R.string.min_recovery_duration
-        )
-
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = InsightIntKey.MaxRecoveryDuration,
-            titleResId = R.string.max_recovery_duration
-        )
-
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = InsightIntKey.DisconnectDelay,
-            titleResId = R.string.disconnect_delay
+            config = config
         )
     }
 

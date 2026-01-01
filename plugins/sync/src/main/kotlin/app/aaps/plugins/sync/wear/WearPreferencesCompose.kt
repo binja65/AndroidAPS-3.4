@@ -3,7 +3,9 @@ package app.aaps.plugins.sync.wear
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
@@ -11,7 +13,8 @@ import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.plugins.sync.R
 
 /**
- * Compose implementation of Wear preferences using adaptive preferences.
+ * Compose implementation of Wear preferences.
+ * Uses key-based rendering - UI is auto-generated from preference keys.
  */
 class WearPreferencesCompose(
     private val preferences: Preferences,
@@ -21,18 +24,34 @@ class WearPreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.wear
 
-    // Main content shown at top level
+    override val mainKeys: List<PreferenceKey> = listOf(
+        BooleanKey.WearControl
+    )
+
+    private val wizardKeys: List<PreferenceKey> = listOf(
+        BooleanKey.WearWizardBg,
+        BooleanKey.WearWizardTt,
+        BooleanKey.WearWizardTrend,
+        BooleanKey.WearWizardCob,
+        BooleanKey.WearWizardIob
+    )
+
+    private val customWatchfaceKeys: List<PreferenceKey> = listOf(
+        BooleanKey.WearCustomWatchfaceAuthorization
+    )
+
+    private val generalKeys: List<PreferenceKey> = listOf(
+        BooleanKey.WearNotifyOnSmb
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Wear control
-        AdaptiveSwitchPreferenceItem(
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.WearControl,
-            titleResId = R.string.wearcontrol_title,
-            summaryResId = R.string.wearcontrol_summary
+            config = config
         )
 
-        // Broadcast data (only for AAPSCLIENT)
+        // Conditional broadcast option (only for AAPSCLIENT)
         if (showBroadcastOption) {
             AdaptiveSwitchPreferenceItem(
                 preferences = preferences,
@@ -45,85 +64,40 @@ class WearPreferencesCompose(
     }
 
     override val subscreens: List<PreferenceSubScreen> = listOf(
-        // Wizard settings subscreen
         PreferenceSubScreen(
             key = "wear_wizard_settings",
             titleResId = app.aaps.core.ui.R.string.wear_wizard_settings,
-            summaryResId = R.string.wear_wizard_settings_summary,
-            summaryItems = listOf(
-                app.aaps.core.ui.R.string.bg_label,
-                app.aaps.core.ui.R.string.tt_label,
-                app.aaps.core.ui.R.string.treatments_wizard_cob_label,
-                app.aaps.core.ui.R.string.iob_label
-            )
+            keys = wizardKeys,
+            summaryResId = R.string.wear_wizard_settings_summary
         ) { _ ->
-            AdaptiveSwitchPreferenceItem(
+            AdaptivePreferenceList(
+                keys = wizardKeys,
                 preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearWizardBg,
-                titleResId = app.aaps.core.ui.R.string.bg_label
-            )
-
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearWizardTt,
-                titleResId = app.aaps.core.ui.R.string.tt_label
-            )
-
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearWizardTrend,
-                titleResId = app.aaps.core.ui.R.string.bg_trend_label
-            )
-
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearWizardCob,
-                titleResId = app.aaps.core.ui.R.string.treatments_wizard_cob_label
-            )
-
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearWizardIob,
-                titleResId = app.aaps.core.ui.R.string.iob_label
+                config = config
             )
         },
 
-        // Custom watchface settings subscreen
         PreferenceSubScreen(
             key = "wear_custom_watchface_settings",
             titleResId = R.string.wear_custom_watchface_settings,
-            summaryItems = listOf(
-                R.string.wear_custom_watchface_authorization_title
-            )
+            keys = customWatchfaceKeys
         ) { _ ->
-            AdaptiveSwitchPreferenceItem(
+            AdaptivePreferenceList(
+                keys = customWatchfaceKeys,
                 preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearCustomWatchfaceAuthorization,
-                titleResId = R.string.wear_custom_watchface_authorization_title,
-                summaryResId = R.string.wear_custom_watchface_authorization_summary
+                config = config
             )
         },
 
-        // General settings subscreen
         PreferenceSubScreen(
             key = "wear_general_settings",
             titleResId = R.string.wear_general_settings,
-            summaryItems = listOf(
-                R.string.wear_notifysmb_title
-            )
+            keys = generalKeys
         ) { _ ->
-            AdaptiveSwitchPreferenceItem(
+            AdaptivePreferenceList(
+                keys = generalKeys,
                 preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearNotifyOnSmb,
-                titleResId = R.string.wear_notifysmb_title,
-                summaryResId = R.string.wear_notifysmb_summary
+                config = config
             )
         }
     )

@@ -3,14 +3,16 @@ package app.aaps.plugins.insulin
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 
 /**
  * Compose implementation of Insulin Free Peak preferences.
+ * Uses key-based rendering - UI is auto-generated from preference keys.
  */
 class InsulinOrefFreePeakPreferencesCompose(
     private val preferences: Preferences,
@@ -19,16 +21,15 @@ class InsulinOrefFreePeakPreferencesCompose(
 
     override val titleResId: Int = R.string.free_peak_oref
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.insulin_peak_time
+    override val mainKeys: List<PreferenceKey> = listOf(
+        IntKey.InsulinOrefPeak
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptiveIntPreferenceItem(
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            intKey = IntKey.InsulinOrefPeak,
-            titleResId = R.string.insulin_peak_time
+            config = config
         )
     }
 

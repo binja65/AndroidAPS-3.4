@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.profile.ProfileUtil
+import app.aaps.core.keys.PreferenceType
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.DoublePreferenceKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
@@ -236,17 +237,26 @@ private class PreferenceDoubleState(
  * Adaptive switch preference that uses BooleanPreferenceKey directly.
  * Handles visibility based on mode settings and dependencies.
  * Uses resource IDs to avoid cross-module Compose compiler issues.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses booleanKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses booleanKey.summaryResId
  */
 fun LazyListScope.adaptiveSwitchPreference(
     preferences: Preferences,
     config: Config,
     booleanKey: BooleanPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     summaryResId: Int? = null,
     summaryOnResId: Int? = null,
     summaryOffResId: Int? = null,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else booleanKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: booleanKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = booleanKey,
         preferences = preferences,
@@ -261,14 +271,14 @@ fun LazyListScope.adaptiveSwitchPreference(
         val state = rememberPreferenceBooleanState(preferences, booleanKey)
         SwitchPreference(
             state = state,
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             summary = when {
                 summaryOnResId != null && summaryOffResId != null -> {
                     { Text(stringResource(if (state.value) summaryOnResId else summaryOffResId)) }
                 }
 
-                summaryResId != null                              -> {
-                    { Text(stringResource(summaryResId)) }
+                effectiveSummaryResId != null                     -> {
+                    { Text(stringResource(effectiveSummaryResId)) }
                 }
 
                 else                                              -> null
@@ -287,16 +297,23 @@ fun LazyListScope.adaptiveSwitchPreference(
  * Handles visibility based on mode settings and dependencies.
  * Validates input against min/max values.
  * Uses resource IDs to avoid cross-module Compose compiler issues.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intKey.titleResId
  */
 fun LazyListScope.adaptiveIntPreference(
     preferences: Preferences,
     config: Config,
     intKey: IntPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     unit: String = "",
     showRange: Boolean = true,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = intKey,
         preferences = preferences,
@@ -313,7 +330,7 @@ fun LazyListScope.adaptiveIntPreference(
 
         TextFieldPreference(
             state = state,
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             textToValue = { text ->
                 text.toIntOrNull()?.coerceIn(intKey.min, intKey.max)
             },
@@ -336,16 +353,23 @@ fun LazyListScope.adaptiveIntPreference(
  * Handles visibility based on mode settings and dependencies.
  * Validates input against min/max values.
  * Uses resource IDs to avoid cross-module Compose compiler issues.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses doubleKey.titleResId
  */
 fun LazyListScope.adaptiveDoublePreference(
     preferences: Preferences,
     config: Config,
     doubleKey: DoublePreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     unit: String = "",
     showRange: Boolean = true,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else doubleKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = doubleKey,
         preferences = preferences,
@@ -362,7 +386,7 @@ fun LazyListScope.adaptiveDoublePreference(
 
         TextFieldPreference(
             state = state,
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             textToValue = { text ->
                 text.toDoubleOrNull()?.coerceIn(doubleKey.min, doubleKey.max)
             },
@@ -384,16 +408,25 @@ fun LazyListScope.adaptiveDoublePreference(
  * Adaptive string preference that uses StringPreferenceKey directly.
  * Handles visibility based on mode settings and dependencies.
  * Uses resource IDs to avoid cross-module Compose compiler issues.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses stringKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses stringKey.summaryResId
  */
 fun LazyListScope.adaptiveStringPreference(
     preferences: Preferences,
     config: Config,
     stringKey: StringPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     summaryResId: Int? = null,
     isPassword: Boolean = false,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else stringKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: stringKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = stringKey,
         preferences = preferences,
@@ -409,20 +442,20 @@ fun LazyListScope.adaptiveStringPreference(
 
         TextFieldPreference(
             state = state,
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             textToValue = { it },
             enabled = visibility.enabled,
             summary = when {
                 isPassword || stringKey.isPassword -> {
-                    { if (value.isNotEmpty()) Text("••••••••") else summaryResId?.let { Text(stringResource(it)) } }
+                    { if (value.isNotEmpty()) Text("••••••••") else effectiveSummaryResId?.let { Text(stringResource(it)) } }
                 }
 
                 value.isNotEmpty()                 -> {
                     { Text(value) }
                 }
 
-                summaryResId != null               -> {
-                    { Text(stringResource(summaryResId)) }
+                effectiveSummaryResId != null      -> {
+                    { Text(stringResource(effectiveSummaryResId)) }
                 }
 
                 else                               -> null
@@ -440,16 +473,23 @@ fun LazyListScope.adaptiveStringPreference(
  * Shows a dialog with a list of options to choose from.
  * Handles visibility based on mode settings and dependencies.
  * Uses resource IDs to avoid cross-module Compose compiler issues.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intKey.titleResId
  */
 fun LazyListScope.adaptiveListIntPreference(
     preferences: Preferences,
     config: Config,
     intKey: IntPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     entries: List<String>,
     entryValues: List<Int>,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = intKey,
         preferences = preferences,
@@ -469,7 +509,7 @@ fun LazyListScope.adaptiveListIntPreference(
         ListPreference(
             state = state,
             values = entryValues,
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             enabled = visibility.enabled,
             summary = { Text(currentEntry) },
             valueToText = { value ->
@@ -489,15 +529,22 @@ fun LazyListScope.adaptiveListIntPreference(
  * Shows a dialog with a list of options to choose from.
  * Handles visibility based on mode settings and dependencies.
  * Uses resource IDs to avoid cross-module Compose compiler issues.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses stringKey.titleResId
  */
 fun LazyListScope.adaptiveStringListPreference(
     preferences: Preferences,
     config: Config,
     stringKey: StringPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     entries: Map<String, String>,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else stringKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = stringKey,
         preferences = preferences,
@@ -516,7 +563,7 @@ fun LazyListScope.adaptiveStringListPreference(
         ListPreference(
             state = state,
             values = values,
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             enabled = visibility.enabled,
             summary = { Text(currentEntry) },
             valueToText = { value ->
@@ -587,19 +634,25 @@ fun calculateIntentPreferenceVisibility(
  *
  * @param preferences The Preferences instance for visibility checks
  * @param intentKey The IntentPreferenceKey for this preference
- * @param titleResId Resource ID for the title string
- * @param summaryResId Optional resource ID for the summary string
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
  * @param onClick Callback invoked when the preference is clicked. Use this to launch intents/activities.
  * @param keyPrefix Optional prefix for the preference key
  */
 fun LazyListScope.adaptiveIntentPreference(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     summaryResId: Int? = null,
     onClick: () -> Unit,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -610,8 +663,8 @@ fun LazyListScope.adaptiveIntentPreference(
     val itemKey = if (keyPrefix.isNotEmpty()) "${keyPrefix}_${intentKey.key}" else intentKey.key
     item(key = itemKey, contentType = "AdaptiveIntentPreference") {
         Preference(
-            title = { Text(stringResource(titleResId)) },
-            summary = summaryResId?.let { { Text(stringResource(it)) } },
+            title = { Text(stringResource(effectiveTitleResId)) },
+            summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
             enabled = visibility.enabled,
             onClick = if (visibility.enabled) onClick else null
         )
@@ -624,17 +677,22 @@ fun LazyListScope.adaptiveIntentPreference(
  *
  * @param preferences The Preferences instance for visibility checks
  * @param intentKey The IntentPreferenceKey for this preference
- * @param titleResId Resource ID for the title string
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
  * @param url The URL to open when clicked
  * @param keyPrefix Optional prefix for the preference key
  */
 fun LazyListScope.adaptiveUrlPreference(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     url: String,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -646,7 +704,7 @@ fun LazyListScope.adaptiveUrlPreference(
     item(key = itemKey, contentType = "AdaptiveUrlPreference") {
         val uriHandler = LocalUriHandler.current
         Preference(
-            title = { Text(stringResource(titleResId)) },
+            title = { Text(stringResource(effectiveTitleResId)) },
             summary = { Text(url) },
             enabled = visibility.enabled,
             onClick = if (visibility.enabled) {
@@ -662,19 +720,25 @@ fun LazyListScope.adaptiveUrlPreference(
  *
  * @param preferences The Preferences instance for visibility checks
  * @param intentKey The IntentPreferenceKey for this preference
- * @param titleResId Resource ID for the title string
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
  * @param activityClass The Activity class to launch when clicked
- * @param summaryResId Optional resource ID for the summary string
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
  * @param keyPrefix Optional prefix for the preference key
  */
 fun <T : Activity> LazyListScope.adaptiveActivityPreference(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     activityClass: Class<T>,
     summaryResId: Int? = null,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -686,8 +750,8 @@ fun <T : Activity> LazyListScope.adaptiveActivityPreference(
     item(key = itemKey, contentType = "AdaptiveActivityPreference") {
         val context = LocalContext.current
         Preference(
-            title = { Text(stringResource(titleResId)) },
-            summary = summaryResId?.let { { Text(stringResource(it)) } },
+            title = { Text(stringResource(effectiveTitleResId)) },
+            summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
             enabled = visibility.enabled,
             onClick = if (visibility.enabled) {
                 { context.startActivity(Intent(context, activityClass)) }
@@ -702,19 +766,25 @@ fun <T : Activity> LazyListScope.adaptiveActivityPreference(
  *
  * @param preferences The Preferences instance for visibility checks
  * @param intentKey The IntentPreferenceKey for this preference
- * @param titleResId Resource ID for the title string
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
  * @param activityClass The Activity class to launch when clicked (dynamic Class<*>)
- * @param summaryResId Optional resource ID for the summary string
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
  * @param keyPrefix Optional prefix for the preference key
  */
 fun LazyListScope.adaptiveDynamicActivityPreference(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     activityClass: Class<*>,
     summaryResId: Int? = null,
     keyPrefix: String = ""
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -726,8 +796,8 @@ fun LazyListScope.adaptiveDynamicActivityPreference(
     item(key = itemKey, contentType = "AdaptiveDynamicActivityPreference") {
         val context = LocalContext.current
         Preference(
-            title = { Text(stringResource(titleResId)) },
-            summary = summaryResId?.let { { Text(stringResource(it)) } },
+            title = { Text(stringResource(effectiveTitleResId)) },
+            summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
             enabled = visibility.enabled,
             onClick = if (visibility.enabled) {
                 { context.startActivity(Intent(context, activityClass)) }
@@ -742,17 +812,26 @@ fun LazyListScope.adaptiveDynamicActivityPreference(
 
 /**
  * Composable switch preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses booleanKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses booleanKey.summaryResId
  */
 @Composable
 fun AdaptiveSwitchPreferenceItem(
     preferences: Preferences,
     config: Config,
     booleanKey: BooleanPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     summaryResId: Int? = null,
     summaryOnResId: Int? = null,
     summaryOffResId: Int? = null
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else booleanKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: booleanKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = booleanKey,
         preferences = preferences,
@@ -765,13 +844,13 @@ fun AdaptiveSwitchPreferenceItem(
     val state = rememberPreferenceBooleanState(preferences, booleanKey)
     SwitchPreference(
         state = state,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         summary = when {
             summaryOnResId != null && summaryOffResId != null -> {
                 { Text(stringResource(if (state.value) summaryOnResId else summaryOffResId)) }
             }
-            summaryResId != null -> {
-                { Text(stringResource(summaryResId)) }
+            effectiveSummaryResId != null -> {
+                { Text(stringResource(effectiveSummaryResId)) }
             }
             else -> null
         },
@@ -781,16 +860,23 @@ fun AdaptiveSwitchPreferenceItem(
 
 /**
  * Composable int preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intKey.titleResId
  */
 @Composable
 fun AdaptiveIntPreferenceItem(
     preferences: Preferences,
     config: Config,
     intKey: IntPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     unit: String = "",
     showRange: Boolean = true
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = intKey,
         preferences = preferences,
@@ -805,7 +891,7 @@ fun AdaptiveIntPreferenceItem(
 
     TextFieldPreference(
         state = state,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         textToValue = { text ->
             text.toIntOrNull()?.coerceIn(intKey.min, intKey.max)
         },
@@ -820,16 +906,23 @@ fun AdaptiveIntPreferenceItem(
 
 /**
  * Composable double preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses doubleKey.titleResId
  */
 @Composable
 fun AdaptiveDoublePreferenceItem(
     preferences: Preferences,
     config: Config,
     doubleKey: DoublePreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     unit: String = "",
     showRange: Boolean = true
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else doubleKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = doubleKey,
         preferences = preferences,
@@ -843,7 +936,7 @@ fun AdaptiveDoublePreferenceItem(
 
     TextFieldPreference(
         state = state,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         textToValue = { text ->
             text.toDoubleOrNull()?.coerceIn(doubleKey.min, doubleKey.max)
         },
@@ -858,16 +951,25 @@ fun AdaptiveDoublePreferenceItem(
 
 /**
  * Composable string preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses stringKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses stringKey.summaryResId
  */
 @Composable
 fun AdaptiveStringPreferenceItem(
     preferences: Preferences,
     config: Config,
     stringKey: StringPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     summaryResId: Int? = null,
     isPassword: Boolean = false
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else stringKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: stringKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = stringKey,
         preferences = preferences,
@@ -881,18 +983,18 @@ fun AdaptiveStringPreferenceItem(
 
     TextFieldPreference(
         state = state,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         textToValue = { it },
         enabled = visibility.enabled,
         summary = when {
             isPassword || stringKey.isPassword -> {
-                { if (value.isNotEmpty()) Text("••••••••") else summaryResId?.let { Text(stringResource(it)) } }
+                { if (value.isNotEmpty()) Text("••••••••") else effectiveSummaryResId?.let { Text(stringResource(it)) } }
             }
             value.isNotEmpty() -> {
                 { Text(value) }
             }
-            summaryResId != null -> {
-                { Text(stringResource(summaryResId)) }
+            effectiveSummaryResId != null -> {
+                { Text(stringResource(effectiveSummaryResId)) }
             }
             else -> null
         }
@@ -901,15 +1003,24 @@ fun AdaptiveStringPreferenceItem(
 
 /**
  * Composable intent preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
  */
 @Composable
 fun AdaptiveIntentPreferenceItem(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     summaryResId: Int? = null,
     onClick: () -> Unit
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -918,8 +1029,8 @@ fun AdaptiveIntentPreferenceItem(
     if (!visibility.visible) return
 
     Preference(
-        title = { Text(stringResource(titleResId)) },
-        summary = summaryResId?.let { { Text(stringResource(it)) } },
+        title = { Text(stringResource(effectiveTitleResId)) },
+        summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
         enabled = visibility.enabled,
         onClick = if (visibility.enabled) onClick else null
     )
@@ -927,14 +1038,21 @@ fun AdaptiveIntentPreferenceItem(
 
 /**
  * Composable URL preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
  */
 @Composable
 fun AdaptiveUrlPreferenceItem(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     url: String
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -944,7 +1062,7 @@ fun AdaptiveUrlPreferenceItem(
 
     val uriHandler = LocalUriHandler.current
     Preference(
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         summary = { Text(url) },
         enabled = visibility.enabled,
         onClick = if (visibility.enabled) {
@@ -955,15 +1073,24 @@ fun AdaptiveUrlPreferenceItem(
 
 /**
  * Composable activity preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
  */
 @Composable
 fun <T : Activity> AdaptiveActivityPreferenceItem(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     activityClass: Class<T>,
     summaryResId: Int? = null
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -973,8 +1100,49 @@ fun <T : Activity> AdaptiveActivityPreferenceItem(
 
     val context = LocalContext.current
     Preference(
-        title = { Text(stringResource(titleResId)) },
-        summary = summaryResId?.let { { Text(stringResource(it)) } },
+        title = { Text(stringResource(effectiveTitleResId)) },
+        summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
+        enabled = visibility.enabled,
+        onClick = if (visibility.enabled) {
+            { context.startActivity(Intent(context, activityClass)) }
+        } else null
+    )
+}
+
+/**
+ * Composable activity preference that uses activityClass from the key.
+ * Use this when the IntentPreferenceKey has activityClass defined.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
+ */
+@Composable
+fun AdaptiveActivityPreferenceItem(
+    preferences: Preferences,
+    intentKey: IntentPreferenceKey,
+    titleResId: Int = 0,
+    summaryResId: Int? = null
+) {
+    val activityClass = intentKey.activityClass
+        ?: return // Skip if no activityClass defined in key
+
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
+    val visibility = calculateIntentPreferenceVisibility(
+        intentKey = intentKey,
+        preferences = preferences
+    )
+
+    if (!visibility.visible) return
+
+    val context = LocalContext.current
+    Preference(
+        title = { Text(stringResource(effectiveTitleResId)) },
+        summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
         enabled = visibility.enabled,
         onClick = if (visibility.enabled) {
             { context.startActivity(Intent(context, activityClass)) }
@@ -984,15 +1152,24 @@ fun <T : Activity> AdaptiveActivityPreferenceItem(
 
 /**
  * Composable dynamic activity preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
+ * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
  */
 @Composable
 fun AdaptiveDynamicActivityPreferenceItem(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     activityClass: Class<*>,
     summaryResId: Int? = null
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
+    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
         preferences = preferences
@@ -1002,8 +1179,8 @@ fun AdaptiveDynamicActivityPreferenceItem(
 
     val context = LocalContext.current
     Preference(
-        title = { Text(stringResource(titleResId)) },
-        summary = summaryResId?.let { { Text(stringResource(it)) } },
+        title = { Text(stringResource(effectiveTitleResId)) },
+        summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
         enabled = visibility.enabled,
         onClick = if (visibility.enabled) {
             { context.startActivity(Intent(context, activityClass)) }
@@ -1013,16 +1190,23 @@ fun AdaptiveDynamicActivityPreferenceItem(
 
 /**
  * Composable list int preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses intKey.titleResId
  */
 @Composable
 fun AdaptiveListIntPreferenceItem(
     preferences: Preferences,
     config: Config,
     intKey: IntPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     entries: List<String>,
     entryValues: List<Int>
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else intKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = intKey,
         preferences = preferences,
@@ -1040,7 +1224,7 @@ fun AdaptiveListIntPreferenceItem(
     ListPreference(
         state = state,
         values = entryValues,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         enabled = visibility.enabled,
         summary = { Text(currentEntry) },
         valueToText = { value ->
@@ -1052,15 +1236,22 @@ fun AdaptiveListIntPreferenceItem(
 
 /**
  * Composable string list preference for use inside card sections.
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses stringKey.titleResId
  */
 @Composable
 fun AdaptiveStringListPreferenceItem(
     preferences: Preferences,
     config: Config,
     stringKey: StringPreferenceKey,
-    titleResId: Int,
+    titleResId: Int = 0,
     entries: Map<String, String>
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else stringKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = stringKey,
         preferences = preferences,
@@ -1077,7 +1268,7 @@ fun AdaptiveStringListPreferenceItem(
     ListPreference(
         state = state,
         values = values,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         enabled = visibility.enabled,
         summary = { Text(currentEntry) },
         valueToText = { value ->
@@ -1132,6 +1323,8 @@ fun rememberUnitDoublePreferenceState(
 /**
  * Composable unit double preference for use inside card sections.
  * Handles glucose unit conversion (mg/dL <-> mmol/L).
+ *
+ * @param titleResId Optional title resource ID. If 0 or not provided, uses unitKey.titleResId
  */
 @Composable
 fun AdaptiveUnitDoublePreferenceItem(
@@ -1139,8 +1332,13 @@ fun AdaptiveUnitDoublePreferenceItem(
     config: Config,
     profileUtil: ProfileUtil,
     unitKey: UnitDoublePreferenceKey,
-    titleResId: Int
+    titleResId: Int = 0
 ) {
+    val effectiveTitleResId = if (titleResId != 0) titleResId else unitKey.titleResId
+
+    // Skip if no title resource is available
+    if (effectiveTitleResId == 0) return
+
     val visibility = calculatePreferenceVisibility(
         preferenceKey = unitKey,
         preferences = preferences,
@@ -1163,7 +1361,7 @@ fun AdaptiveUnitDoublePreferenceItem(
 
     TextFieldPreference(
         state = textState,
-        title = { Text(stringResource(titleResId)) },
+        title = { Text(stringResource(effectiveTitleResId)) },
         textToValue = { text ->
             val value = text.toDoubleOrNull()
             if (value != null && value >= minDisplay && value <= maxDisplay) {
@@ -1177,3 +1375,260 @@ fun AdaptiveUnitDoublePreferenceItem(
         summary = { Text("${state.displayValue} $unit ($minFormatted-$maxFormatted)") }
     )
 }
+
+// =================================
+// Generic Preference Renderer
+// =================================
+
+/**
+ * Renders a preference based on its PreferenceKey type and preferenceType.
+ * Automatically selects the appropriate composable.
+ *
+ * For LIST types, loads entries from resources using entriesResId/entryValuesResId.
+ * For URL/ACTIVITY types on IntentPreferenceKey, requires additional parameters.
+ *
+ * @param key The PreferenceKey to render
+ * @param preferences The Preferences instance
+ * @param config The Config instance
+ * @param profileUtil Required for UnitDoublePreferenceKey
+ * @param onIntentClick Optional click handler for IntentPreferenceKey with CLICK type
+ * @param intentUrl Optional URL for IntentPreferenceKey with URL type
+ * @param intentActivityClass Optional Activity class for IntentPreferenceKey with ACTIVITY type
+ */
+@Composable
+fun AdaptivePreferenceItem(
+    key: PreferenceKey,
+    preferences: Preferences,
+    config: Config,
+    profileUtil: ProfileUtil? = null,
+    onIntentClick: (() -> Unit)? = null,
+    intentUrl: String? = null,
+    intentActivityClass: Class<*>? = null
+) {
+    when (key) {
+        is BooleanPreferenceKey -> {
+            AdaptiveSwitchPreferenceItem(
+                preferences = preferences,
+                config = config,
+                booleanKey = key
+            )
+        }
+
+        is IntPreferenceKey      -> {
+            when (key.preferenceType) {
+                PreferenceType.LIST       -> {
+                    if (key.entries.isNotEmpty()) {
+                        val entryValues = key.entries.keys.toList()
+                        val entries = key.entries.values.map { stringResource(it) }
+                        AdaptiveListIntPreferenceItem(
+                            preferences = preferences,
+                            config = config,
+                            intKey = key,
+                            entries = entries,
+                            entryValues = entryValues
+                        )
+                    }
+                }
+
+                PreferenceType.TEXT_FIELD -> {
+                    AdaptiveIntPreferenceItem(
+                        preferences = preferences,
+                        config = config,
+                        intKey = key
+                    )
+                }
+
+                else                      -> {
+                    // Default to text field for unsupported types
+                    AdaptiveIntPreferenceItem(
+                        preferences = preferences,
+                        config = config,
+                        intKey = key
+                    )
+                }
+            }
+        }
+
+        is DoublePreferenceKey   -> {
+            AdaptiveDoublePreferenceItem(
+                preferences = preferences,
+                config = config,
+                doubleKey = key
+            )
+        }
+
+        is StringPreferenceKey   -> {
+            when (key.preferenceType) {
+                PreferenceType.LIST       -> {
+                    if (key.entries.isNotEmpty()) {
+                        // Convert Map<String, Int> (value -> labelResId) to Map<String, String> (value -> label)
+                        val entriesMap = key.entries.mapValues { (_, resId) -> stringResource(resId) }
+                        AdaptiveStringListPreferenceItem(
+                            preferences = preferences,
+                            config = config,
+                            stringKey = key,
+                            entries = entriesMap
+                        )
+                    }
+                }
+
+                PreferenceType.TEXT_FIELD -> {
+                    AdaptiveStringPreferenceItem(
+                        preferences = preferences,
+                        config = config,
+                        stringKey = key
+                    )
+                }
+
+                else                      -> {
+                    AdaptiveStringPreferenceItem(
+                        preferences = preferences,
+                        config = config,
+                        stringKey = key
+                    )
+                }
+            }
+        }
+
+        is UnitDoublePreferenceKey -> {
+            profileUtil?.let {
+                AdaptiveUnitDoublePreferenceItem(
+                    preferences = preferences,
+                    config = config,
+                    profileUtil = it,
+                    unitKey = key
+                )
+            }
+        }
+
+        is IntentPreferenceKey   -> {
+            when (key.preferenceType) {
+                PreferenceType.URL      -> {
+                    intentUrl?.let { url ->
+                        AdaptiveUrlPreferenceItem(
+                            preferences = preferences,
+                            intentKey = key,
+                            url = url
+                        )
+                    }
+                }
+
+                PreferenceType.ACTIVITY -> {
+                    intentActivityClass?.let { activityClass ->
+                        AdaptiveDynamicActivityPreferenceItem(
+                            preferences = preferences,
+                            intentKey = key,
+                            activityClass = activityClass
+                        )
+                    }
+                }
+
+                PreferenceType.CLICK    -> {
+                    onIntentClick?.let { onClick ->
+                        AdaptiveIntentPreferenceItem(
+                            preferences = preferences,
+                            intentKey = key,
+                            onClick = onClick
+                        )
+                    }
+                }
+
+                else                    -> {
+                    onIntentClick?.let { onClick ->
+                        AdaptiveIntentPreferenceItem(
+                            preferences = preferences,
+                            intentKey = key,
+                            onClick = onClick
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * LazyListScope extension for rendering a preference based on its PreferenceKey.
+ */
+fun LazyListScope.adaptivePreference(
+    key: PreferenceKey,
+    preferences: Preferences,
+    config: Config,
+    profileUtil: ProfileUtil? = null,
+    onIntentClick: (() -> Unit)? = null,
+    intentUrl: String? = null,
+    intentActivityClass: Class<*>? = null,
+    keyPrefix: String = ""
+) {
+    val itemKey = if (keyPrefix.isNotEmpty()) "${keyPrefix}_${key.key}" else key.key
+
+    item(key = itemKey, contentType = "AdaptivePreference_${key::class.simpleName}") {
+        AdaptivePreferenceItem(
+            key = key,
+            preferences = preferences,
+            config = config,
+            profileUtil = profileUtil,
+            onIntentClick = onIntentClick,
+            intentUrl = intentUrl,
+            intentActivityClass = intentActivityClass
+        )
+    }
+}
+
+/**
+ * Renders a list of preferences from PreferenceKeys.
+ * This is the main entry point for auto-generating preference screens.
+ *
+ * @param keys List of PreferenceKeys to render
+ * @param preferences The Preferences instance
+ * @param config The Config instance
+ * @param profileUtil Required for UnitDoublePreferenceKey
+ * @param intentHandlers Map of IntentPreferenceKey to handler info (optional - for dynamic values)
+ */
+@Composable
+fun AdaptivePreferenceList(
+    keys: List<PreferenceKey>,
+    preferences: Preferences,
+    config: Config,
+    profileUtil: ProfileUtil? = null,
+    intentHandlers: Map<IntentPreferenceKey, IntentHandler> = emptyMap()
+) {
+    keys.forEach { key ->
+        if (key is IntentPreferenceKey) {
+            // Priority: 1) intentHandlers map, 2) key properties
+            val handler = intentHandlers[key]
+            val resolvedUrl = handler?.url
+                ?: key.urlResId?.let { stringResource(it) }
+            val resolvedActivityClass = handler?.activityClass
+                ?: key.activityClass
+            val resolvedOnClick = handler?.onClick
+
+            AdaptivePreferenceItem(
+                key = key,
+                preferences = preferences,
+                config = config,
+                profileUtil = profileUtil,
+                onIntentClick = resolvedOnClick,
+                intentUrl = resolvedUrl,
+                intentActivityClass = resolvedActivityClass
+            )
+        } else {
+            AdaptivePreferenceItem(
+                key = key,
+                preferences = preferences,
+                config = config,
+                profileUtil = profileUtil
+            )
+        }
+    }
+}
+
+/**
+ * Handler info for IntentPreferenceKey.
+ * Provide one of: onClick, url, or activityClass based on preferenceType.
+ */
+data class IntentHandler(
+    val onClick: (() -> Unit)? = null,
+    val url: String? = null,
+    val activityClass: Class<*>? = null
+)

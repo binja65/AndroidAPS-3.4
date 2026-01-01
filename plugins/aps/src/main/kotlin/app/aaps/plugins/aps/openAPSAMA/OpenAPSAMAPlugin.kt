@@ -26,7 +26,7 @@ import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.plugin.ActivePlugin
-import app.aaps.core.interfaces.plugin.PluginBase
+import app.aaps.core.interfaces.plugin.PluginBaseWithPreferences
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.profile.Profile
 import app.aaps.core.interfaces.profile.ProfileFunction
@@ -38,7 +38,7 @@ import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.interfaces.utils.Round
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
-import app.aaps.core.keys.IntentKey
+import app.aaps.plugins.aps.keys.ApsIntentKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.constraints.ConstraintObject
 import app.aaps.core.objects.extensions.convertedToAbsolute
@@ -78,11 +78,11 @@ class OpenAPSAMAPlugin @Inject constructor(
     private val dateUtil: DateUtil,
     private val persistenceLayer: PersistenceLayer,
     private val glucoseStatusProvider: GlucoseStatusProvider,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val determineBasalAMA: DetermineBasalAMA,
     private val glucoseStatusCalculatorSMB: GlucoseStatusCalculatorSMB,
     private val apsResultProvider: Provider<APSResult>
-) : PluginBase(
+) : PluginBaseWithPreferences(
     PluginDescription()
         .mainType(PluginType.APS)
         .fragmentClass(OpenAPSFragment::class.java.name)
@@ -93,7 +93,8 @@ class OpenAPSAMAPlugin @Inject constructor(
         .preferencesVisibleInSimpleMode(false)
         .showInList { config.APS }
         .description(R.string.description_ama),
-    aapsLogger, rh
+    ownPreferences = listOf(ApsIntentKey::class.java),
+    aapsLogger, rh, preferences
 ), APS, PluginConstraints {
 
     // last values
@@ -315,8 +316,7 @@ class OpenAPSAMAPlugin @Inject constructor(
 
     override fun getPreferenceScreenContent(): Any = OpenAPSAMAPreferencesCompose(
         preferences = preferences,
-        config = config,
-        linkToDocsUrl = rh.gs(R.string.openapsama_link_to_preference_json_doc)
+        config = config
     )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
@@ -338,7 +338,7 @@ class OpenAPSAMAPlugin @Inject constructor(
                 addPreference(
                     AdaptiveIntentPreference(
                         ctx = context,
-                        intentKey = IntentKey.ApsLinkToDocs,
+                        intentKey = ApsIntentKey.LinkToDocs,
                         intent = Intent().apply { action = Intent.ACTION_VIEW; data = rh.gs(R.string.openapsama_link_to_preference_json_doc).toUri() },
                         summary = R.string.openapsama_link_to_preference_json_doc_txt
                     )

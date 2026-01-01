@@ -11,11 +11,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.AdaptiveStringListPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
@@ -27,6 +28,7 @@ import app.aaps.pump.dana.keys.DanaStringKey
 
 /**
  * Compose implementation of DanaR preferences.
+ * Note: BT device selector and bolus speed require special handling.
  */
 class DanaRPreferencesCompose(
     private val preferences: Preferences,
@@ -35,26 +37,28 @@ class DanaRPreferencesCompose(
 
     override val titleResId: Int = R.string.danarpump
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.danar_bt_name_title,
-        R.string.danar_password_title,
-        R.string.bolusspeed
+    override val mainKeys: List<PreferenceKey> = listOf(
+        DanaStringKey.RName,
+        DanaIntKey.Password,
+        DanaIntKey.BolusSpeed,
+        DanaBooleanKey.UseExtended
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Bluetooth device selector
+        // Bluetooth device selector - requires dynamic bonded devices
         BluetoothDevicePreferenceItem(
             preferences = preferences,
             config = config
         )
 
-        AdaptiveIntPreferenceItem(
+        // Password - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(DanaIntKey.Password),
             preferences = preferences,
-            config = config,
-            intKey = DanaIntKey.Password,
-            titleResId = R.string.danar_password_title
+            config = config
         )
 
+        // Bolus speed - requires custom entries
         AdaptiveListIntPreferenceItem(
             preferences = preferences,
             config = config,
@@ -64,11 +68,11 @@ class DanaRPreferencesCompose(
             entryValues = listOf(0, 1, 2)
         )
 
-        AdaptiveSwitchPreferenceItem(
+        // Use extended - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(DanaBooleanKey.UseExtended),
             preferences = preferences,
-            config = config,
-            booleanKey = DanaBooleanKey.UseExtended,
-            titleResId = R.string.danar_useextended_title
+            config = config
         )
     }
 

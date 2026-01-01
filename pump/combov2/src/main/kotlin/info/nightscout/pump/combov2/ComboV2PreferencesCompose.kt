@@ -2,11 +2,11 @@ package info.nightscout.pump.combov2
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveActivityPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveIntentPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -17,6 +17,7 @@ import info.nightscout.pump.combov2.keys.ComboIntentKey
 
 /**
  * Compose implementation of ComboV2 preferences.
+ * Note: Pairing/unpairing activities require special handling.
  */
 class ComboV2PreferencesCompose(
     private val preferences: Preferences,
@@ -26,13 +27,15 @@ class ComboV2PreferencesCompose(
 
     override val titleResId: Int = R.string.combov2_title
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.combov2_pair_with_pump_title,
-        R.string.combov2_discovery_duration,
-        R.string.combov2_automatic_reservoir_entry
+    override val mainKeys: List<PreferenceKey> = listOf(
+        ComboIntKey.DiscoveryDuration,
+        ComboBooleanKey.AutomaticReservoirEntry,
+        ComboBooleanKey.AutomaticBatteryEntry,
+        ComboBooleanKey.VerboseLogging
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // Pairing - requires activity launch
         AdaptiveActivityPreferenceItem(
             preferences = preferences,
             intentKey = ComboIntentKey.PairWithPump,
@@ -41,6 +44,7 @@ class ComboV2PreferencesCompose(
             summaryResId = R.string.combov2_pair_with_pump_summary
         )
 
+        // Unpair - requires custom onClick
         AdaptiveIntentPreferenceItem(
             preferences = preferences,
             intentKey = ComboIntentKey.UnpairPump,
@@ -49,32 +53,11 @@ class ComboV2PreferencesCompose(
             onClick = onUnpairClick
         )
 
-        AdaptiveIntPreferenceItem(
+        // All other preferences - can use key-based
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            intKey = ComboIntKey.DiscoveryDuration,
-            titleResId = R.string.combov2_discovery_duration
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = ComboBooleanKey.AutomaticReservoirEntry,
-            titleResId = R.string.combov2_automatic_reservoir_entry
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = ComboBooleanKey.AutomaticBatteryEntry,
-            titleResId = R.string.combov2_automatic_battery_entry
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = ComboBooleanKey.VerboseLogging,
-            titleResId = R.string.combov2_verbose_logging
+            config = config
         )
     }
 

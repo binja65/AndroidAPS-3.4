@@ -2,11 +2,11 @@ package app.aaps.pump.danars
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveActivityPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveStringPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -19,6 +19,7 @@ import app.aaps.pump.danars.activities.BLEScanActivity
 
 /**
  * Compose implementation of DanaRS preferences.
+ * Note: BT selector and bolus speed require special handling.
  */
 class DanaRSPreferencesCompose(
     private val preferences: Preferences,
@@ -33,13 +34,15 @@ class DanaRSPreferencesCompose(
 
     override val titleResId: Int = R.string.danarspump
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.selectedpump,
-        R.string.danars_password_title,
-        R.string.bolusspeed
+    override val mainKeys: List<PreferenceKey> = listOf(
+        DanaStringKey.Password,
+        DanaIntKey.BolusSpeed,
+        DanaBooleanKey.LogInsulinChange,
+        DanaBooleanKey.LogCannulaChange
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // BT selector - requires activity launch
         AdaptiveActivityPreferenceItem(
             preferences = preferences,
             intentKey = DanaIntentKey.BtSelector,
@@ -47,13 +50,14 @@ class DanaRSPreferencesCompose(
             activityClass = BLEScanActivity::class.java
         )
 
-        AdaptiveStringPreferenceItem(
+        // Password - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(DanaStringKey.Password),
             preferences = preferences,
-            config = config,
-            stringKey = DanaStringKey.Password,
-            titleResId = R.string.danars_password_title
+            config = config
         )
 
+        // Bolus speed - requires custom entries
         AdaptiveListIntPreferenceItem(
             preferences = preferences,
             config = config,
@@ -63,20 +67,14 @@ class DanaRSPreferencesCompose(
             entryValues = bolusSpeedValues
         )
 
-        AdaptiveSwitchPreferenceItem(
+        // Log preferences - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(
+                DanaBooleanKey.LogInsulinChange,
+                DanaBooleanKey.LogCannulaChange
+            ),
             preferences = preferences,
-            config = config,
-            booleanKey = DanaBooleanKey.LogInsulinChange,
-            titleResId = R.string.rs_loginsulinchange_title,
-            summaryResId = R.string.rs_loginsulinchange_summary
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = DanaBooleanKey.LogCannulaChange,
-            titleResId = R.string.rs_logcanulachange_title,
-            summaryResId = R.string.rs_logcanulachange_summary
+            config = config
         )
     }
 

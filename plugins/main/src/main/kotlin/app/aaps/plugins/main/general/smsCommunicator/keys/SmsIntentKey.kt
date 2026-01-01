@@ -1,12 +1,13 @@
-package app.aaps.pump.common.hw.rileylink.keys
+package app.aaps.plugins.main.general.smsCommunicator.keys
 
+import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.PreferenceType
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.IntentPreferenceKey
-import app.aaps.pump.common.dialog.RileyLinkBLEConfigActivity
-import app.aaps.pump.common.hw.rileylink.R
+import app.aaps.plugins.main.R
+import app.aaps.plugins.main.general.smsCommunicator.activities.SmsCommunicatorOtpActivity
 
-enum class RileyLinkIntentPreferenceKey(
+enum class SmsIntentKey(
     override val key: String,
     override val titleResId: Int = 0,
     override val summaryResId: Int? = null,
@@ -22,9 +23,11 @@ enum class RileyLinkIntentPreferenceKey(
     override val exportable: Boolean = false
 ) : IntentPreferenceKey {
 
-    MacAddressSelector(
-        key = "rileylink_mac_address_selector",
-        titleResId = R.string.rileylink_configuration,
-        activityClass = RileyLinkBLEConfigActivity::class.java
+    OtpSetup(
+        key = "smscommunicator_otp_setup",
+        titleResId = R.string.smscommunicator_tab_otp_label,
+        preferenceType = PreferenceType.ACTIVITY,
+        activityClass = SmsCommunicatorOtpActivity::class.java,
+        dependency = BooleanKey.SmsAllowRemoteCommands
     )
 }

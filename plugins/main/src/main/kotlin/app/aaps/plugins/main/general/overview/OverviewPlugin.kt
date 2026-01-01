@@ -37,12 +37,12 @@ import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.BooleanNonKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
-import app.aaps.core.keys.IntentKey
 import app.aaps.core.keys.LongComposedKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.StringNonKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
 import app.aaps.core.objects.extensions.put
 import app.aaps.core.objects.extensions.store
 import app.aaps.core.validators.preferences.AdaptiveClickPreference
@@ -94,7 +94,7 @@ class OverviewPlugin @Inject constructor(
         .shortName(R.string.overview_shortname)
         .preferencesId(PluginDescription.PREFERENCE_SCREEN)
         .description(R.string.description_overview),
-    ownPreferences = listOf(OverviewStringKey::class.java),
+    ownPreferences = listOf(OverviewStringKey::class.java, OverviewIntentKey::class.java),
     aapsLogger, rh, preferences
 ), Overview {
 
@@ -227,7 +227,6 @@ class OverviewPlugin @Inject constructor(
     }
 
     override fun getPreferenceScreenContent(): Any = OverviewPreferencesCompose(
-        sp = sp,
         rh = rh,
         activePlugin = activePlugin,
         nsSettingStatus = nsSettingStatus,
@@ -266,7 +265,7 @@ class OverviewPlugin @Inject constructor(
             addPreference(
                 AdaptiveIntentPreference(
                     ctx = context,
-                    intentKey = IntentKey.OverviewQuickWizardSettings,
+                    intentKey = OverviewIntentKey.QuickWizardSettings,
                     title = R.string.quickwizard_settings,
                     intent = Intent(context, uiInteraction.quickWizardListActivity)
                 )

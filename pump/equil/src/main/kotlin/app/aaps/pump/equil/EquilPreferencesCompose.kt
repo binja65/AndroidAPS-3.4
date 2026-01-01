@@ -3,9 +3,10 @@ package app.aaps.pump.equil
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.resources.ResourceHelper
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -14,6 +15,7 @@ import app.aaps.pump.equil.keys.EquilIntPreferenceKey
 
 /**
  * Compose implementation of Equil preferences.
+ * Note: Tone mode requires dynamic entries from ResourceHelper.
  */
 class EquilPreferencesCompose(
     private val preferences: Preferences,
@@ -31,27 +33,24 @@ class EquilPreferencesCompose(
 
     override val titleResId: Int = R.string.equil_name
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.equil_settings_alarm_battery,
-        R.string.equil_settings_alarm_insulin,
-        R.string.equil_tone
+    override val mainKeys: List<PreferenceKey> = listOf(
+        EquilBooleanPreferenceKey.EquilAlarmBattery,
+        EquilBooleanPreferenceKey.EquilAlarmInsulin,
+        EquilIntPreferenceKey.EquilTone
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptiveSwitchPreferenceItem(
+        // Boolean preferences - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(
+                EquilBooleanPreferenceKey.EquilAlarmBattery,
+                EquilBooleanPreferenceKey.EquilAlarmInsulin
+            ),
             preferences = preferences,
-            config = config,
-            booleanKey = EquilBooleanPreferenceKey.EquilAlarmBattery,
-            titleResId = R.string.equil_settings_alarm_battery
+            config = config
         )
 
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = EquilBooleanPreferenceKey.EquilAlarmInsulin,
-            titleResId = R.string.equil_settings_alarm_insulin
-        )
-
+        // Tone mode - requires dynamic entries
         AdaptiveListIntPreferenceItem(
             preferences = preferences,
             config = config,

@@ -43,7 +43,7 @@ import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.keys.BooleanKey
-import app.aaps.core.keys.IntentKey
+import app.aaps.plugins.sync.xdrip.keys.XdripIntentKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.extensions.generateCOBString
 import app.aaps.core.objects.extensions.round
@@ -101,7 +101,7 @@ class XdripPlugin @Inject constructor(
         .shortName(R.string.xdrip_shortname)
         .preferencesId(PluginDescription.PREFERENCE_SCREEN)
         .description(R.string.description_xdrip),
-    ownPreferences = listOf(XdripLongKey::class.java),
+    ownPreferences = listOf(XdripLongKey::class.java, XdripIntentKey::class.java),
     aapsLogger, rh, preferences
 ) {
 
@@ -387,7 +387,7 @@ class XdripPlugin @Inject constructor(
             key = "xdrip_settings"
             title = rh.gs(R.string.xdrip)
             initialExpandedChildrenCount = 0
-            addPreference(AdaptiveIntentPreference(ctx = context, intentKey = IntentKey.XdripInfo, summary = R.string.xdrip_local_broadcasts_summary, title = R.string.xdrip_local_broadcasts_title))
+            addPreference(AdaptiveIntentPreference(ctx = context, intentKey = XdripIntentKey.Info, summary = R.string.xdrip_local_broadcasts_summary, title = R.string.xdrip_local_broadcasts_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.XdripSendStatus, title = R.string.xdrip_send_status_title))
             addPreference(preferenceManager.createPreferenceScreen(context).apply {
                 key = "xdrip_advanced"

@@ -4,16 +4,16 @@ import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
-import app.aaps.plugins.aps.R
 
 /**
  * Compose implementation of Autotune preferences.
+ * Uses key-based rendering - UI is auto-generated from preference keys.
  */
 class AutotunePreferencesCompose(
     private val preferences: Preferences,
@@ -22,42 +22,18 @@ class AutotunePreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.autotune
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.autotune_auto_title,
-        R.string.autotune_categorize_uam_as_basal_title,
-        R.string.autotune_default_tune_days_title
+    override val mainKeys: List<PreferenceKey> = listOf(
+        BooleanKey.AutotuneAutoSwitchProfile,
+        BooleanKey.AutotuneCategorizeUamAsBasal,
+        IntKey.AutotuneDefaultTuneDays,
+        BooleanKey.AutotuneCircadianIcIsf
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptiveSwitchPreferenceItem(
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AutotuneAutoSwitchProfile,
-            titleResId = R.string.autotune_auto_title,
-            summaryResId = R.string.autotune_auto_summary
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AutotuneCategorizeUamAsBasal,
-            titleResId = R.string.autotune_categorize_uam_as_basal_title,
-            summaryResId = R.string.autotune_categorize_uam_as_basal_summary
-        )
-
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = IntKey.AutotuneDefaultTuneDays,
-            titleResId = R.string.autotune_default_tune_days_title
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AutotuneCircadianIcIsf,
-            titleResId = R.string.autotune_circadian_ic_isf_title,
-            summaryResId = R.string.autotune_circadian_ic_isf_summary
+            config = config
         )
     }
 

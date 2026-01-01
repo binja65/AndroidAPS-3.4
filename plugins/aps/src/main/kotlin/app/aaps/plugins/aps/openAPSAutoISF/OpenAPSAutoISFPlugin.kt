@@ -35,7 +35,7 @@ import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.notifications.Notification
 import app.aaps.core.interfaces.plugin.ActivePlugin
-import app.aaps.core.interfaces.plugin.PluginBase
+import app.aaps.core.interfaces.plugin.PluginBaseWithPreferences
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.profile.Profile
 import app.aaps.core.interfaces.profile.ProfileFunction
@@ -51,7 +51,7 @@ import app.aaps.core.interfaces.utils.Round
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
-import app.aaps.core.keys.IntentKey
+import app.aaps.plugins.aps.keys.ApsIntentKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.constraints.ConstraintObject
@@ -96,7 +96,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     private val activePlugin: ActivePlugin,
     private val iobCobCalculator: IobCobCalculator,
     private val hardLimits: HardLimits,
-    private val preferences: Preferences,
+    preferences: Preferences,
     protected val dateUtil: DateUtil,
     private val processedTbrEbData: ProcessedTbrEbData,
     private val persistenceLayer: PersistenceLayer,
@@ -107,7 +107,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     private val profiler: Profiler,
     private val glucoseStatusCalculatorAutoIsf: GlucoseStatusCalculatorAutoIsf,
     private val apsResultProvider: Provider<APSResult>
-) : PluginBase(
+) : PluginBaseWithPreferences(
     PluginDescription()
         .mainType(PluginType.APS)
         .fragmentClass(OpenAPSFragment::class.java.name)
@@ -118,7 +118,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         .preferencesVisibleInSimpleMode(false)
         .showInList { config.APS && config.isEngineeringMode() && config.isDev() }
         .description(R.string.description_auto_isf),
-    aapsLogger, rh
+    ownPreferences = listOf(ApsIntentKey::class.java),
+    aapsLogger, rh, preferences
 ), APS, PluginConstraints {
 
     // last values
@@ -941,8 +942,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
     override fun getPreferenceScreenContent(): Any = OpenAPSAutoISFPreferencesCompose(
         preferences = preferences,
-        config = config,
-        linkToDocsUrl = rh.gs(R.string.openapsama_link_to_preference_json_doc)
+        config = config
     )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
@@ -983,7 +983,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 addPreference(
                     AdaptiveIntentPreference(
                         ctx = context,
-                        intentKey = IntentKey.ApsLinkToDocs,
+                        intentKey = ApsIntentKey.LinkToDocs,
                         intent = Intent().apply { action = Intent.ACTION_VIEW; data = rh.gs(R.string.openapsama_link_to_preference_json_doc).toUri() },
                         summary = R.string.openapsama_link_to_preference_json_doc_txt
                     )

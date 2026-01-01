@@ -3,14 +3,16 @@ package app.aaps.compose.preferences
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 
 /**
  * Compose implementation of Pump preferences.
+ * Uses key-based rendering - UI is auto-generated from preference keys.
  */
 class PumpPreferencesCompose(
     private val preferences: Preferences,
@@ -19,18 +21,15 @@ class PumpPreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.pump
 
-    override val summaryItems: List<Int> = listOf(
-        app.aaps.core.ui.R.string.btwatchdog_title
+    override val mainKeys: List<PreferenceKey> = listOf(
+        BooleanKey.PumpBtWatchdog
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // BT Watchdog
-        AdaptiveSwitchPreferenceItem(
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.PumpBtWatchdog,
-            titleResId = app.aaps.core.ui.R.string.btwatchdog_title,
-            summaryResId = app.aaps.core.ui.R.string.btwatchdog_summary
+            config = config
         )
     }
 

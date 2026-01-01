@@ -26,4 +26,12 @@ interface IntPreferenceKey : PreferenceKey, IntNonPreferenceKey {
      * Visible in engineering mode only, otherwise `defaultValue`
      */
     val engineeringModeOnly: Boolean
+
+    /**
+     * Entries for LIST type preferences.
+     * Map of stored value -> label resource ID.
+     * Empty map means no entries (not a list preference).
+     */
+    val entries: Map<Int, Int>
+        get() = emptyMap()
 }

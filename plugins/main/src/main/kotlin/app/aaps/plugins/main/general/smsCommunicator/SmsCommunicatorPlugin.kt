@@ -35,7 +35,7 @@ import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.logging.UserEntryLogger
 import app.aaps.core.interfaces.notifications.Notification
 import app.aaps.core.interfaces.plugin.ActivePlugin
-import app.aaps.core.interfaces.plugin.PluginBase
+import app.aaps.core.interfaces.plugin.PluginBaseWithPreferences
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.profile.ProfileFunction
 import app.aaps.core.interfaces.profile.ProfileUtil
@@ -60,7 +60,7 @@ import app.aaps.core.interfaces.utils.SafeParse
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
-import app.aaps.core.keys.IntentKey
+import app.aaps.plugins.main.general.smsCommunicator.keys.SmsIntentKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
@@ -102,7 +102,7 @@ class SmsCommunicatorPlugin @Inject constructor(
     rh: ResourceHelper,
     private val smsManager: SmsManager?,
     private val aapsSchedulers: AapsSchedulers,
-    private val preferences: Preferences,
+    preferences: Preferences,
     private val sp: SP,
     private val constraintChecker: ConstraintsChecker,
     private val rxBus: RxBus,
@@ -125,7 +125,7 @@ class SmsCommunicatorPlugin @Inject constructor(
     private val authRequestProvider: Provider<AuthRequest>,
     private val pumpStatusProvider: PumpStatusProvider,
     @ApplicationScope private val appScope: CoroutineScope
-) : PluginBase(
+) : PluginBaseWithPreferences(
     PluginDescription()
         .mainType(PluginType.GENERAL)
         .fragmentClass(SmsCommunicatorFragment::class.java.name)
@@ -134,7 +134,8 @@ class SmsCommunicatorPlugin @Inject constructor(
         .shortName(R.string.smscommunicator_shortname)
         .preferencesId(PluginDescription.PREFERENCE_SCREEN)
         .description(R.string.description_sms_communicator),
-    aapsLogger, rh
+    ownPreferences = listOf(SmsIntentKey::class.java),
+    aapsLogger, rh, preferences
 ), SmsCommunicator {
 
     private val disposable = CompositeDisposable()
@@ -1333,7 +1334,7 @@ class SmsCommunicatorPlugin @Inject constructor(
             addPreference(
                 AdaptiveIntentPreference(
                     ctx = context,
-                    intentKey = IntentKey.SmsOtpSetup,
+                    intentKey = SmsIntentKey.OtpSetup,
                     title = R.string.smscommunicator_tab_otp_label,
                     intent = Intent().apply { action = SmsCommunicatorOtpActivity::class.java.name }
                 )

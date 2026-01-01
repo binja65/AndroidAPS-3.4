@@ -5,15 +5,16 @@ import app.aaps.R
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 
 /**
  * Compose implementation of Local Alerts preferences.
+ * Uses key-based rendering - UI is auto-generated from preference keys.
  */
 class AlertsPreferencesCompose(
     private val preferences: Preferences,
@@ -22,67 +23,21 @@ class AlertsPreferencesCompose(
 
     override val titleResId: Int = R.string.localalertsettings_title
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.enable_missed_bg_readings_alert,
-        R.string.enable_pump_unreachable_alert,
-        R.string.enable_carbs_req_alert
+    override val mainKeys: List<PreferenceKey> = listOf(
+        BooleanKey.AlertMissedBgReading,
+        IntKey.AlertsStaleDataThreshold,
+        BooleanKey.AlertPumpUnreachable,
+        IntKey.AlertsPumpUnreachableThreshold,
+        BooleanKey.AlertCarbsRequired,
+        BooleanKey.AlertUrgentAsAndroidNotification,
+        BooleanKey.AlertIncreaseVolume
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Enable missed BG readings alert
-        AdaptiveSwitchPreferenceItem(
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AlertMissedBgReading,
-            titleResId = R.string.enable_missed_bg_readings_alert
-        )
-
-        // Stale data threshold (depends on AlertMissedBgReading)
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = IntKey.AlertsStaleDataThreshold,
-            titleResId = app.aaps.plugins.sync.R.string.ns_alarm_stale_data_value_label
-        )
-
-        // Enable pump unreachable alert
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AlertPumpUnreachable,
-            titleResId = R.string.enable_pump_unreachable_alert
-        )
-
-        // Pump unreachable threshold (depends on AlertPumpUnreachable)
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = IntKey.AlertsPumpUnreachableThreshold,
-            titleResId = R.string.pump_unreachable_threshold
-        )
-
-        // Enable carbs required alert
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AlertCarbsRequired,
-            titleResId = R.string.enable_carbs_req_alert
-        )
-
-        // Raise urgent alarms as Android notifications
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AlertUrgentAsAndroidNotification,
-            titleResId = app.aaps.core.ui.R.string.raise_notifications_as_android_notifications
-        )
-
-        // Gradually increase notification volume
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = BooleanKey.AlertIncreaseVolume,
-            titleResId = R.string.gradually_increase_notification_volume
+            config = config
         )
     }
 

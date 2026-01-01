@@ -7,9 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
@@ -19,6 +20,7 @@ import app.aaps.pump.diaconn.keys.DiaconnIntKey
 
 /**
  * Compose implementation of Diaconn G8 preferences.
+ * Note: BT selector and bolus speed require special handling.
  */
 class DiaconnG8PreferencesCompose(
     private val preferences: Preferences,
@@ -34,10 +36,13 @@ class DiaconnG8PreferencesCompose(
 
     override val titleResId: Int = R.string.diaconn_g8_pump
 
-    override val summaryItems: List<Int> = listOf(
-        R.string.selectedpump,
-        R.string.bolusspeed,
-        R.string.diaconn_g8_loginsulinchange_title
+    override val mainKeys: List<PreferenceKey> = listOf(
+        DiaconnIntKey.BolusSpeed,
+        DiaconnBooleanKey.LogInsulinChange,
+        DiaconnBooleanKey.LogCannulaChange,
+        DiaconnBooleanKey.LogTubeChange,
+        DiaconnBooleanKey.LogBatteryChange,
+        DiaconnBooleanKey.SendLogsToCloud
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
@@ -49,6 +54,7 @@ class DiaconnG8PreferencesCompose(
             )
         }
 
+        // Bolus speed - requires custom entries
         AdaptiveListIntPreferenceItem(
             preferences = preferences,
             config = config,
@@ -58,39 +64,17 @@ class DiaconnG8PreferencesCompose(
             entryValues = speedValues
         )
 
-        AdaptiveSwitchPreferenceItem(
+        // Boolean preferences - can use key-based
+        AdaptivePreferenceList(
+            keys = listOf(
+                DiaconnBooleanKey.LogInsulinChange,
+                DiaconnBooleanKey.LogCannulaChange,
+                DiaconnBooleanKey.LogTubeChange,
+                DiaconnBooleanKey.LogBatteryChange,
+                DiaconnBooleanKey.SendLogsToCloud
+            ),
             preferences = preferences,
-            config = config,
-            booleanKey = DiaconnBooleanKey.LogInsulinChange,
-            titleResId = R.string.diaconn_g8_loginsulinchange_title
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = DiaconnBooleanKey.LogCannulaChange,
-            titleResId = R.string.diaconn_g8_logcanulachange_title
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = DiaconnBooleanKey.LogTubeChange,
-            titleResId = R.string.diaconn_g8_logtubechange_title
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = DiaconnBooleanKey.LogBatteryChange,
-            titleResId = R.string.diaconn_g8_logbatterychange_title
-        )
-
-        AdaptiveSwitchPreferenceItem(
-            preferences = preferences,
-            config = config,
-            booleanKey = DiaconnBooleanKey.SendLogsToCloud,
-            titleResId = R.string.diaconn_g8_cloudsend_title
+            config = config
         )
     }
 

@@ -5,10 +5,9 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveStringPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -16,6 +15,7 @@ import app.aaps.plugins.configuration.R
 
 /**
  * Compose implementation of Maintenance preferences.
+ * Uses key-based rendering - UI is auto-generated from preference keys.
  */
 class MaintenancePreferencesCompose(
     private val preferences: Preferences,
@@ -24,62 +24,50 @@ class MaintenancePreferencesCompose(
 
     override val titleResId: Int = R.string.maintenance
 
-    // Main content shown at top level
-    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptiveStringPreferenceItem(
-            preferences = preferences,
-            config = config,
-            stringKey = StringKey.MaintenanceEmail,
-            titleResId = R.string.maintenance_email
-        )
+    override val mainKeys: List<PreferenceKey> = listOf(
+        StringKey.MaintenanceEmail,
+        IntKey.MaintenanceLogsAmount
+    )
 
-        AdaptiveIntPreferenceItem(
+    private val dataChoiceKeys: List<PreferenceKey> = listOf(
+        BooleanKey.MaintenanceEnableFabric,
+        StringKey.MaintenanceIdentification
+    )
+
+    private val unattendedExportKeys: List<PreferenceKey> = listOf(
+        BooleanKey.MaintenanceEnableExportSettingsAutomation
+    )
+
+    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        AdaptivePreferenceList(
+            keys = mainKeys,
             preferences = preferences,
-            config = config,
-            intKey = IntKey.MaintenanceLogsAmount,
-            titleResId = R.string.maintenance_amount
+            config = config
         )
     }
 
     override val subscreens: List<PreferenceSubScreen> = listOf(
-        // Data choices subscreen
         PreferenceSubScreen(
             key = "data_choice_setting",
             titleResId = R.string.data_choices,
-            summaryItems = listOf(
-                R.string.fabric_upload,
-                R.string.identification
-            )
+            keys = dataChoiceKeys
         ) { _ ->
-            AdaptiveSwitchPreferenceItem(
+            AdaptivePreferenceList(
+                keys = dataChoiceKeys,
                 preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.MaintenanceEnableFabric,
-                titleResId = R.string.fabric_upload
-            )
-
-            AdaptiveStringPreferenceItem(
-                preferences = preferences,
-                config = config,
-                stringKey = StringKey.MaintenanceIdentification,
-                titleResId = R.string.identification
+                config = config
             )
         },
 
-        // Unattended export subscreen
         PreferenceSubScreen(
             key = "unattended_export_setting",
             titleResId = R.string.unattended_settings_export,
-            summaryItems = listOf(
-                R.string.unattended_settings_export
-            )
+            keys = unattendedExportKeys
         ) { _ ->
-            AdaptiveSwitchPreferenceItem(
+            AdaptivePreferenceList(
+                keys = unattendedExportKeys,
                 preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.MaintenanceEnableExportSettingsAutomation,
-                titleResId = R.string.unattended_settings_export,
-                summaryResId = R.string.unattended_settings_export_summary
+                config = config
             )
         }
     )

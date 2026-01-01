@@ -1,5 +1,7 @@
 package app.aaps.core.keys.interfaces
 
+import app.aaps.core.keys.PreferenceType
+
 /**
  * Defines shared preference encapsulation
  */
@@ -9,6 +11,30 @@ interface PreferenceKey : NonPreferenceKey {
      * Associated [android.content.SharedPreferences] key
      */
     override val key: String
+
+    /**
+     * String resource ID for preference title.
+     * Use ResourceHelper.gs(titleResId) for localized string.
+     * 0 means not yet migrated.
+     */
+    val titleResId: Int
+        get() = 0
+
+    /**
+     * String resource ID for preference summary/description.
+     * Use ResourceHelper.gs(summaryResId) for localized string.
+     * null means no summary.
+     */
+    val summaryResId: Int?
+        get() = null
+
+    /**
+     * UI type for rendering this preference.
+     * Determines which Adaptive* composable to use.
+     * Each key type provides a sensible default.
+     */
+    val preferenceType: PreferenceType
+        get() = PreferenceType.TEXT_FIELD
 
     /**
      * Affected by simple mode?
