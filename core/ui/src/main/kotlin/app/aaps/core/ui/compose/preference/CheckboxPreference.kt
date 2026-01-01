@@ -17,9 +17,7 @@
 
 package app.aaps.core.ui.compose.preference
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
@@ -28,56 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import app.aaps.core.interfaces.sharedPreferences.SP
-
-fun LazyListScope.checkboxPreference(
-    key: String,
-    defaultValue: Boolean,
-    title: @Composable (Boolean) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    rememberState: @Composable () -> MutableState<Boolean>,
-    enabled: (Boolean) -> Boolean = { true },
-    icon: @Composable ((Boolean) -> Unit)? = null,
-    summary: @Composable ((Boolean) -> Unit)? = null,
-) {
-    item(key = key, contentType = "CheckboxPreference") {
-        val state = rememberState()
-        val value by state
-        CheckboxPreference(
-            state = state,
-            title = { title(value) },
-            modifier = modifier,
-            enabled = enabled(value),
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
-        )
-    }
-}
-
-/**
- * Convenience function to create a checkbox preference backed by SP.
- */
-fun LazyListScope.checkboxPreference(
-    sp: SP,
-    key: String,
-    defaultValue: Boolean,
-    title: @Composable (Boolean) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    enabled: (Boolean) -> Boolean = { true },
-    icon: @Composable ((Boolean) -> Unit)? = null,
-    summary: @Composable ((Boolean) -> Unit)? = null,
-) {
-    checkboxPreference(
-        key = key,
-        defaultValue = defaultValue,
-        title = title,
-        modifier = modifier,
-        rememberState = { rememberSPBooleanState(sp, key, defaultValue) },
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
-    )
-}
 
 @Composable
 fun CheckboxPreference(

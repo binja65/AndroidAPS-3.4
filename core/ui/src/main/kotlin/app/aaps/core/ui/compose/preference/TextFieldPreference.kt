@@ -20,7 +20,6 @@ package app.aaps.core.ui.compose.preference
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,103 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import app.aaps.core.interfaces.sharedPreferences.SP
-
-/**
- * Convenience function to create a string text field preference backed by SP.
- * Uses resource IDs to avoid cross-module Compose compiler issues.
- */
-fun LazyListScope.stringTextFieldPreference(
-    sp: SP,
-    key: String,
-    defaultValue: String,
-    titleResId: Int,
-    summaryResId: Int? = null,
-    enabled: Boolean = true,
-    isPassword: Boolean = false,
-) {
-    item(key = key, contentType = "StringTextFieldPreference") {
-        val state = rememberSPStringState(sp, key, defaultValue)
-        val value by state
-        TextFieldPreference(
-            state = state,
-            title = { Text(stringResource(titleResId)) },
-            textToValue = { it },
-            enabled = enabled,
-            summary = when {
-                isPassword && value.isNotEmpty() -> {
-                    { Text("••••••••") }
-                }
-
-                value.isNotEmpty()               -> {
-                    { Text(value) }
-                }
-
-                summaryResId != null             -> {
-                    { Text(stringResource(summaryResId)) }
-                }
-
-                else                             -> null
-            },
-        )
-    }
-}
-
-/**
- * Convenience function to create an int text field preference backed by SP.
- */
-fun LazyListScope.intTextFieldPreference(
-    sp: SP,
-    key: String,
-    defaultValue: Int,
-    title: @Composable (Int) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    enabled: Boolean = true,
-    icon: @Composable ((Int) -> Unit)? = null,
-    summary: @Composable ((Int) -> Unit)? = null,
-) {
-    item(key = key, contentType = "IntTextFieldPreference") {
-        val state = rememberSPIntState(sp, key, defaultValue)
-        val value by state
-        TextFieldPreference(
-            state = state,
-            title = { title(value) },
-            textToValue = { it.toIntOrNull() },
-            modifier = modifier,
-            enabled = enabled,
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
-        )
-    }
-}
-
-/**
- * Convenience function to create a double text field preference backed by SP.
- */
-fun LazyListScope.doubleTextFieldPreference(
-    sp: SP,
-    key: String,
-    defaultValue: Double,
-    title: @Composable (Double) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    enabled: Boolean = true,
-    icon: @Composable ((Double) -> Unit)? = null,
-    summary: @Composable ((Double) -> Unit)? = null,
-) {
-    item(key = key, contentType = "DoubleTextFieldPreference") {
-        val state = rememberSPDoubleState(sp, key, defaultValue)
-        val value by state
-        TextFieldPreference(
-            state = state,
-            title = { title(value) },
-            textToValue = { it.toDoubleOrNull() },
-            modifier = modifier,
-            enabled = enabled,
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
-        )
-    }
-}
 
 @Composable
 fun <T> TextFieldPreference(
@@ -246,39 +148,4 @@ object TextFieldPreferenceDefaults {
                 singleLine = true,
             )
         }
-}
-
-/**
- * Composable string text field preference backed by SP, for use inside card sections.
- */
-@Composable
-fun StringTextFieldPreferenceItem(
-    sp: SP,
-    key: String,
-    defaultValue: String,
-    titleResId: Int,
-    summaryResId: Int? = null,
-    enabled: Boolean = true,
-    isPassword: Boolean = false,
-) {
-    val state = rememberSPStringState(sp, key, defaultValue)
-    val value by state
-    TextFieldPreference(
-        state = state,
-        title = { Text(stringResource(titleResId)) },
-        textToValue = { it },
-        enabled = enabled,
-        summary = when {
-            isPassword && value.isNotEmpty() -> {
-                { Text("••••••••") }
-            }
-            value.isNotEmpty() -> {
-                { Text(value) }
-            }
-            summaryResId != null -> {
-                { Text(stringResource(summaryResId)) }
-            }
-            else -> null
-        },
-    )
 }

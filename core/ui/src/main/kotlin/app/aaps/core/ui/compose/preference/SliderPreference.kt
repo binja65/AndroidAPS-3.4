@@ -20,9 +20,7 @@ package app.aaps.core.ui.compose.preference
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
@@ -34,74 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import app.aaps.core.interfaces.sharedPreferences.SP
-
-fun LazyListScope.sliderPreference(
-    key: String,
-    defaultValue: Float,
-    title: @Composable (Float) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    rememberState: @Composable () -> MutableState<Float>,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    valueSteps: Int = 0,
-    rememberSliderState: @Composable (Float) -> MutableFloatState = {
-        remember { mutableFloatStateOf(it) }
-    },
-    enabled: (Float) -> Boolean = { true },
-    icon: @Composable ((Float) -> Unit)? = null,
-    summary: @Composable ((Float) -> Unit)? = null,
-    valueText: @Composable ((Float) -> Unit)? = null,
-) {
-    item(key = key, contentType = "SliderPreference") {
-        val state = rememberState()
-        val value by state
-        val sliderState = rememberSliderState(value)
-        val sliderValue by sliderState
-        SliderPreference(
-            state = state,
-            title = { title(sliderValue) },
-            modifier = modifier,
-            valueRange = valueRange,
-            valueSteps = valueSteps,
-            sliderState = sliderState,
-            enabled = enabled(value),
-            icon = icon?.let { { it(sliderValue) } },
-            summary = summary?.let { { it(sliderValue) } },
-            valueText = valueText?.let { { it(sliderValue) } },
-        )
-    }
-}
-
-/**
- * Convenience function to create a slider preference backed by SP.
- */
-fun LazyListScope.sliderPreference(
-    sp: SP,
-    key: String,
-    defaultValue: Float,
-    title: @Composable (Float) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    valueSteps: Int = 0,
-    enabled: (Float) -> Boolean = { true },
-    icon: @Composable ((Float) -> Unit)? = null,
-    summary: @Composable ((Float) -> Unit)? = null,
-    valueText: @Composable ((Float) -> Unit)? = null,
-) {
-    sliderPreference(
-        key = key,
-        defaultValue = defaultValue,
-        title = title,
-        modifier = modifier,
-        rememberState = { rememberSPFloatState(sp, key, defaultValue) },
-        valueRange = valueRange,
-        valueSteps = valueSteps,
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
-        valueText = valueText,
-    )
-}
 
 @Composable
 fun SliderPreference(

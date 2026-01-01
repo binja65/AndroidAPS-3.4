@@ -1,18 +1,21 @@
 package app.aaps.plugins.automation
 
 import androidx.compose.runtime.Composable
-import app.aaps.core.interfaces.sharedPreferences.SP
+import androidx.compose.ui.res.stringResource
+import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.ui.compose.preference.AdaptiveStringListPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
-import app.aaps.core.ui.compose.preference.StringListPreferenceItem
 
 /**
  * Compose implementation of Automation preferences.
  */
 class AutomationPreferencesCompose(
-    private val sp: SP
+    private val preferences: Preferences,
+    private val config: Config
 ) : NavigablePreferenceContent {
 
     override val titleResId: Int = app.aaps.core.ui.R.string.automation
@@ -23,16 +26,17 @@ class AutomationPreferencesCompose(
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Location service preference
-        StringListPreferenceItem(
-            sp = sp,
-            key = StringKey.AutomationLocation.key,
-            defaultValue = StringKey.AutomationLocation.defaultValue,
-            entries = mapOf(
-                "PASSIVE" to R.string.use_passive_location,
-                "NETWORK" to R.string.use_network_location,
-                "GPS" to R.string.use_gps_location
-            ),
-            titleResId = R.string.locationservice
+        val entries = mapOf(
+            "PASSIVE" to stringResource(R.string.use_passive_location),
+            "NETWORK" to stringResource(R.string.use_network_location),
+            "GPS" to stringResource(R.string.use_gps_location)
+        )
+        AdaptiveStringListPreferenceItem(
+            preferences = preferences,
+            config = config,
+            stringKey = StringKey.AutomationLocation,
+            titleResId = R.string.locationservice,
+            entries = entries
         )
     }
 

@@ -49,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import app.aaps.core.interfaces.sharedPreferences.SP
 
 enum class ListPreferenceType {
     ALERT_DIALOG,
@@ -87,67 +86,6 @@ fun <T> LazyListScope.listPreference(
             item = item,
         )
     }
-}
-
-/**
- * Convenience function to create a string list preference backed by SP.
- * Uses resource IDs to avoid cross-module Compose compiler issues.
- *
- * @param entries Map of value to display text resource ID
- */
-fun LazyListScope.stringListPreference(
-    sp: SP,
-    key: String,
-    defaultValue: String,
-    entries: Map<String, Int>,
-    titleResId: Int,
-    type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
-) {
-    item(key = key, contentType = "StringListPreference") {
-        val state = rememberSPStringState(sp, key, defaultValue)
-        val value by state
-        // Pre-resolve resource strings during composition to use in non-composable lambda
-        val resolvedEntries = entries.mapValues { (_, resId) -> stringResource(resId) }
-        ListPreference(
-            state = state,
-            values = entries.keys.toList(),
-            title = { Text(stringResource(titleResId)) },
-            summary = { Text(resolvedEntries[value] ?: value) },
-            type = type,
-            valueToText = { v -> AnnotatedString(resolvedEntries[v] ?: v) },
-        )
-    }
-}
-
-/**
- * Convenience function to create an int list preference backed by SP.
- */
-fun LazyListScope.intListPreference(
-    sp: SP,
-    key: String,
-    defaultValue: Int,
-    values: List<Int>,
-    title: @Composable (Int) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    enabled: (Int) -> Boolean = { true },
-    icon: @Composable ((Int) -> Unit)? = null,
-    summary: @Composable ((Int) -> Unit)? = null,
-    type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
-    valueToText: (Int) -> AnnotatedString = { AnnotatedString(it.toString()) },
-) {
-    listPreference(
-        key = key,
-        defaultValue = defaultValue,
-        values = values,
-        title = title,
-        modifier = modifier,
-        rememberState = { rememberSPIntState(sp, key, defaultValue) },
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
-        type = type,
-        valueToText = valueToText,
-    )
 }
 
 @Composable
@@ -324,32 +262,4 @@ object ListPreferenceDefaults {
             colors = MenuDefaults.itemColors(),
         )
     }
-}
-
-/**
- * Composable string list preference backed by SP, for use inside card sections.
- *
- * @param entries Map of value to display text resource ID
- */
-@Composable
-fun StringListPreferenceItem(
-    sp: SP,
-    key: String,
-    defaultValue: String,
-    entries: Map<String, Int>,
-    titleResId: Int,
-    type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
-) {
-    val state = rememberSPStringState(sp, key, defaultValue)
-    val value by state
-    // Pre-resolve resource strings during composition to use in non-composable lambda
-    val resolvedEntries = entries.mapValues { (_, resId) -> stringResource(resId) }
-    ListPreference(
-        state = state,
-        values = entries.keys.toList(),
-        title = { Text(stringResource(titleResId)) },
-        summary = { Text(resolvedEntries[value] ?: value) },
-        type = type,
-        valueToText = { v -> AnnotatedString(resolvedEntries[v] ?: v) },
-    )
 }
