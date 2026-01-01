@@ -28,6 +28,11 @@ class VirtualPumpPreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.virtual_pump
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.virtual_pump_type,
+        app.aaps.core.ui.R.string.virtualpump_uploadstatus_title
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveStringListPreferenceItem(
             preferences = preferences,

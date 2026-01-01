@@ -24,6 +24,12 @@ class GarminPreferencesCompose(
 
     override val titleResId: Int = R.string.garmin
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.garmin_local_http_server,
+        R.string.garmin_local_http_server_port,
+        R.string.garmin_request_key
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveSwitchPreferenceItem(
             preferences = preferences,

@@ -31,6 +31,12 @@ class EquilPreferencesCompose(
 
     override val titleResId: Int = R.string.equil_name
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.equil_settings_alarm_battery,
+        R.string.equil_settings_alarm_insulin,
+        R.string.equil_tone
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveSwitchPreferenceItem(
             preferences = preferences,

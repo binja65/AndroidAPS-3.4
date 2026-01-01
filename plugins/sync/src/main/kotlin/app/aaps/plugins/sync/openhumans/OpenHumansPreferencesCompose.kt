@@ -20,6 +20,11 @@ class OpenHumansPreferencesCompose(
 
     override val titleResId: Int = R.string.open_humans
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.only_upload_if_connected_to_wifi,
+        R.string.only_upload_if_charging
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveSwitchPreferenceItem(
             preferences = preferences,

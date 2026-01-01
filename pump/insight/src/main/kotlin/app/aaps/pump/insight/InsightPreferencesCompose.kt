@@ -24,6 +24,12 @@ class InsightPreferencesCompose(
 
     override val titleResId: Int = R.string.insight_local
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.insight_pairing,
+        R.string.log_reservoir_changes,
+        R.string.enable_tbr_emulation
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveActivityPreferenceItem(
             preferences = preferences,

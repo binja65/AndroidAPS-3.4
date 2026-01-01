@@ -42,6 +42,12 @@ class OverviewPreferencesCompose(
 
     override val titleResId: Int = R.string.overview
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.keep_screen_on_title,
+        R.string.quickwizard_settings,
+        R.string.short_tabtitles
+    )
+
     // Main content shown at top level
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Keep Screen On

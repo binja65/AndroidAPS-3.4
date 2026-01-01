@@ -22,10 +22,13 @@ import app.aaps.compose.navigation.AppRoute
 import app.aaps.compose.preferences.AllPreferencesScreen
 import app.aaps.compose.preferences.PluginPreferencesScreen
 import app.aaps.core.data.ue.Sources
+import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.configuration.ConfigBuilder
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
+import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.protection.ProtectionCheck
+import app.aaps.plugins.main.skins.SkinProvider
 import app.aaps.core.interfaces.rx.AapsSchedulers
 import app.aaps.core.interfaces.rx.events.EventPreferenceChange
 import app.aaps.core.interfaces.ui.UiInteraction
@@ -56,9 +59,12 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
     @Inject lateinit var aapsSchedulers: AapsSchedulers
     @Inject lateinit var fabricPrivacy: FabricPrivacy
     @Inject lateinit var protectionCheck: ProtectionCheck
+    @Inject lateinit var passwordCheck: PasswordCheck
     @Inject lateinit var activePlugin: ActivePlugin
     @Inject lateinit var configBuilder: ConfigBuilder
+    @Inject lateinit var config: Config
     @Inject lateinit var uiInteraction: UiInteraction
+    @Inject lateinit var skinProvider: SkinProvider
 
     // ViewModels
     @Inject lateinit var mainViewModel: MainViewModel
@@ -245,6 +251,11 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
                     composable(AppRoute.Preferences.route) {
                         AllPreferencesScreen(
                             plugins = activePlugin.getPluginsList(),
+                            preferences = preferences,
+                            config = config,
+                            passwordCheck = passwordCheck,
+                            skins = skinProvider.list,
+                            getSkinDescription = { skin -> getString(skin.description) },
                             onBackClick = { navController.popBackStack() }
                         )
                     }

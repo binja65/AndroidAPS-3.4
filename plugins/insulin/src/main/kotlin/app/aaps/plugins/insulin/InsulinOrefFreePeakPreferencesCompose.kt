@@ -19,6 +19,10 @@ class InsulinOrefFreePeakPreferencesCompose(
 
     override val titleResId: Int = R.string.free_peak_oref
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.insulin_peak_time
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveIntPreferenceItem(
             preferences = preferences,

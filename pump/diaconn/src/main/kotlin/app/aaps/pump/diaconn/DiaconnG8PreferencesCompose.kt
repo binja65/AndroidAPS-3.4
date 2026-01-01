@@ -34,6 +34,12 @@ class DiaconnG8PreferencesCompose(
 
     override val titleResId: Int = R.string.diaconn_g8_pump
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.selectedpump,
+        R.string.bolusspeed,
+        R.string.diaconn_g8_loginsulinchange_title
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Bluetooth device selector
         btSelectorActivityClass?.let { activityClass ->

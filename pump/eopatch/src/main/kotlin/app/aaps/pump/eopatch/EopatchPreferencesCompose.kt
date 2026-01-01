@@ -29,6 +29,12 @@ class EopatchPreferencesCompose(
 
     override val titleResId: Int = R.string.eopatch
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.low_reservoir,
+        R.string.patch_expiration_reminders,
+        R.string.patch_buzzer_reminders
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveListIntPreferenceItem(
             preferences = preferences,

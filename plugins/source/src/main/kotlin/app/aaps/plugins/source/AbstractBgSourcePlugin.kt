@@ -53,6 +53,10 @@ abstract class AbstractBgSourcePlugin(
         override val titleResId: Int
     ) : NavigablePreferenceContent {
 
+        override val summaryItems: List<Int> = listOf(
+            app.aaps.core.ui.R.string.do_ns_upload_title
+        )
+
         override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
             AdaptiveSwitchPreferenceItem(
                 preferences = preferences,

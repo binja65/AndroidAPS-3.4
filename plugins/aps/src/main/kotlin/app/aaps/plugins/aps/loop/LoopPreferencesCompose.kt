@@ -20,6 +20,10 @@ class LoopPreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.loop
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.loop_open_mode_min_change
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveIntPreferenceItem(
             preferences = preferences,

@@ -17,6 +17,10 @@ class AutomationPreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.automation
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.locationservice
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Location service preference
         StringListPreferenceItem(

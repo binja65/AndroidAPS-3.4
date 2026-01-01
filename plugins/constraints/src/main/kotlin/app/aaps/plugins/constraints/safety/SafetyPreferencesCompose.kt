@@ -26,6 +26,12 @@ class SafetyPreferencesCompose(
 
     override val titleResId: Int = R.string.safety
 
+    override val summaryItems: List<Int> = listOf(
+        app.aaps.core.ui.R.string.patient_type,
+        app.aaps.core.ui.R.string.max_bolus_title,
+        app.aaps.core.ui.R.string.max_carbs_title
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Patient age preference
         val ageEntries = hardLimits.ageEntryValues().zip(hardLimits.ageEntries()).associate {

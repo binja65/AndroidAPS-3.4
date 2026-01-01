@@ -31,6 +31,12 @@ class OpenAPSSMBPreferencesCompose(
 
     override val titleResId: Int = R.string.openapssmb
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.openapsma_max_basal_title,
+        R.string.openapssmb_max_iob_title,
+        R.string.use_dynamic_sensitivity_title
+    )
+
     // Main content shown at top level
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveDoublePreferenceItem(

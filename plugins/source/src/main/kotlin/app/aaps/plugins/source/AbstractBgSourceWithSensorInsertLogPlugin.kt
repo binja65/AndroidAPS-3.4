@@ -52,6 +52,11 @@ abstract class AbstractBgSourceWithSensorInsertLogPlugin(
         override val titleResId: Int
     ) : NavigablePreferenceContent {
 
+        override val summaryItems: List<Int> = listOf(
+            app.aaps.core.ui.R.string.do_ns_upload_title,
+            R.string.bgsource_log_sensor_change_title
+        )
+
         override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
             AdaptiveSwitchPreferenceItem(
                 preferences = preferences,

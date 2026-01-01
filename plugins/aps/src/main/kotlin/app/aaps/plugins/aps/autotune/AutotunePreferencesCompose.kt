@@ -22,6 +22,12 @@ class AutotunePreferencesCompose(
 
     override val titleResId: Int = app.aaps.core.ui.R.string.autotune
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.autotune_auto_title,
+        R.string.autotune_categorize_uam_as_basal_title,
+        R.string.autotune_default_tune_days_title
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveSwitchPreferenceItem(
             preferences = preferences,

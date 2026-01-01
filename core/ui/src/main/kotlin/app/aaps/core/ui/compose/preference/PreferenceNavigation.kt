@@ -72,6 +72,14 @@ interface NavigablePreferenceContent {
     val titleResId: Int
 
     /**
+     * Optional list of preference title resource IDs to show as summary when collapsed.
+     * Used when the card is collapsed to show what preferences are available.
+     * If empty, subscreen titles will be used instead.
+     */
+    val summaryItems: List<Int>
+        get() = emptyList()
+
+    /**
      * Optional main content shown at top level (not in a subscreen).
      * These preferences are displayed directly, with subscreens below.
      */
@@ -304,8 +312,10 @@ fun LazyListScope.addNavigablePreferenceContent(
     val sectionKey = "${content.keyPrefix}_main"
     item(key = sectionKey) {
         val isExpanded = sectionState?.isExpanded(sectionKey) ?: false
-        // Build summaryItems from subscreens
-        val summaryItems = content.subscreens.map { it.titleResId }
+        // Use content.summaryItems if provided, otherwise fall back to subscreen titles
+        val summaryItems = content.summaryItems.ifEmpty {
+            content.subscreens.map { it.titleResId }
+        }
         CollapsibleCardSectionContent(
             titleResId = content.titleResId,
             summaryItems = summaryItems,

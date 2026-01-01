@@ -26,6 +26,12 @@ class ComboV2PreferencesCompose(
 
     override val titleResId: Int = R.string.combov2_title
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.combov2_pair_with_pump_title,
+        R.string.combov2_discovery_duration,
+        R.string.combov2_automatic_reservoir_entry
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveActivityPreferenceItem(
             preferences = preferences,

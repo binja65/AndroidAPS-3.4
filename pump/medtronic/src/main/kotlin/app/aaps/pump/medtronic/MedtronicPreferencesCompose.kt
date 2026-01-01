@@ -71,6 +71,12 @@ class MedtronicPreferencesCompose(
 
     override val titleResId: Int = R.string.medtronic_name
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.medtronic_serial_number,
+        R.string.medtronic_pump_type,
+        R.string.medtronic_pump_frequency
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveStringPreferenceItem(
             preferences = preferences,

@@ -1,44 +1,36 @@
-package app.aaps.plugins.source
+package app.aaps.compose.preferences
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
-import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 
 /**
- * Compose implementation of Random BG source preferences.
+ * Compose implementation of Pump preferences.
  */
-class RandomBgPreferencesCompose(
+class PumpPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config
 ) : NavigablePreferenceContent {
 
-    override val titleResId: Int = R.string.random_bg
+    override val titleResId: Int = app.aaps.core.ui.R.string.pump
 
     override val summaryItems: List<Int> = listOf(
-        app.aaps.core.ui.R.string.do_ns_upload_title,
-        R.string.bg_generation_interval_minutes
+        app.aaps.core.ui.R.string.btwatchdog_title
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // BT Watchdog
         AdaptiveSwitchPreferenceItem(
             preferences = preferences,
             config = config,
-            booleanKey = BooleanKey.BgSourceUploadToNs,
-            titleResId = app.aaps.core.ui.R.string.do_ns_upload_title
-        )
-
-        AdaptiveIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = IntKey.BgSourceRandomInterval,
-            titleResId = R.string.bg_generation_interval_minutes
+            booleanKey = BooleanKey.PumpBtWatchdog,
+            titleResId = app.aaps.core.ui.R.string.btwatchdog_title,
+            summaryResId = app.aaps.core.ui.R.string.btwatchdog_summary
         )
     }
 

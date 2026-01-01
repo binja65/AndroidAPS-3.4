@@ -39,6 +39,12 @@ class MedtrumPreferencesCompose(
 
     override val titleResId: Int = R.string.medtrum
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.sn_input_title,
+        R.string.alarm_setting_title,
+        R.string.pump_warning_notification_title
+    )
+
     // Main content shown at top level
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveStringPreferenceItem(

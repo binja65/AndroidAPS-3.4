@@ -35,6 +35,12 @@ class DanaRPreferencesCompose(
 
     override val titleResId: Int = R.string.danarpump
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.danar_bt_name_title,
+        R.string.danar_password_title,
+        R.string.bolusspeed
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Bluetooth device selector
         BluetoothDevicePreferenceItem(

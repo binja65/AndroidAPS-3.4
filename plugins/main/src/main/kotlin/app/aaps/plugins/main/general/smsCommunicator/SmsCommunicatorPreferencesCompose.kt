@@ -27,6 +27,12 @@ class SmsCommunicatorPreferencesCompose(
 
     override val titleResId: Int = R.string.smscommunicator
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.smscommunicator_allowednumbers,
+        R.string.smscommunicator_remote_commands_allowed,
+        R.string.smscommunicator_remote_bolus_min_distance
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveStringPreferenceItem(
             preferences = preferences,

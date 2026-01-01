@@ -33,6 +33,12 @@ class DanaRSPreferencesCompose(
 
     override val titleResId: Int = R.string.danarspump
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.selectedpump,
+        R.string.danars_password_title,
+        R.string.bolusspeed
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveActivityPreferenceItem(
             preferences = preferences,

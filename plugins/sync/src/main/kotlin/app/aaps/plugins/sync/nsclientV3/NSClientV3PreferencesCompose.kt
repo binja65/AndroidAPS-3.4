@@ -24,6 +24,12 @@ class NSClientV3PreferencesCompose(
 
     override val titleResId: Int = R.string.ns_client_v3_title
 
+    override val summaryItems: List<Int> = listOf(
+        R.string.ns_client_url_title,
+        R.string.nsclient_token_title,
+        R.string.ns_use_ws_title
+    )
+
     // Main content shown at top level (URL, token, websocket)
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptiveStringPreferenceItem(
