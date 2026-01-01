@@ -338,6 +338,22 @@ class OverviewPlugin @Inject constructor(
         }
     }
 
+    override fun applyStatusLightsFromNs(
+        cageWarn: Int?, cageCritical: Int?,
+        iageWarn: Int?, iageCritical: Int?,
+        sageWarn: Int?, sageCritical: Int?,
+        bageWarn: Int?, bageCritical: Int?
+    ) {
+        cageWarn?.let { preferences.put(IntKey.OverviewCageWarning, it) }
+        cageCritical?.let { preferences.put(IntKey.OverviewCageCritical, it) }
+        iageWarn?.let { preferences.put(IntKey.OverviewIageWarning, it) }
+        iageCritical?.let { preferences.put(IntKey.OverviewIageCritical, it) }
+        sageWarn?.let { preferences.put(IntKey.OverviewSageWarning, it) }
+        sageCritical?.let { preferences.put(IntKey.OverviewSageCritical, it) }
+        bageWarn?.let { preferences.put(IntKey.OverviewBageWarning, it) }
+        bageCritical?.let { preferences.put(IntKey.OverviewBageCritical, it) }
+    }
+
     private val dismissReceiver = DismissNotificationReceiver()
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
