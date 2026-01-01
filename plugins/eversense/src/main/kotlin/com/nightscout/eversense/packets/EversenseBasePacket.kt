@@ -23,9 +23,9 @@ abstract class EversenseBasePacket : Object() {
         return when(annotation.responseId) {
             EversenseE3Packets.ReadSingleByteSerialFlashRegisterResponseId,
             EversenseE3Packets.ReadTwoByteSerialFlashRegisterResponseId,
-            EversenseE3Packets.ReadFourByteSerialFlashRegisterResponseId -> 3
+            EversenseE3Packets.ReadFourByteSerialFlashRegisterResponseId -> 4
 
-            else -> 0
+            else -> 1
         }
     }
 

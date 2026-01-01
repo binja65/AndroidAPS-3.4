@@ -15,6 +15,8 @@ android {
 dependencies {
     testImplementation(libs.androidx.work.testing)
 
+    implementation(libs.androidx.core)
+
     ksp(libs.com.google.dagger.compiler)
     ksp(libs.com.google.dagger.android.processor)
 }

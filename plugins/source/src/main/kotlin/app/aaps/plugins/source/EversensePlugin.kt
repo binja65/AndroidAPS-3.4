@@ -43,9 +43,12 @@ class EversensePlugin @Inject constructor(
     init {
         EversenseCGMPlugin.instance.setContext(context)
         EversenseCGMPlugin.instance.addWatcher(this)
+
+        EversenseCGMPlugin.instance.connect(null)
     }
 
     override fun onCGMRead(type: EversenseType, glucoseInMgDl: Int, datetime: Long, trend: EversenseTrendArrow) {
+        Log.w("onCGMRead", "Received glucose data: $glucoseInMgDl mg/dl, time: $datetime, persistenceLayer: ${persistenceLayer == null}")
         val value = GV(
             timestamp = datetime,
             value = glucoseInMgDl.toDouble(),
@@ -58,11 +61,19 @@ class EversensePlugin @Inject constructor(
             }
         )
 
-        persistenceLayer.insertCgmSourceData(
+        val result = persistenceLayer.insertCgmSourceData(
             Sources.Eversense,
             listOf(value),
             listOf(),
             null
-        )
+        ).blockingGet()
+
+        for (inserted in result.inserted) {
+            Log.i("onCGMRead", "Inserted glucose: ${inserted.value} mg/dl")
+        }
+
+        for (invalidated in result.invalidated) {
+            Log.i("onCGMRead", "invalidated glucose: ${invalidated.value} mg/dl")
+        }
     }
 }

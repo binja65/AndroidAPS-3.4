@@ -12,10 +12,10 @@ import com.nightscout.eversense.packets.e3.util.EversenseE3Parser
     responseType = 0,
     securityType = EversenseSecurityType.None
 )
-class GetRecentGlucoseValue : EversenseBasePacket() {
+class GetRecentGlucoseTimePacket : EversenseBasePacket() {
 
     override fun getRequestData(): ByteArray {
-        return EversenseE3Memory.RecentGlucoseValue.getRequestData()
+        return EversenseE3Memory.RecentGlucoseTime.getRequestData()
     }
 
     override fun parseResponse(): Response? {
@@ -24,9 +24,9 @@ class GetRecentGlucoseValue : EversenseBasePacket() {
         }
 
         return Response(
-            glucoseInMgDl = EversenseE3Parser.readGlucose(receivedData, getStartIndex())
+            time = EversenseE3Parser.readTime(receivedData, getStartIndex())
         )
     }
 
-    data class Response(val glucoseInMgDl: Int) : EversenseBasePacket.Response()
+    data class Response(val time: Long) : EversenseBasePacket.Response()
 }

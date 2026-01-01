@@ -2,13 +2,16 @@ package com.nightscout.eversense
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile.GATT
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.ParcelUuid
 import android.util.Log
+import androidx.core.content.edit
 import com.nightscout.eversense.callbacks.EversenseScanCallback
 import com.nightscout.eversense.callbacks.EversenseWatcher
 
@@ -34,6 +37,14 @@ class EversenseCGMPlugin {
 
     fun addWatcher(watcher: EversenseWatcher) {
         this.watchers += watcher
+    }
+
+    fun isConnected(): Boolean {
+        val gattCallback = this.gattCallback ?:run {
+            return false
+        }
+
+        return gattCallback.isConnected()
     }
 
     @SuppressLint("MissingPermission")
@@ -67,6 +78,11 @@ class EversenseCGMPlugin {
             bluetoothManager.adapter.bluetoothLeScanner.stopScan(scanner)
         }
 
+        if (gattCallback.isConnected()) {
+            Log.i(TAG, "Already connected!")
+            return true
+        }
+
         if (device != null) {
             Log.i(TAG, "Connecting to ${device.name}")
             device.connectGatt(context, true, gattCallback)
@@ -82,12 +98,13 @@ class EversenseCGMPlugin {
             Log.e(TAG, "Remote device not found. Make sure you've connected once and bonded to this device")
             return false
         }
+
         remoteDevice.connectGatt(context, true, gattCallback)
         return true
     }
 
     companion object {
-        private val TAG = "EversenseCGMManager"
+        private const val TAG = "EversenseCGMManager"
 
         val instance:EversenseCGMPlugin by lazy {
             EversenseCGMPlugin()

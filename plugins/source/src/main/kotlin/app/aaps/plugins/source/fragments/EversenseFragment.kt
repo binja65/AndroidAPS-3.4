@@ -26,6 +26,11 @@ class EversenseFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("eversense_connect")?.setOnPreferenceClickListener {
             Toast.makeText(context, "Scanning for Smart Transmitter...", Toast.LENGTH_SHORT).show()
 
+            // Try reconnect without scanning
+            if (EversenseCGMPlugin.instance.connect(null)) {
+                return@setOnPreferenceClickListener true
+            }
+
             EversenseCGMPlugin.instance.startScan(object : EversenseScanCallback {
                 override fun onResult(var0: EversenseScanResult) {
                     if (var0.name.startsWith("DEMO")) {

@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.SharedPreferences
+import android.provider.Settings.Global.putString
 import android.util.Log
 import com.nightscout.eversense.enums.EversenseSecurityType
 import com.nightscout.eversense.exceptions.EversenseWriteException
@@ -18,6 +19,7 @@ import com.nightscout.eversense.packets.e3.SaveBondingInformationPacket
 import java.util.UUID
 import java.util.concurrent.Executors
 import kotlin.jvm.Throws
+import androidx.core.content.edit
 
 class EversenseGattCallback(
     private val plugin: EversenseCGMPlugin,
@@ -47,12 +49,20 @@ class EversenseGattCallback(
     private var security: EversenseSecurityType = EversenseSecurityType.None
     var currentPacket: EversenseBasePacket? = null
 
+    fun isConnected(): Boolean {
+        return this.bluetoothGatt != null
+    }
+
     @SuppressLint("MissingPermission")
     override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
         Log.i(TAG, "Connection state changed - state: $status, newState: $newState")
 
         if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
             bluetoothGatt = gatt
+
+            preferences.edit(commit = true) {
+                putString(StorageKeys.REMOTE_DEVICE_KEY, gatt.device.address)
+            }
 
             val success = gatt.requestMtu(512)
             Log.i(TAG, "Requested MTU: $success")
@@ -61,6 +71,7 @@ class EversenseGattCallback(
 
         if (newState == BluetoothProfile.STATE_DISCONNECTED) {
             Log.w(TAG, "Disconnected...")
+            bluetoothGatt = null
         }
     }
 
@@ -218,7 +229,6 @@ class EversenseGattCallback(
 
         synchronized(packet) {
             try {
-                Log.i(TAG, "Waiting on packet...")
                 packet.wait(5000)
             } catch (e: Exception) {
                 Log.e(TAG, "Exception during await - exception: $e")
@@ -227,7 +237,6 @@ class EversenseGattCallback(
         }
 
         return try {
-            Log.i(TAG, "Parsing data...")
             val response = packet.parseResponse()
             currentPacket = null
             response as? T ?: throw EversenseWriteException("Unable to cast response")
@@ -238,10 +247,16 @@ class EversenseGattCallback(
 
     private fun authE3flow() {
         Log.i(TAG, "Starting auth flow E3...")
-        writePacket<SaveBondingInformationPacket.SaveBondingInformationResponse>(SaveBondingInformationPacket())
+
+        try {
+            writePacket<SaveBondingInformationPacket.SaveBondingInformationResponse>(SaveBondingInformationPacket())
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to do auth flow - exception: $exception")
+            return
+        }
 
         Log.i(TAG, "Ready for full sync!!")
-        // EversenseE3Communicator.fullSync(this, preferences)
+        EversenseE3Communicator.fullSync(this, preferences)
     }
 
     private fun authV2flow() {
