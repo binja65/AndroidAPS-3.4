@@ -37,21 +37,3 @@ fun PreferencesScreen(
         }
     }
 }
-
-/**
- * Preferences screen with multiple plugin contents.
- *
- * @param modifier Modifier for the screen
- * @param contents List of PreferenceScreenContent providers
- */
-@Composable
-fun PreferencesScreen(
-    modifier: Modifier = Modifier,
-    contents: List<PreferenceScreenContent>
-) {
-    PreferencesScreen(modifier = modifier) {
-        contents.forEach { content ->
-            addPreferenceContent(content)
-        }
-    }
-}

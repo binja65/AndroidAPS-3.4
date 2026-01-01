@@ -1,13 +1,13 @@
 package app.aaps.plugins.aps.loop
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
-import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
-import app.aaps.core.ui.compose.preference.PreferenceScreenContent
+import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
+import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.plugins.aps.R
 
 /**
@@ -16,28 +16,18 @@ import app.aaps.plugins.aps.R
 class LoopPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config
-) : PreferenceScreenContent {
+) : NavigablePreferenceContent {
 
-    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
-        // Loop category
-        val loopSettingsKey = "${keyPrefix}_loop_settings"
-        item {
-            val isExpanded = sectionState?.isExpanded(loopSettingsKey) ?: true
-            CollapsibleCardSectionContent(
-                titleResId = app.aaps.core.ui.R.string.loop,
-                summaryItems = listOf(
-                    R.string.loop_open_mode_min_change
-                ),
-                expanded = isExpanded,
-                onToggle = { sectionState?.toggle(loopSettingsKey) }
-            ) {
-                AdaptiveIntPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    intKey = IntKey.LoopOpenModeMinChange,
-                    titleResId = R.string.loop_open_mode_min_change
-                )
-            }
-        }
+    override val titleResId: Int = app.aaps.core.ui.R.string.loop
+
+    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        AdaptiveIntPreferenceItem(
+            preferences = preferences,
+            config = config,
+            intKey = IntKey.LoopOpenModeMinChange,
+            titleResId = R.string.loop_open_mode_min_change
+        )
     }
+
+    override val subscreens: List<PreferenceSubScreen> = emptyList()
 }

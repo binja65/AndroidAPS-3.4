@@ -1,7 +1,6 @@
 package app.aaps.core.ui.compose.preference
 
 import android.os.Bundle
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.saveable.Saver
@@ -16,6 +15,7 @@ import androidx.core.os.bundleOf
 class PreferenceSectionState(
     private val expandedSections: SnapshotStateMap<String, Boolean> = mutableStateMapOf()
 ) {
+
     /**
      * Check if a section is expanded (default: false - collapsed)
      */
@@ -36,6 +36,7 @@ class PreferenceSectionState(
     }
 
     companion object {
+
         val Saver: Saver<PreferenceSectionState, Bundle> = Saver(
             save = { state ->
                 bundleOf(*state.expandedSections.map { (k, v) -> k to v }.toTypedArray())
@@ -60,39 +61,5 @@ class PreferenceSectionState(
 fun rememberPreferenceSectionState(): PreferenceSectionState {
     return rememberSaveable(saver = PreferenceSectionState.Saver) {
         PreferenceSectionState()
-    }
-}
-
-/**
- * Interface for plugins to provide compose preference content.
- * Plugins implement this to define their preference UI using the compose preference DSL.
- */
-interface PreferenceScreenContent {
-
-    /**
-     * Unique key prefix for this plugin's preferences.
-     * Used to ensure keys don't collide when multiple plugins are shown together.
-     * Default implementation uses the class name.
-     */
-    val keyPrefix: String
-        get() = this::class.java.simpleName
-
-    /**
-     * Add preference items to the LazyListScope.
-     *
-     * @param sectionState State holder for collapsible sections (optional)
-     */
-    fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState? = null)
-}
-
-/**
- * Helper function to invoke PreferenceScreenContent within a LazyListScope
- */
-fun LazyListScope.addPreferenceContent(
-    content: PreferenceScreenContent,
-    sectionState: PreferenceSectionState? = null
-) {
-    with(content) {
-        preferenceItems(sectionState)
     }
 }

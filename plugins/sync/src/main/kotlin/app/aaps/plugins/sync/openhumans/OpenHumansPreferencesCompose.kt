@@ -1,13 +1,13 @@
 package app.aaps.plugins.sync.openhumans
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
-import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
-import app.aaps.core.ui.compose.preference.PreferenceScreenContent
+import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
+import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.plugins.sync.R
 
 /**
@@ -16,36 +16,25 @@ import app.aaps.plugins.sync.R
 class OpenHumansPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config
-) : PreferenceScreenContent {
+) : NavigablePreferenceContent {
 
-    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
-        // Open Humans settings category
-        val openHumansSettingsKey = "${keyPrefix}_open_humans_settings"
-        item {
-            val isExpanded = sectionState?.isExpanded(openHumansSettingsKey) ?: true
-            CollapsibleCardSectionContent(
-                titleResId = R.string.open_humans,
-                summaryItems = listOf(
-                    R.string.only_upload_if_connected_to_wifi,
-                    R.string.only_upload_if_charging
-                ),
-                expanded = isExpanded,
-                onToggle = { sectionState?.toggle(openHumansSettingsKey) }
-            ) {
-                AdaptiveSwitchPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = BooleanKey.OpenHumansWifiOnly,
-                    titleResId = R.string.only_upload_if_connected_to_wifi
-                )
+    override val titleResId: Int = R.string.open_humans
 
-                AdaptiveSwitchPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = BooleanKey.OpenHumansChargingOnly,
-                    titleResId = R.string.only_upload_if_charging
-                )
-            }
-        }
+    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = BooleanKey.OpenHumansWifiOnly,
+            titleResId = R.string.only_upload_if_connected_to_wifi
+        )
+
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = BooleanKey.OpenHumansChargingOnly,
+            titleResId = R.string.only_upload_if_charging
+        )
     }
+
+    override val subscreens: List<PreferenceSubScreen> = emptyList()
 }

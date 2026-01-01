@@ -1,6 +1,6 @@
 package app.aaps.pump.medtronic
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveActivityPreferenceItem
@@ -9,9 +9,9 @@ import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveStringListPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveStringPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
-import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
-import app.aaps.core.ui.compose.preference.PreferenceScreenContent
+import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
+import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.pump.common.dialog.RileyLinkBLEConfigActivity
 import app.aaps.pump.common.hw.rileylink.ble.defs.RileyLinkEncodingType
 import app.aaps.pump.common.hw.rileylink.ble.defs.RileyLinkTargetFrequency
@@ -29,9 +29,10 @@ import app.aaps.pump.medtronic.keys.MedtronicStringPreferenceKey
 class MedtronicPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config
-) : PreferenceScreenContent {
+) : NavigablePreferenceContent {
 
     companion object {
+
         private val bolusDelayEntries = listOf("5", "10", "15")
         private val bolusDelayValues = listOf(5, 10, 15)
 
@@ -68,115 +69,102 @@ class MedtronicPreferencesCompose(
         private val batteryTypeEntries = BatteryType.entries.associate { it.key to it.key }
     }
 
-    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
-        // Medtronic pump settings category
-        val sectionKey = "${keyPrefix}_medtronic_settings"
-        item {
-            val isExpanded = sectionState?.isExpanded(sectionKey) ?: true
-            CollapsibleCardSectionContent(
-                titleResId = R.string.medtronic_name,
-                summaryItems = listOf(
-                    R.string.medtronic_serial_number,
-                    R.string.medtronic_pump_type,
-                    R.string.medtronic_pump_frequency,
-                    R.string.medtronic_pump_max_basal
-                ),
-                expanded = isExpanded,
-                onToggle = { sectionState?.toggle(sectionKey) }
-            ) {
-                AdaptiveStringPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    stringKey = MedtronicStringPreferenceKey.Serial,
-                    titleResId = R.string.medtronic_serial_number
-                )
+    override val titleResId: Int = R.string.medtronic_name
 
-                AdaptiveStringListPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    stringKey = MedtronicStringPreferenceKey.PumpType,
-                    titleResId = R.string.medtronic_pump_type,
-                    entries = pumpTypeEntries
-                )
+    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        AdaptiveStringPreferenceItem(
+            preferences = preferences,
+            config = config,
+            stringKey = MedtronicStringPreferenceKey.Serial,
+            titleResId = R.string.medtronic_serial_number
+        )
 
-                AdaptiveStringListPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    stringKey = MedtronicStringPreferenceKey.PumpFrequency,
-                    titleResId = R.string.medtronic_pump_frequency,
-                    entries = pumpFrequencyEntries
-                )
+        AdaptiveStringListPreferenceItem(
+            preferences = preferences,
+            config = config,
+            stringKey = MedtronicStringPreferenceKey.PumpType,
+            titleResId = R.string.medtronic_pump_type,
+            entries = pumpTypeEntries
+        )
 
-                AdaptiveIntPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    intKey = MedtronicIntPreferenceKey.MaxBasal,
-                    titleResId = R.string.medtronic_pump_max_basal
-                )
+        AdaptiveStringListPreferenceItem(
+            preferences = preferences,
+            config = config,
+            stringKey = MedtronicStringPreferenceKey.PumpFrequency,
+            titleResId = R.string.medtronic_pump_frequency,
+            entries = pumpFrequencyEntries
+        )
 
-                AdaptiveIntPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    intKey = MedtronicIntPreferenceKey.MaxBolus,
-                    titleResId = R.string.medtronic_pump_max_bolus
-                )
+        AdaptiveIntPreferenceItem(
+            preferences = preferences,
+            config = config,
+            intKey = MedtronicIntPreferenceKey.MaxBasal,
+            titleResId = R.string.medtronic_pump_max_basal
+        )
 
-                AdaptiveListIntPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    intKey = MedtronicIntPreferenceKey.BolusDelay,
-                    titleResId = R.string.medtronic_pump_bolus_delay,
-                    entries = bolusDelayEntries,
-                    entryValues = bolusDelayValues
-                )
+        AdaptiveIntPreferenceItem(
+            preferences = preferences,
+            config = config,
+            intKey = MedtronicIntPreferenceKey.MaxBolus,
+            titleResId = R.string.medtronic_pump_max_bolus
+        )
 
-                AdaptiveStringListPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    stringKey = RileyLinkStringPreferenceKey.Encoding,
-                    titleResId = R.string.medtronic_pump_encoding,
-                    entries = encodingEntries
-                )
+        AdaptiveListIntPreferenceItem(
+            preferences = preferences,
+            config = config,
+            intKey = MedtronicIntPreferenceKey.BolusDelay,
+            titleResId = R.string.medtronic_pump_bolus_delay,
+            entries = bolusDelayEntries,
+            entryValues = bolusDelayValues
+        )
 
-                AdaptiveStringListPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    stringKey = MedtronicStringPreferenceKey.BatteryType,
-                    titleResId = R.string.medtronic_pump_battery_select,
-                    entries = batteryTypeEntries
-                )
+        AdaptiveStringListPreferenceItem(
+            preferences = preferences,
+            config = config,
+            stringKey = RileyLinkStringPreferenceKey.Encoding,
+            titleResId = R.string.medtronic_pump_encoding,
+            entries = encodingEntries
+        )
 
-                AdaptiveActivityPreferenceItem(
-                    preferences = preferences,
-                    intentKey = RileyLinkIntentPreferenceKey.MacAddressSelector,
-                    titleResId = app.aaps.pump.common.hw.rileylink.R.string.rileylink_configuration,
-                    activityClass = RileyLinkBLEConfigActivity::class.java
-                )
+        AdaptiveStringListPreferenceItem(
+            preferences = preferences,
+            config = config,
+            stringKey = MedtronicStringPreferenceKey.BatteryType,
+            titleResId = R.string.medtronic_pump_battery_select,
+            entries = batteryTypeEntries
+        )
 
-                AdaptiveSwitchPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = RileylinkBooleanPreferenceKey.OrangeUseScanning,
-                    titleResId = app.aaps.pump.common.hw.rileylink.R.string.orange_use_scanning_level,
-                    summaryResId = app.aaps.pump.common.hw.rileylink.R.string.orange_use_scanning_level_summary
-                )
+        AdaptiveActivityPreferenceItem(
+            preferences = preferences,
+            intentKey = RileyLinkIntentPreferenceKey.MacAddressSelector,
+            titleResId = app.aaps.pump.common.hw.rileylink.R.string.rileylink_configuration,
+            activityClass = RileyLinkBLEConfigActivity::class.java
+        )
 
-                AdaptiveSwitchPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = RileylinkBooleanPreferenceKey.ShowReportedBatteryLevel,
-                    titleResId = app.aaps.pump.common.hw.rileylink.R.string.riley_link_show_battery_level,
-                    summaryResId = app.aaps.pump.common.hw.rileylink.R.string.riley_link_show_battery_level_summary
-                )
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = RileylinkBooleanPreferenceKey.OrangeUseScanning,
+            titleResId = app.aaps.pump.common.hw.rileylink.R.string.orange_use_scanning_level,
+            summaryResId = app.aaps.pump.common.hw.rileylink.R.string.orange_use_scanning_level_summary
+        )
 
-                AdaptiveSwitchPreferenceItem(
-                    preferences = preferences,
-                    config = config,
-                    booleanKey = MedtronicBooleanPreferenceKey.SetNeutralTemp,
-                    titleResId = R.string.set_neutral_temps_title,
-                    summaryResId = R.string.set_neutral_temps_summary
-                )
-            }
-        }
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = RileylinkBooleanPreferenceKey.ShowReportedBatteryLevel,
+            titleResId = app.aaps.pump.common.hw.rileylink.R.string.riley_link_show_battery_level,
+            summaryResId = app.aaps.pump.common.hw.rileylink.R.string.riley_link_show_battery_level_summary
+        )
+
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = MedtronicBooleanPreferenceKey.SetNeutralTemp,
+            titleResId = R.string.set_neutral_temps_title,
+            summaryResId = R.string.set_neutral_temps_summary
+        )
     }
+
+    override val subscreens: List<PreferenceSubScreen> = emptyList()
 }

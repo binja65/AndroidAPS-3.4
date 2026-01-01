@@ -1,15 +1,15 @@
 package app.aaps.plugins.aps.autotune
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
-import app.aaps.core.ui.compose.preference.PreferenceScreenContent
+import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.CollapsibleCardSectionContent
+import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.plugins.aps.R
 
 /**
@@ -18,55 +18,42 @@ import app.aaps.plugins.aps.R
 class AutotunePreferencesCompose(
     private val preferences: Preferences,
     private val config: Config
-) : PreferenceScreenContent {
+) : NavigablePreferenceContent {
 
-    override fun LazyListScope.preferenceItems(sectionState: PreferenceSectionState?) {
-        // Autotune settings category
-        val autotuneSettingsKey = "${keyPrefix}_autotune_settings"
-        item {
-            val isExpanded = sectionState?.isExpanded(autotuneSettingsKey) ?: true
-            CollapsibleCardSectionContent(
-                titleResId = R.string.autotune_settings,
-                summaryItems = listOf(
-                    R.string.autotune_auto_title,
-                    R.string.autotune_categorize_uam_as_basal_title,
-                    R.string.autotune_default_tune_days_title,
-                    R.string.autotune_circadian_ic_isf_title
-                ),
-                expanded = isExpanded,
-                onToggle = { sectionState?.toggle(autotuneSettingsKey) }
-            ) {
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.AutotuneAutoSwitchProfile,
-                titleResId = R.string.autotune_auto_title,
-                summaryResId = R.string.autotune_auto_summary
-            )
+    override val titleResId: Int = app.aaps.core.ui.R.string.autotune
 
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.AutotuneCategorizeUamAsBasal,
-                titleResId = R.string.autotune_categorize_uam_as_basal_title,
-                summaryResId = R.string.autotune_categorize_uam_as_basal_summary
-            )
+    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = BooleanKey.AutotuneAutoSwitchProfile,
+            titleResId = R.string.autotune_auto_title,
+            summaryResId = R.string.autotune_auto_summary
+        )
 
-            AdaptiveIntPreferenceItem(
-                preferences = preferences,
-                config = config,
-                intKey = IntKey.AutotuneDefaultTuneDays,
-                titleResId = R.string.autotune_default_tune_days_title
-            )
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = BooleanKey.AutotuneCategorizeUamAsBasal,
+            titleResId = R.string.autotune_categorize_uam_as_basal_title,
+            summaryResId = R.string.autotune_categorize_uam_as_basal_summary
+        )
 
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.AutotuneCircadianIcIsf,
-                titleResId = R.string.autotune_circadian_ic_isf_title,
-                summaryResId = R.string.autotune_circadian_ic_isf_summary
-            )
-            }
-        }
+        AdaptiveIntPreferenceItem(
+            preferences = preferences,
+            config = config,
+            intKey = IntKey.AutotuneDefaultTuneDays,
+            titleResId = R.string.autotune_default_tune_days_title
+        )
+
+        AdaptiveSwitchPreferenceItem(
+            preferences = preferences,
+            config = config,
+            booleanKey = BooleanKey.AutotuneCircadianIcIsf,
+            titleResId = R.string.autotune_circadian_ic_isf_title,
+            summaryResId = R.string.autotune_circadian_ic_isf_summary
+        )
     }
+
+    override val subscreens: List<PreferenceSubScreen> = emptyList()
 }
