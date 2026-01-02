@@ -13,8 +13,6 @@ import androidx.core.content.ContextCompat
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.AdaptiveStringListPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
@@ -28,7 +26,7 @@ import app.aaps.pump.dana.keys.DanaStringKey
 
 /**
  * Compose implementation of DanaR preferences.
- * Note: BT device selector and bolus speed require special handling.
+ * Note: BT device selector requires dynamic bonded devices.
  */
 class DanaRPreferencesCompose(
     private val preferences: Preferences,
@@ -46,31 +44,11 @@ class DanaRPreferencesCompose(
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         // Bluetooth device selector - requires dynamic bonded devices
-        BluetoothDevicePreferenceItem(
-            preferences = preferences,
-            config = config
-        )
+        BluetoothDevicePreferenceItem(preferences, config)
 
-        // Password - can use key-based
+        // Password, Bolus speed, Use Extended - all key-based (BolusSpeed has entries on key)
         AdaptivePreferenceList(
-            keys = listOf(DanaIntKey.Password),
-            preferences = preferences,
-            config = config
-        )
-
-        // Bolus speed - requires custom entries
-        AdaptiveListIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = DanaIntKey.BolusSpeed,
-            titleResId = R.string.bolusspeed,
-            entries = listOf("12 s/U", "30 s/U", "60 s/U"),
-            entryValues = listOf(0, 1, 2)
-        )
-
-        // Use extended - can use key-based
-        AdaptivePreferenceList(
-            keys = listOf(DanaBooleanKey.UseExtended),
+            keys = listOf(DanaIntKey.Password, DanaIntKey.BolusSpeed, DanaBooleanKey.UseExtended),
             preferences = preferences,
             config = config
         )

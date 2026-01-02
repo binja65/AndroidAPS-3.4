@@ -459,7 +459,7 @@ class EquilPumpPlugin @Inject constructor(
         fun toDuration(dateTime: DateTime): Duration = Duration(dateTime.toLocalTime().millisOfDay.toLong())
     }
 
-    override fun getPreferenceScreenContent(): Any = EquilPreferencesCompose(preferences, config, rh)
+    override fun getPreferenceScreenContent(): Any = EquilPreferencesCompose(preferences, config)
 
     override fun addPreferenceScreen(
         preferenceManager: PreferenceManager,

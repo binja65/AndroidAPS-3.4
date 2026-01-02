@@ -237,5 +237,5 @@ class WearPlugin @Inject constructor(
         }
     }
 
-    override fun getPreferenceScreenContent(): Any = WearPreferencesCompose(preferences, config, config.AAPSCLIENT)
+    override fun getPreferenceScreenContent(): Any = WearPreferencesCompose(preferences, config)
 }

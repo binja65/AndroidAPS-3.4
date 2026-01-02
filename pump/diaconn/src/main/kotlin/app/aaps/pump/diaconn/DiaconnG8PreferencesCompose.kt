@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
@@ -20,19 +19,13 @@ import app.aaps.pump.diaconn.keys.DiaconnIntKey
 
 /**
  * Compose implementation of Diaconn G8 preferences.
- * Note: BT selector and bolus speed require special handling.
+ * Note: BT selector requires activity launch.
  */
 class DiaconnG8PreferencesCompose(
     private val preferences: Preferences,
     private val config: Config,
     private val btSelectorActivityClass: Class<out Activity>? = null
 ) : NavigablePreferenceContent {
-
-    companion object {
-
-        private val speedEntries = listOf("1 U/min", "2 U/min", "3 U/min", "4 U/min", "5 U/min", "6 U/min", "7 U/min", "8 U/min")
-        private val speedValues = listOf(1, 2, 3, 4, 5, 6, 7, 8)
-    }
 
     override val titleResId: Int = R.string.diaconn_g8_pump
 
@@ -46,7 +39,7 @@ class DiaconnG8PreferencesCompose(
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Bluetooth device selector
+        // Bluetooth device selector - requires activity launch
         btSelectorActivityClass?.let { activityClass ->
             BtSelectorPreferenceItem(
                 titleResId = R.string.selectedpump,
@@ -54,19 +47,10 @@ class DiaconnG8PreferencesCompose(
             )
         }
 
-        // Bolus speed - requires custom entries
-        AdaptiveListIntPreferenceItem(
-            preferences = preferences,
-            config = config,
-            intKey = DiaconnIntKey.BolusSpeed,
-            titleResId = R.string.bolusspeed,
-            entries = speedEntries,
-            entryValues = speedValues
-        )
-
-        // Boolean preferences - can use key-based
+        // All other preferences are key-based (BolusSpeed has entries on key)
         AdaptivePreferenceList(
             keys = listOf(
+                DiaconnIntKey.BolusSpeed,
                 DiaconnBooleanKey.LogInsulinChange,
                 DiaconnBooleanKey.LogCannulaChange,
                 DiaconnBooleanKey.LogTubeChange,

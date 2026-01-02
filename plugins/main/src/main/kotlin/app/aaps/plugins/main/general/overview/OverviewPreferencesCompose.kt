@@ -5,30 +5,27 @@ import androidx.compose.ui.platform.LocalContext
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.nsclient.NSSettingsStatus
 import app.aaps.core.interfaces.profile.ProfileUtil
-import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.PreferenceKey
-import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.IntentHandler
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
-import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.plugins.main.R
-import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
 import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
+import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
 
 /**
  * Compose implementation of Overview preferences.
  * Uses key-based rendering with AdaptivePreferenceList.
  */
 class OverviewPreferencesCompose(
-    private val rh: ResourceHelper,
     private val nsSettingStatus: NSSettingsStatus,
     private val preferences: Preferences,
     private val config: Config,
@@ -117,7 +114,8 @@ class OverviewPreferencesCompose(
         IntKey.OverviewBattWarning,
         IntKey.OverviewBattCritical,
         IntKey.OverviewBageWarning,
-        IntKey.OverviewBageCritical
+        IntKey.OverviewBageCritical,
+        OverviewIntentKey.CopyStatusLightsFromNS
     )
 
     // Keys for advanced settings subscreen
@@ -186,20 +184,17 @@ class OverviewPreferencesCompose(
             titleResId = app.aaps.core.ui.R.string.statuslights,
             keys = statusLightsKeys
         ) { _ ->
+            val activityContext = LocalContext.current
             AdaptivePreferenceList(
                 keys = statusLightsKeys,
                 preferences = preferences,
                 config = config,
-                visibilityContext = visibilityContext
-            )
-
-            // Copy settings from NS button
-            val activityContext = LocalContext.current
-            Preference(
-                title = { androidx.compose.material3.Text(rh.gs(R.string.statuslights_copy_ns)) },
-                onClick = {
-                    nsSettingStatus.copyStatusLightsNsSettings(activityContext)
-                }
+                visibilityContext = visibilityContext,
+                intentHandlers = mapOf(
+                    OverviewIntentKey.CopyStatusLightsFromNS to IntentHandler(
+                        onClick = { nsSettingStatus.copyStatusLightsNsSettings(activityContext) }
+                    )
+                )
             )
         },
 

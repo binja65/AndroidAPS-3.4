@@ -15,12 +15,12 @@ import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.nsclient.NSSettingsStatus
 import app.aaps.core.interfaces.overview.Overview
-import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.overview.OverviewData
 import app.aaps.core.interfaces.overview.OverviewMenus
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBaseWithPreferences
 import app.aaps.core.interfaces.plugin.PluginDescription
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.AapsSchedulers
 import app.aaps.core.interfaces.rx.bus.RxBus
@@ -41,10 +41,8 @@ import app.aaps.core.keys.LongComposedKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.StringNonKey
 import app.aaps.core.keys.UnitDoubleKey
-import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
-import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
-import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.extensions.put
 import app.aaps.core.objects.extensions.store
 import app.aaps.core.validators.preferences.AdaptiveClickPreference
@@ -54,6 +52,8 @@ import app.aaps.core.validators.preferences.AdaptiveIntentPreference
 import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 import app.aaps.core.validators.preferences.AdaptiveUnitPreference
 import app.aaps.plugins.main.R
+import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
+import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
 import app.aaps.plugins.main.general.overview.keys.OverviewStringKey
 import app.aaps.plugins.main.general.overview.notifications.NotificationStore
 import app.aaps.plugins.main.general.overview.notifications.events.EventUpdateOverviewNotification
@@ -230,7 +230,6 @@ class OverviewPlugin @Inject constructor(
     }
 
     override fun getPreferenceScreenContent(): Any = OverviewPreferencesCompose(
-        rh = rh,
         nsSettingStatus = nsSettingStatus,
         preferences = preferences,
         config = config,

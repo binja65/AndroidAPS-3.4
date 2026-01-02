@@ -2,12 +2,15 @@ package app.aaps.pump.dana.keys
 
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
+import app.aaps.pump.dana.R
 
 enum class DanaIntKey(
     override val key: String,
     override val defaultValue: Int,
+    override val titleResId: Int = 0,
     override val min: Int = Int.MIN_VALUE,
     override val max: Int = Int.MAX_VALUE,
+    override val entries: Map<Int, Int> = emptyMap(),
     override val calculatedDefaultValue: Boolean = false,
     override val engineeringModeOnly: Boolean = false,
     override val defaultedBySM: Boolean = false,
@@ -20,6 +23,15 @@ enum class DanaIntKey(
     override val exportable: Boolean = true
 ) : IntPreferenceKey {
 
-    Password("danar_password", 0),
-    BolusSpeed("danars_bolusspeed", 0),
+    Password("danar_password", 0, titleResId = R.string.danar_password_title),
+    BolusSpeed(
+        key = "danars_bolusspeed",
+        defaultValue = 0,
+        titleResId = R.string.bolusspeed,
+        entries = mapOf(
+            0 to R.string.bolus_speed_12,
+            1 to R.string.bolus_speed_30,
+            2 to R.string.bolus_speed_60
+        )
+    ),
 }

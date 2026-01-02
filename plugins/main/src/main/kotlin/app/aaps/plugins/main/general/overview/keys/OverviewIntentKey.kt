@@ -24,5 +24,11 @@ enum class OverviewIntentKey(
         key = "overview_quickwizard_settings",
         titleResId = R.string.quickwizard_settings,
         preferenceType = PreferenceType.ACTIVITY
+    ),
+
+    CopyStatusLightsFromNS(
+        key = "statuslights_copy_ns",
+        titleResId = R.string.statuslights_copy_ns,
+        preferenceType = PreferenceType.CLICK
     )
 }

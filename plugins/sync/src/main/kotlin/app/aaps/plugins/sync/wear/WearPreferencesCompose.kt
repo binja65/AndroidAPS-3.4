@@ -6,7 +6,6 @@ import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -18,14 +17,16 @@ import app.aaps.plugins.sync.R
  */
 class WearPreferencesCompose(
     private val preferences: Preferences,
-    private val config: Config,
-    private val showBroadcastOption: Boolean
+    private val config: Config
 ) : NavigablePreferenceContent {
 
     override val titleResId: Int = app.aaps.core.ui.R.string.wear
 
+    // WearBroadcastData has showInApsMode=false, showInPumpControlMode=false
+    // so it only appears in NSClient mode (handled by AdaptivePreferenceList)
     override val mainKeys: List<PreferenceKey> = listOf(
-        BooleanKey.WearControl
+        BooleanKey.WearControl,
+        BooleanKey.WearBroadcastData
     )
 
     private val wizardKeys: List<PreferenceKey> = listOf(
@@ -50,17 +51,6 @@ class WearPreferencesCompose(
             preferences = preferences,
             config = config
         )
-
-        // Conditional broadcast option (only for AAPSCLIENT)
-        if (showBroadcastOption) {
-            AdaptiveSwitchPreferenceItem(
-                preferences = preferences,
-                config = config,
-                booleanKey = BooleanKey.WearBroadcastData,
-                titleResId = R.string.wear_broadcast_data,
-                summaryResId = R.string.wear_broadcast_data_summary
-            )
-        }
     }
 
     override val subscreens: List<PreferenceSubScreen> = listOf(
