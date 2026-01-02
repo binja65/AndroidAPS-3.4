@@ -255,7 +255,6 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
                             config = config,
                             passwordCheck = passwordCheck,
                             skins = skinProvider.list,
-                            getSkinDescription = { skin -> getString(skin.description) },
                             onBackClick = { navController.popBackStack() }
                         )
                     }

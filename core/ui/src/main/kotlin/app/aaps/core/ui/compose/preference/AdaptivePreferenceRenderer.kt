@@ -5,7 +5,6 @@
 
 package app.aaps.core.ui.compose.preference
 
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
@@ -185,34 +184,6 @@ fun AdaptivePreferenceItem(
                 }
             }
         }
-    }
-}
-
-/**
- * LazyListScope extension for rendering a preference based on its PreferenceKey.
- */
-fun LazyListScope.adaptivePreference(
-    key: PreferenceKey,
-    preferences: Preferences,
-    config: Config,
-    profileUtil: ProfileUtil? = null,
-    onIntentClick: (() -> Unit)? = null,
-    intentUrl: String? = null,
-    intentActivityClass: Class<*>? = null,
-    keyPrefix: String = ""
-) {
-    val itemKey = if (keyPrefix.isNotEmpty()) "${keyPrefix}_${key.key}" else key.key
-
-    item(key = itemKey, contentType = "AdaptivePreference_${key::class.simpleName}") {
-        AdaptivePreferenceItem(
-            key = key,
-            preferences = preferences,
-            config = config,
-            profileUtil = profileUtil,
-            onIntentClick = onIntentClick,
-            intentUrl = intentUrl,
-            intentActivityClass = intentActivityClass
-        )
     }
 }
 

@@ -1,6 +1,7 @@
 package app.aaps.compose.preferences
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.StringKey
@@ -20,8 +21,7 @@ import app.aaps.plugins.main.skins.SkinInterface
 class GeneralPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config,
-    private val skins: List<SkinInterface>,
-    private val getSkinDescription: (SkinInterface) -> String
+    private val skins: List<SkinInterface>
 ) : NavigablePreferenceContent {
 
     override val titleResId: Int = app.aaps.plugins.configuration.R.string.configbuilder_general
@@ -53,7 +53,7 @@ class GeneralPreferencesCompose(
         // Skin - requires dynamic entries from plugins (cannot be key-based)
         if (skins.isNotEmpty()) {
             val skinEntries = skins.associate { skin ->
-                skin.javaClass.name to getSkinDescription(skin)
+                skin.javaClass.name to stringResource(skin.description)
             }
             AdaptiveStringListPreferenceItem(
                 preferences = preferences,

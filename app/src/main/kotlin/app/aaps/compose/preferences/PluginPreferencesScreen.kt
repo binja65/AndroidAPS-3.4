@@ -104,7 +104,6 @@ fun PluginPreferencesScreen(
  * @param config Config instance
  * @param passwordCheck PasswordCheck for protection settings
  * @param skins List of available skins
- * @param getSkinDescription Function to get localized skin description
  * @param onBackClick Callback when back button is clicked
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,11 +114,10 @@ fun AllPreferencesScreen(
     config: Config,
     passwordCheck: PasswordCheck,
     skins: List<SkinInterface>,
-    getSkinDescription: (SkinInterface) -> String,
     onBackClick: () -> Unit
 ) {
     // Built-in preference screens
-    val generalPreferences = GeneralPreferencesCompose(preferences, config, skins, getSkinDescription)
+    val generalPreferences = GeneralPreferencesCompose(preferences, config, skins)
     val protectionPreferences = ProtectionPreferencesCompose(preferences, config, passwordCheck)
     val pumpPreferences = PumpPreferencesCompose(preferences, config)
     val alertsPreferences = AlertsPreferencesCompose(preferences, config)
