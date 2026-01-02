@@ -11,10 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import app.aaps.core.interfaces.configuration.Config
-import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.withEntries
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.AdaptiveStringListPreferenceItem
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
@@ -26,7 +25,6 @@ import app.aaps.pump.dana.keys.DanaStringKey
 
 /**
  * Compose implementation of DanaR preferences.
- * Note: BT device selector requires dynamic bonded devices.
  */
 class DanaRPreferencesCompose(
     private val preferences: Preferences,
@@ -35,63 +33,37 @@ class DanaRPreferencesCompose(
 
     override val titleResId: Int = R.string.danarpump
 
-    override val mainKeys: List<PreferenceKey> = listOf(
-        DanaStringKey.RName,
-        DanaIntKey.Password,
-        DanaIntKey.BolusSpeed,
-        DanaBooleanKey.UseExtended
-    )
-
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Bluetooth device selector - requires dynamic bonded devices
-        BluetoothDevicePreferenceItem(preferences, config)
+        val context = LocalContext.current
+        val bondedDevices = remember { getBondedBluetoothDevices(context) }
 
-        // Password, Bolus speed, Use Extended - all key-based (BolusSpeed has entries on key)
-        AdaptivePreferenceList(
-            keys = listOf(DanaIntKey.Password, DanaIntKey.BolusSpeed, DanaBooleanKey.UseExtended),
-            preferences = preferences,
-            config = config
-        )
+        if (bondedDevices.isNotEmpty()) {
+            AdaptivePreferenceList(
+                keys = listOf(
+                    DanaStringKey.RName.withEntries(bondedDevices.associateWith { it }),
+                    DanaIntKey.Password,
+                    DanaIntKey.BolusSpeed,
+                    DanaBooleanKey.UseExtended
+                ),
+                preferences = preferences,
+                config = config
+            )
+        } else {
+            // Show placeholder when no devices or no permission
+            Preference(
+                title = { Text(stringResource(R.string.danar_bt_name_title)) },
+                summary = { Text(stringResource(app.aaps.core.ui.R.string.need_connect_permission)) },
+                enabled = false
+            )
+            AdaptivePreferenceList(
+                keys = listOf(DanaIntKey.Password, DanaIntKey.BolusSpeed, DanaBooleanKey.UseExtended),
+                preferences = preferences,
+                config = config
+            )
+        }
     }
 
     override val subscreens: List<PreferenceSubScreen> = emptyList()
-}
-
-/**
- * Composable preference for selecting a bonded Bluetooth device.
- * Shows a list of classic Bluetooth bonded devices.
- */
-@Composable
-private fun BluetoothDevicePreferenceItem(
-    preferences: Preferences,
-    config: Config
-) {
-    val context = LocalContext.current
-
-    // Get bonded devices if permission is granted
-    val bondedDevices = remember {
-        getBondedBluetoothDevices(context)
-    }
-
-    if (bondedDevices.isNotEmpty()) {
-        // Create entries map from bonded devices (name -> name)
-        val entries = bondedDevices.associateWith { it }
-
-        AdaptiveStringListPreferenceItem(
-            preferences = preferences,
-            config = config,
-            stringKey = DanaStringKey.RName,
-            titleResId = R.string.danar_bt_name_title,
-            entries = entries
-        )
-    } else {
-        // Show placeholder when no devices or no permission
-        Preference(
-            title = { Text(stringResource(R.string.danar_bt_name_title)) },
-            summary = { Text(stringResource(app.aaps.core.ui.R.string.need_connect_permission)) },
-            enabled = false
-        )
-    }
 }
 
 /**

@@ -15,4 +15,67 @@ interface IntentPreferenceKey : PreferenceKey {
      */
     val activityClass: Class<*>?
         get() = null
+
+    /**
+     * Runtime-attached click handler.
+     * When set, this takes precedence over other handlers.
+     */
+    val onClick: (() -> Unit)?
+        get() = null
+
+    /**
+     * Runtime-attached activity class.
+     * When set, this takes precedence over [activityClass].
+     */
+    val runtimeActivityClass: Class<*>?
+        get() = null
+
+    /**
+     * Runtime-attached URL.
+     * When set, this takes precedence over [urlResId].
+     */
+    val runtimeUrl: String?
+        get() = null
 }
+
+/**
+ * Wrapper that attaches a click handler to an IntentPreferenceKey.
+ */
+class IntentKeyWithClick(
+    private val delegate: IntentPreferenceKey,
+    override val onClick: () -> Unit
+) : IntentPreferenceKey by delegate
+
+/**
+ * Wrapper that attaches an activity class to an IntentPreferenceKey.
+ */
+class IntentKeyWithActivity(
+    private val delegate: IntentPreferenceKey,
+    override val runtimeActivityClass: Class<*>
+) : IntentPreferenceKey by delegate
+
+/**
+ * Wrapper that attaches a URL to an IntentPreferenceKey.
+ */
+class IntentKeyWithUrl(
+    private val delegate: IntentPreferenceKey,
+    override val runtimeUrl: String
+) : IntentPreferenceKey by delegate
+
+/**
+ * Creates a new IntentPreferenceKey with a click handler attached.
+ */
+fun IntentPreferenceKey.withClick(onClick: () -> Unit): IntentPreferenceKey =
+    IntentKeyWithClick(this, onClick)
+
+/**
+ * Creates a new IntentPreferenceKey with an activity class attached.
+ */
+fun IntentPreferenceKey.withActivity(activityClass: Class<*>): IntentPreferenceKey =
+    IntentKeyWithActivity(this, activityClass)
+
+/**
+ * Creates a new IntentPreferenceKey with a URL attached.
+ */
+fun IntentPreferenceKey.withUrl(url: String): IntentPreferenceKey =
+    IntentKeyWithUrl(this, url)

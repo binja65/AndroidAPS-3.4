@@ -2,10 +2,9 @@ package info.nightscout.pump.combov2
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
-import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveActivityPreferenceItem
-import app.aaps.core.ui.compose.preference.AdaptiveIntentPreferenceItem
+import app.aaps.core.keys.interfaces.withActivity
+import app.aaps.core.keys.interfaces.withClick
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
@@ -27,35 +26,16 @@ class ComboV2PreferencesCompose(
 
     override val titleResId: Int = R.string.combov2_title
 
-    override val mainKeys: List<PreferenceKey> = listOf(
-        ComboIntKey.DiscoveryDuration,
-        ComboBooleanKey.AutomaticReservoirEntry,
-        ComboBooleanKey.AutomaticBatteryEntry,
-        ComboBooleanKey.VerboseLogging
-    )
-
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Pairing - requires activity launch
-        AdaptiveActivityPreferenceItem(
-            preferences = preferences,
-            intentKey = ComboIntentKey.PairWithPump,
-            titleResId = R.string.combov2_pair_with_pump_title,
-            activityClass = ComboV2PairingActivity::class.java,
-            summaryResId = R.string.combov2_pair_with_pump_summary
-        )
-
-        // Unpair - requires custom onClick
-        AdaptiveIntentPreferenceItem(
-            preferences = preferences,
-            intentKey = ComboIntentKey.UnpairPump,
-            titleResId = R.string.combov2_unpair_pump_title,
-            summaryResId = R.string.combov2_unpair_pump_summary,
-            onClick = onUnpairClick
-        )
-
-        // All other preferences - can use key-based
         AdaptivePreferenceList(
-            keys = mainKeys,
+            keys = listOf(
+                ComboIntentKey.PairWithPump.withActivity(ComboV2PairingActivity::class.java),
+                ComboIntentKey.UnpairPump.withClick(onUnpairClick),
+                ComboIntKey.DiscoveryDuration,
+                ComboBooleanKey.AutomaticReservoirEntry,
+                ComboBooleanKey.AutomaticBatteryEntry,
+                ComboBooleanKey.VerboseLogging
+            ),
             preferences = preferences,
             config = config
         )

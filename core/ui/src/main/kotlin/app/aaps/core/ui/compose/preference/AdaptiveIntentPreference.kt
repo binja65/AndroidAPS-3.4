@@ -4,7 +4,6 @@
 
 package app.aaps.core.ui.compose.preference
 
-import android.app.Activity
 import android.content.Intent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,85 +79,6 @@ fun AdaptiveUrlPreferenceItem(
         enabled = visibility.enabled,
         onClick = if (visibility.enabled) {
             { uriHandler.openUri(url) }
-        } else null
-    )
-}
-
-/**
- * Composable activity preference for use inside card sections.
- *
- * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
- * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
- */
-@Composable
-fun <T : Activity> AdaptiveActivityPreferenceItem(
-    preferences: Preferences,
-    intentKey: IntentPreferenceKey,
-    titleResId: Int = 0,
-    activityClass: Class<T>,
-    summaryResId: Int? = null
-) {
-    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
-    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
-
-    // Skip if no title resource is available
-    if (effectiveTitleResId == 0) return
-
-    val visibility = calculateIntentPreferenceVisibility(
-        intentKey = intentKey,
-        preferences = preferences
-    )
-
-    if (!visibility.visible) return
-
-    val context = LocalContext.current
-    Preference(
-        title = { Text(stringResource(effectiveTitleResId)) },
-        summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
-        enabled = visibility.enabled,
-        onClick = if (visibility.enabled) {
-            { context.startActivity(Intent(context, activityClass)) }
-        } else null
-    )
-}
-
-/**
- * Composable activity preference that uses activityClass from the key.
- * Use this when the IntentPreferenceKey has activityClass defined.
- *
- * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
- * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
- */
-@Composable
-fun AdaptiveActivityPreferenceItem(
-    preferences: Preferences,
-    intentKey: IntentPreferenceKey,
-    titleResId: Int = 0,
-    summaryResId: Int? = null
-) {
-    val activityClass = intentKey.activityClass
-        ?: return // Skip if no activityClass defined in key
-
-    val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
-    val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
-
-    // Skip if no title resource is available
-    if (effectiveTitleResId == 0) return
-
-    val visibility = calculateIntentPreferenceVisibility(
-        intentKey = intentKey,
-        preferences = preferences
-    )
-
-    if (!visibility.visible) return
-
-    val context = LocalContext.current
-    Preference(
-        title = { Text(stringResource(effectiveTitleResId)) },
-        summary = effectiveSummaryResId?.let { { Text(stringResource(it)) } },
-        enabled = visibility.enabled,
-        onClick = if (visibility.enabled) {
-            { context.startActivity(Intent(context, activityClass)) }
         } else null
     )
 }

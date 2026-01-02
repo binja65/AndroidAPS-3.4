@@ -12,8 +12,9 @@ import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.withActivity
+import app.aaps.core.keys.interfaces.withClick
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.IntentHandler
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -36,26 +37,21 @@ class OverviewPreferencesCompose(
 
     override val titleResId: Int = R.string.overview
 
-    override val mainKeys: List<PreferenceKey> = listOf(
-        BooleanKey.OverviewKeepScreenOn,
-        OverviewIntentKey.QuickWizardSettings,
-        BooleanKey.OverviewShortTabTitles,
-        BooleanKey.OverviewShowNotesInDialogs,
-        IntKey.OverviewBolusPercentage,
-        IntKey.OverviewResetBolusPercentageTime,
-        BooleanKey.OverviewUseBolusAdvisor,
-        BooleanKey.OverviewUseBolusReminder
-    )
-
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptivePreferenceList(
-            keys = mainKeys,
+            keys = listOf(
+                BooleanKey.OverviewKeepScreenOn,
+                quickWizardListActivity?.let { OverviewIntentKey.QuickWizardSettings.withActivity(it) } ?: OverviewIntentKey.QuickWizardSettings,
+                BooleanKey.OverviewShortTabTitles,
+                BooleanKey.OverviewShowNotesInDialogs,
+                IntKey.OverviewBolusPercentage,
+                IntKey.OverviewResetBolusPercentageTime,
+                BooleanKey.OverviewUseBolusAdvisor,
+                BooleanKey.OverviewUseBolusReminder
+            ),
             preferences = preferences,
             config = config,
-            profileUtil = profileUtil,
-            intentHandlers = quickWizardListActivity?.let {
-                mapOf(OverviewIntentKey.QuickWizardSettings to IntentHandler(activityClass = it))
-            } ?: emptyMap()
+            profileUtil = profileUtil
         )
     }
 
@@ -103,8 +99,8 @@ class OverviewPreferencesCompose(
         BooleanKey.OverviewShowStatusLights,
         IntKey.OverviewCageWarning,
         IntKey.OverviewCageCritical,
-        OverviewIntKey.IageWarning,  // visibility = NON_PATCH_PUMP
-        OverviewIntKey.IageCritical, // visibility = NON_PATCH_PUMP
+        OverviewIntKey.IageWarning,
+        OverviewIntKey.IageCritical,
         IntKey.OverviewSageWarning,
         IntKey.OverviewSageCritical,
         IntKey.OverviewSbatWarning,
@@ -186,15 +182,12 @@ class OverviewPreferencesCompose(
         ) { _ ->
             val activityContext = LocalContext.current
             AdaptivePreferenceList(
-                keys = statusLightsKeys,
+                keys = statusLightsKeys.dropLast(1) + listOf(
+                    OverviewIntentKey.CopyStatusLightsFromNS.withClick { nsSettingStatus.copyStatusLightsNsSettings(activityContext) }
+                ),
                 preferences = preferences,
                 config = config,
-                visibilityContext = visibilityContext,
-                intentHandlers = mapOf(
-                    OverviewIntentKey.CopyStatusLightsFromNS to IntentHandler(
-                        onClick = { nsSettingStatus.copyStatusLightsNsSettings(activityContext) }
-                    )
-                )
+                visibilityContext = visibilityContext
             )
         },
 

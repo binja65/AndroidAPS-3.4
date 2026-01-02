@@ -2,9 +2,8 @@ package app.aaps.pump.insight
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
-import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptiveActivityPreferenceItem
+import app.aaps.core.keys.interfaces.withActivity
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
@@ -25,33 +24,23 @@ class InsightPreferencesCompose(
 
     override val titleResId: Int = R.string.insight_local
 
-    override val mainKeys: List<PreferenceKey> = listOf(
-        InsightBooleanKey.LogReservoirChanges,
-        InsightBooleanKey.LogTubeChanges,
-        InsightBooleanKey.LogSiteChanges,
-        InsightBooleanKey.LogBatteryChanges,
-        InsightBooleanKey.LogOperatingModeChanges,
-        InsightBooleanKey.LogAlerts,
-        InsightBooleanKey.EnableTbrEmulation,
-        InsightBooleanKey.DisableVibration,
-        InsightBooleanKey.DisableVibrationAuto,
-        InsightIntKey.MinRecoveryDuration,
-        InsightIntKey.MaxRecoveryDuration,
-        InsightIntKey.DisconnectDelay
-    )
-
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        // Pairing activity - requires activity launch
-        AdaptiveActivityPreferenceItem(
-            preferences = preferences,
-            intentKey = InsightIntentKey.InsightPairing,
-            titleResId = R.string.insight_pairing,
-            activityClass = InsightPairingInformationActivity::class.java
-        )
-
-        // All other preferences - can use key-based
         AdaptivePreferenceList(
-            keys = mainKeys,
+            keys = listOf(
+                InsightIntentKey.InsightPairing.withActivity(InsightPairingInformationActivity::class.java),
+                InsightBooleanKey.LogReservoirChanges,
+                InsightBooleanKey.LogTubeChanges,
+                InsightBooleanKey.LogSiteChanges,
+                InsightBooleanKey.LogBatteryChanges,
+                InsightBooleanKey.LogOperatingModeChanges,
+                InsightBooleanKey.LogAlerts,
+                InsightBooleanKey.EnableTbrEmulation,
+                InsightBooleanKey.DisableVibration,
+                InsightBooleanKey.DisableVibrationAuto,
+                InsightIntKey.MinRecoveryDuration,
+                InsightIntKey.MaxRecoveryDuration,
+                InsightIntKey.DisconnectDelay
+            ),
             preferences = preferences,
             config = config
         )
