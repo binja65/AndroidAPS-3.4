@@ -74,4 +74,17 @@ interface PreferenceKey : NonPreferenceKey {
      * PreferenceScreen is final so we cannot extend and modify thisbehavior
      */
     val hideParentScreenIfHidden: Boolean
+
+    /**
+     * Runtime visibility condition for this preference.
+     * Evaluated against [PreferenceVisibilityContext] to determine if preference should be shown.
+     * Default is [PreferenceVisibility.ALWAYS] (always visible).
+     *
+     * Example usage in key definition:
+     * ```
+     * IageWarning(..., visibility = PreferenceVisibility.NON_PATCH_PUMP)
+     * ```
+     */
+    val visibility: PreferenceVisibility
+        get() = PreferenceVisibility.ALWAYS
 }

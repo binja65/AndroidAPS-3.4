@@ -22,6 +22,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
+import dagger.Lazy
 
 /*
  {
@@ -121,7 +122,7 @@ class NSSettingsStatusImpl @Inject constructor(
     private val config: Config,
     private val uel: UserEntryLogger,
     private val uiInteraction: UiInteraction,
-    private val overview: Overview
+    private val overview: Lazy<Overview>
 ) : NSSettingsStatus {
 
     // ***** PUMP STATUS ******
@@ -220,7 +221,7 @@ class NSSettingsStatusImpl @Inject constructor(
 
     override fun copyStatusLightsNsSettings(context: Context?) {
         val action = {
-            overview.applyStatusLightsFromNs(
+            overview.get().applyStatusLightsFromNs(
                 cageWarn = getExtendedWarnValue("cage", "warn")?.toInt(),
                 cageCritical = getExtendedWarnValue("cage", "urgent")?.toInt(),
                 iageWarn = getExtendedWarnValue("iage", "warn")?.toInt(),

@@ -28,13 +28,15 @@ import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.StringPreferenceKey
 import app.aaps.core.keys.interfaces.UnitDoublePreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibility
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
  * Data class holding visibility and enabled state for a preference
  */
-data class PreferenceVisibility(
+data class PreferenceVisibilityState(
     val visible: Boolean,
     val enabled: Boolean
 )
@@ -46,8 +48,9 @@ fun calculatePreferenceVisibility(
     preferenceKey: PreferenceKey,
     preferences: Preferences,
     config: Config,
-    engineeringModeOnly: Boolean = false
-): PreferenceVisibility {
+    engineeringModeOnly: Boolean = false,
+    visibilityContext: PreferenceVisibilityContext? = null
+): PreferenceVisibilityState {
     var visible = true
     var enabled = true
 
@@ -94,7 +97,14 @@ fun calculatePreferenceVisibility(
         }
     }
 
-    return PreferenceVisibility(visible, enabled)
+    // Check runtime visibility condition
+    visibilityContext?.let { context ->
+        if (!preferenceKey.visibility.isVisible(context)) {
+            visible = false
+        }
+    }
+
+    return PreferenceVisibilityState(visible, enabled)
 }
 
 /**
@@ -582,8 +592,9 @@ fun LazyListScope.adaptiveStringListPreference(
  */
 fun calculateIntentPreferenceVisibility(
     intentKey: IntentPreferenceKey,
-    preferences: Preferences
-): PreferenceVisibility {
+    preferences: Preferences,
+    visibilityContext: PreferenceVisibilityContext? = null
+): PreferenceVisibilityState {
     var visible = true
     var enabled = true
 
@@ -624,7 +635,14 @@ fun calculateIntentPreferenceVisibility(
         }
     }
 
-    return PreferenceVisibility(visible, enabled)
+    // Check runtime visibility condition
+    visibilityContext?.let { context ->
+        if (!intentKey.visibility.isVisible(context)) {
+            visible = false
+        }
+    }
+
+    return PreferenceVisibilityState(visible, enabled)
 }
 
 /**
@@ -1584,6 +1602,7 @@ fun LazyListScope.adaptivePreference(
  * @param config The Config instance
  * @param profileUtil Required for UnitDoublePreferenceKey
  * @param intentHandlers Map of IntentPreferenceKey to handler info (optional - for dynamic values)
+ * @param visibilityContext Optional context for evaluating runtime visibility conditions
  */
 @Composable
 fun AdaptivePreferenceList(
@@ -1591,9 +1610,17 @@ fun AdaptivePreferenceList(
     preferences: Preferences,
     config: Config,
     profileUtil: ProfileUtil? = null,
-    intentHandlers: Map<IntentPreferenceKey, IntentHandler> = emptyMap()
+    intentHandlers: Map<IntentPreferenceKey, IntentHandler> = emptyMap(),
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
-    keys.forEach { key ->
+    // Filter keys by runtime visibility if context is provided
+    val visibleKeys = if (visibilityContext != null) {
+        keys.filter { key -> key.visibility.isVisible(visibilityContext) }
+    } else {
+        keys
+    }
+
+    visibleKeys.forEach { key ->
         if (key is IntentPreferenceKey) {
             // Priority: 1) intentHandlers map, 2) key properties
             val handler = intentHandlers[key]

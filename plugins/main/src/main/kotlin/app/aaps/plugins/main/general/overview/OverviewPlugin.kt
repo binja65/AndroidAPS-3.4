@@ -42,7 +42,9 @@ import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.StringNonKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
+import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
 import app.aaps.core.objects.extensions.put
 import app.aaps.core.objects.extensions.store
 import app.aaps.core.validators.preferences.AdaptiveClickPreference
@@ -81,7 +83,8 @@ class OverviewPlugin @Inject constructor(
     private val nsSettingStatus: NSSettingsStatus,
     private val config: Config,
     private val activePlugin: ActivePlugin,
-    private val profileUtil: ProfileUtil
+    private val profileUtil: ProfileUtil,
+    private val visibilityContext: PreferenceVisibilityContext
 ) : PluginBaseWithPreferences(
     pluginDescription = PluginDescription()
         .mainType(PluginType.GENERAL)
@@ -159,8 +162,8 @@ class OverviewPlugin @Inject constructor(
             .put(UnitDoubleKey.OverviewHighMark, preferences)
             .put(IntKey.OverviewCageWarning, preferences)
             .put(IntKey.OverviewCageCritical, preferences)
-            .put(IntKey.OverviewIageWarning, preferences)
-            .put(IntKey.OverviewIageCritical, preferences)
+            .put(OverviewIntKey.IageWarning, preferences)
+            .put(OverviewIntKey.IageCritical, preferences)
             .put(IntKey.OverviewSageWarning, preferences)
             .put(IntKey.OverviewSageCritical, preferences)
             .put(IntKey.OverviewSbatWarning, preferences)
@@ -189,8 +192,8 @@ class OverviewPlugin @Inject constructor(
             .store(UnitDoubleKey.OverviewHighMark, preferences)
             .store(IntKey.OverviewCageWarning, preferences)
             .store(IntKey.OverviewCageCritical, preferences)
-            .store(IntKey.OverviewIageWarning, preferences)
-            .store(IntKey.OverviewIageCritical, preferences)
+            .store(OverviewIntKey.IageWarning, preferences)
+            .store(OverviewIntKey.IageCritical, preferences)
             .store(IntKey.OverviewSageWarning, preferences)
             .store(IntKey.OverviewSageCritical, preferences)
             .store(IntKey.OverviewSbatWarning, preferences)
@@ -228,12 +231,11 @@ class OverviewPlugin @Inject constructor(
 
     override fun getPreferenceScreenContent(): Any = OverviewPreferencesCompose(
         rh = rh,
-        activePlugin = activePlugin,
         nsSettingStatus = nsSettingStatus,
         preferences = preferences,
         config = config,
         profileUtil = profileUtil,
-        context = context,
+        visibilityContext = visibilityContext,
         quickWizardListActivity = uiInteraction.quickWizardListActivity
     )
 
@@ -304,8 +306,8 @@ class OverviewPlugin @Inject constructor(
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewCageWarning, title = R.string.statuslights_cage_warning))
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewCageCritical, title = R.string.statuslights_cage_critical))
                 if (pump.pumpDescription.isPatchPump.not()) {
-                    addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewIageWarning, title = R.string.statuslights_iage_warning))
-                    addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewIageCritical, title = R.string.statuslights_iage_critical))
+                    addPreference(AdaptiveIntPreference(ctx = context, intKey = OverviewIntKey.IageWarning, title = R.string.statuslights_iage_warning))
+                    addPreference(AdaptiveIntPreference(ctx = context, intKey = OverviewIntKey.IageCritical, title = R.string.statuslights_iage_critical))
                 }
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSageWarning, title = R.string.statuslights_sage_warning))
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSageCritical, title = R.string.statuslights_sage_critical))
@@ -346,8 +348,8 @@ class OverviewPlugin @Inject constructor(
     ) {
         cageWarn?.let { preferences.put(IntKey.OverviewCageWarning, it) }
         cageCritical?.let { preferences.put(IntKey.OverviewCageCritical, it) }
-        iageWarn?.let { preferences.put(IntKey.OverviewIageWarning, it) }
-        iageCritical?.let { preferences.put(IntKey.OverviewIageCritical, it) }
+        iageWarn?.let { preferences.put(OverviewIntKey.IageWarning, it) }
+        iageCritical?.let { preferences.put(OverviewIntKey.IageCritical, it) }
         sageWarn?.let { preferences.put(IntKey.OverviewSageWarning, it) }
         sageCritical?.let { preferences.put(IntKey.OverviewSageCritical, it) }
         bageWarn?.let { preferences.put(IntKey.OverviewBageWarning, it) }

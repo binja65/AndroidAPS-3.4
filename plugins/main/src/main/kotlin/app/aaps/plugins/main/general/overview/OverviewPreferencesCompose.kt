@@ -1,10 +1,9 @@
 package app.aaps.plugins.main.general.overview
 
-import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.nsclient.NSSettingsStatus
-import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.keys.BooleanKey
@@ -13,6 +12,7 @@ import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.IntentHandler
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
@@ -21,6 +21,7 @@ import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
 import app.aaps.plugins.main.R
 import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
+import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
 
 /**
  * Compose implementation of Overview preferences.
@@ -28,12 +29,11 @@ import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
  */
 class OverviewPreferencesCompose(
     private val rh: ResourceHelper,
-    private val activePlugin: ActivePlugin,
     private val nsSettingStatus: NSSettingsStatus,
     private val preferences: Preferences,
     private val config: Config,
     private val profileUtil: ProfileUtil,
-    private val context: Context,
+    private val visibilityContext: PreferenceVisibilityContext,
     private val quickWizardListActivity: Class<*>? = null
 ) : NavigablePreferenceContent {
 
@@ -101,21 +101,13 @@ class OverviewPreferencesCompose(
         UnitDoubleKey.OverviewHighMark
     )
 
-    // Keys for status lights - common keys always shown
-    private val statusLightsCommonKeys: List<PreferenceKey> = listOf(
+    // Keys for status lights - visibility is handled by PreferenceVisibility on each key
+    private val statusLightsKeys: List<PreferenceKey> = listOf(
         BooleanKey.OverviewShowStatusLights,
         IntKey.OverviewCageWarning,
-        IntKey.OverviewCageCritical
-    )
-
-    // Keys for status lights - insulin age keys (only for non-patch pumps)
-    private val statusLightsInsulinAgeKeys: List<PreferenceKey> = listOf(
-        IntKey.OverviewIageWarning,
-        IntKey.OverviewIageCritical
-    )
-
-    // Keys for status lights - remaining keys
-    private val statusLightsRemainingKeys: List<PreferenceKey> = listOf(
+        IntKey.OverviewCageCritical,
+        OverviewIntKey.IageWarning,  // visibility = NON_PATCH_PUMP
+        OverviewIntKey.IageCritical, // visibility = NON_PATCH_PUMP
         IntKey.OverviewSageWarning,
         IntKey.OverviewSageCritical,
         IntKey.OverviewSbatWarning,
@@ -188,42 +180,25 @@ class OverviewPreferencesCompose(
             )
         },
 
-        // Status Lights subscreen - kept manual due to conditional isPatchPump logic and custom button
+        // Status Lights subscreen - visibility handled by PreferenceVisibility on each key
         PreferenceSubScreen(
             key = "statuslights_overview_advanced",
             titleResId = app.aaps.core.ui.R.string.statuslights,
-            keys = statusLightsCommonKeys + statusLightsRemainingKeys
+            keys = statusLightsKeys
         ) { _ ->
-            val isPatchPump = activePlugin.activePump.pumpDescription.isPatchPump
-
-            // Common keys
             AdaptivePreferenceList(
-                keys = statusLightsCommonKeys,
+                keys = statusLightsKeys,
                 preferences = preferences,
-                config = config
-            )
-
-            // Insulin age keys - only for non-patch pumps
-            if (!isPatchPump) {
-                AdaptivePreferenceList(
-                    keys = statusLightsInsulinAgeKeys,
-                    preferences = preferences,
-                    config = config
-                )
-            }
-
-            // Remaining keys
-            AdaptivePreferenceList(
-                keys = statusLightsRemainingKeys,
-                preferences = preferences,
-                config = config
+                config = config,
+                visibilityContext = visibilityContext
             )
 
             // Copy settings from NS button
+            val activityContext = LocalContext.current
             Preference(
                 title = { androidx.compose.material3.Text(rh.gs(R.string.statuslights_copy_ns)) },
                 onClick = {
-                    nsSettingStatus.copyStatusLightsNsSettings(context)
+                    nsSettingStatus.copyStatusLightsNsSettings(activityContext)
                 }
             )
         },

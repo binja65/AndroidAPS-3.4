@@ -32,8 +32,6 @@ enum class IntKey(
     OverviewHypoDuration(key = "hypo_duration", defaultValue = 60, min = 15, max = 180, titleResId = R.string.pref_title_hypo_duration, defaultedBySM = true),
     OverviewCageWarning(key = "statuslights_cage_warning", defaultValue = 48, min = 24, max = 240, titleResId = R.string.pref_title_cage_warning, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),
     OverviewCageCritical(key = "statuslights_cage_critical", defaultValue = 72, min = 24, max = 240, titleResId = R.string.pref_title_cage_critical, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),
-    OverviewIageWarning(key = "statuslights_iage_warning", defaultValue = 72, min = 24, max = 240, titleResId = R.string.pref_title_iage_warning, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),
-    OverviewIageCritical(key = "statuslights_iage_critical", defaultValue = 144, min = 24, max = 240, titleResId = R.string.pref_title_iage_critical, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),
     OverviewSageWarning(key = "statuslights_sage_warning", defaultValue = 216, min = 24, max = 720, titleResId = R.string.pref_title_sage_warning, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),
     OverviewSageCritical(key = "statuslights_sage_critical", defaultValue = 240, min = 24, max = 720, titleResId = R.string.pref_title_sage_critical, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),
     OverviewSbatWarning(key = "statuslights_sbat_warning", defaultValue = 25, min = 0, max = 100, titleResId = R.string.pref_title_sbat_warning, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights),

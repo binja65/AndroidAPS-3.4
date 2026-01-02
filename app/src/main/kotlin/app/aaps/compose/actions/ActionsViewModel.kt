@@ -31,7 +31,9 @@ import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.keys.BooleanNonKey
 import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.IntPreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
 import app.aaps.core.objects.extensions.toStringMedium
 import app.aaps.core.objects.extensions.toStringShort
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -251,8 +253,8 @@ class ActionsViewModel @Inject constructor(
         return StatusItem(
             label = rh.gs(app.aaps.plugins.main.R.string.insulin_label),
             age = event?.let { formatAge(it.timestamp) } ?: "-",
-            ageStatus = event?.let { getAgeStatus(it.timestamp, IntKey.OverviewIageWarning, IntKey.OverviewIageCritical) } ?: StatusLevel.UNSPECIFIED,
-            agePercent = event?.let { getAgePercent(it.timestamp, IntKey.OverviewIageCritical) } ?: 0f,
+            ageStatus = event?.let { getAgeStatus(it.timestamp, OverviewIntKey.IageWarning, OverviewIntKey.IageCritical) } ?: StatusLevel.UNSPECIFIED,
+            agePercent = event?.let { getAgePercent(it.timestamp, OverviewIntKey.IageCritical) } ?: 0f,
             level = level,
             levelStatus = if (reservoirLevel > 0) getLevelStatus(reservoirLevel, IntKey.OverviewResWarning, IntKey.OverviewResCritical) else StatusLevel.UNSPECIFIED,
             levelPercent = -1f, // No progress bar - reservoir sizes vary by pump
@@ -327,7 +329,7 @@ class ActionsViewModel @Inject constructor(
         }
     }
 
-    private fun getAgeStatus(timestamp: Long, warnKey: IntKey, urgentKey: IntKey): StatusLevel {
+    private fun getAgeStatus(timestamp: Long, warnKey: IntPreferenceKey, urgentKey: IntPreferenceKey): StatusLevel {
         val warnHours = preferences.get(warnKey)
         val urgentHours = preferences.get(urgentKey)
         val ageHours = (System.currentTimeMillis() - timestamp) / (1000 * 60 * 60)
@@ -338,7 +340,7 @@ class ActionsViewModel @Inject constructor(
         }
     }
 
-    private fun getAgePercent(timestamp: Long, urgentKey: IntKey): Float {
+    private fun getAgePercent(timestamp: Long, urgentKey: IntPreferenceKey): Float {
         val urgentHours = preferences.get(urgentKey)
         if (urgentHours <= 0) return 0f
         val ageHours = (System.currentTimeMillis() - timestamp) / (1000.0 * 60 * 60)

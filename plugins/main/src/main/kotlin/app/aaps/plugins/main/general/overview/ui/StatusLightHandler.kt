@@ -13,7 +13,9 @@ import app.aaps.core.interfaces.stats.TddCalculator
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.IntPreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -55,7 +57,7 @@ class StatusLightHandler @Inject constructor(
         val pump = activePlugin.activePump
         val bgSource = activePlugin.activeBgSource
         handleAge(cannulaAge, TE.Type.CANNULA_CHANGE, IntKey.OverviewCageWarning, IntKey.OverviewCageCritical)
-        handleAge(insulinAge, TE.Type.INSULIN_CHANGE, IntKey.OverviewIageWarning, IntKey.OverviewIageCritical)
+        handleAge(insulinAge, TE.Type.INSULIN_CHANGE, OverviewIntKey.IageWarning, OverviewIntKey.IageCritical)
         handleAge(sensorAge, TE.Type.SENSOR_CHANGE, IntKey.OverviewSageWarning, IntKey.OverviewSageCritical)
         if (pump.pumpDescription.isBatteryReplaceable || pump.isBatteryChangeLoggingEnabled()) {
             handleAge(batteryAge, TE.Type.PUMP_BATTERY_CHANGE, IntKey.OverviewBageWarning, IntKey.OverviewBageCritical)
@@ -96,7 +98,7 @@ class StatusLightHandler @Inject constructor(
         }
     }
 
-    private fun handleAge(view: TextView?, type: TE.Type, warnSettings: IntKey, urgentSettings: IntKey) {
+    private fun handleAge(view: TextView?, type: TE.Type, warnSettings: IntPreferenceKey, urgentSettings: IntPreferenceKey) {
         val warn = preferences.get(warnSettings)
         val urgent = preferences.get(urgentSettings)
         val therapyEvent = runBlocking { persistenceLayer.getLastTherapyRecordUpToNow(type) }
@@ -109,7 +111,7 @@ class StatusLightHandler @Inject constructor(
     }
 
     @SuppressLint("SetTextI18n")
-    private fun handleLevel(view: TextView?, criticalSetting: IntKey, warnSetting: IntKey, level: Double, units: String) {
+    private fun handleLevel(view: TextView?, criticalSetting: IntPreferenceKey, warnSetting: IntPreferenceKey, level: Double, units: String) {
         val resUrgent = preferences.get(criticalSetting)
         val resWarn = preferences.get(warnSetting)
         if (level > 0) view?.text = " " + decimalFormatter.to0Decimal(level, units)
@@ -120,7 +122,7 @@ class StatusLightHandler @Inject constructor(
     // Omnipod only reports reservoir level when it's 50 units or less, so we display "50+U" for any value > 50
     @Suppress("SameParameterValue")
     private fun handlePatchReservoirLevel(
-        view: TextView?, criticalSetting: IntKey, warnSetting: IntKey, level: Double, units: String, maxReading: Double
+        view: TextView?, criticalSetting: IntPreferenceKey, warnSetting: IntPreferenceKey, level: Double, units: String, maxReading: Double
     ) {
         if (level >= maxReading) {
             @Suppress("SetTextI18n")
