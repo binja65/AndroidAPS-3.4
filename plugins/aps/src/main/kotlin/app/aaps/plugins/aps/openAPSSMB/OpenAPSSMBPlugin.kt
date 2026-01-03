@@ -193,6 +193,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
         }
     }
 
+    // MIGRATED to OpenAPSSMBPreferencesCompose - kept for legacy XML preferences support
     override fun preprocessPreferences(preferenceFragment: PreferenceFragmentCompat) {
         super.preprocessPreferences(preferenceFragment)
 
@@ -592,7 +593,8 @@ open class OpenAPSSMBPlugin @Inject constructor(
     override fun getPreferenceScreenContent(): Any = OpenAPSSMBPreferencesCompose(
         preferences = preferences,
         config = config,
-        profileUtil = profileUtil
+        profileUtil = profileUtil,
+        activePlugin = activePlugin
     )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {

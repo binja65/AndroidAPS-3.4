@@ -149,6 +149,9 @@ class MedtrumPlugin @Inject constructor(
         return medtrumService
     }
 
+    // MIGRATED TO COMPOSE: MedtrumPreferencesCompose handles serial number enabled state
+    // via enabledCondition on MedtrumStringKey.MedtrumSnInput using isPumpInitialized from visibilityContext.
+    // Note: Serial validation and connection alert custom summaries remain in legacy code (UI-specific).
     override fun preprocessPreferences(preferenceFragment: PreferenceFragmentCompat) {
         super.preprocessPreferences(preferenceFragment)
 
@@ -457,7 +460,11 @@ class MedtrumPlugin @Inject constructor(
         return pumpEnactResultProvider.get().success(connectionOK)
     }
 
-    override fun getPreferenceScreenContent(): Any = MedtrumPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = MedtrumPreferencesCompose(
+        preferences = preferences,
+        config = config,
+        isPumpInitialized = { isInitialized() }
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "medtrum_advanced") return

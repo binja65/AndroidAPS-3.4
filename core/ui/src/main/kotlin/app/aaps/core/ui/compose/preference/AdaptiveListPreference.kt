@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.IntPreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.StringPreferenceKey
 
@@ -17,6 +18,7 @@ import app.aaps.core.keys.interfaces.StringPreferenceKey
  * Composable list int preference for use inside card sections.
  *
  * @param titleResId Optional title resource ID. If 0 or not provided, uses intKey.titleResId
+ * @param visibilityContext Optional context for evaluating runtime visibility/enabled conditions
  */
 @Composable
 fun AdaptiveListIntPreferenceItem(
@@ -25,7 +27,8 @@ fun AdaptiveListIntPreferenceItem(
     intKey: IntPreferenceKey,
     titleResId: Int = 0,
     entries: List<String>,
-    entryValues: List<Int>
+    entryValues: List<Int>,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else intKey.titleResId
 
@@ -36,7 +39,8 @@ fun AdaptiveListIntPreferenceItem(
         preferenceKey = intKey,
         preferences = preferences,
         config = config,
-        engineeringModeOnly = intKey.engineeringModeOnly
+        engineeringModeOnly = intKey.engineeringModeOnly,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible) return
@@ -63,6 +67,7 @@ fun AdaptiveListIntPreferenceItem(
  * Composable string list preference for use inside card sections.
  *
  * @param titleResId Optional title resource ID. If 0 or not provided, uses stringKey.titleResId
+ * @param visibilityContext Optional context for evaluating runtime visibility/enabled conditions
  */
 @Composable
 fun AdaptiveStringListPreferenceItem(
@@ -70,7 +75,8 @@ fun AdaptiveStringListPreferenceItem(
     config: Config,
     stringKey: StringPreferenceKey,
     titleResId: Int = 0,
-    entries: Map<String, String>
+    entries: Map<String, String>,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else stringKey.titleResId
 
@@ -80,7 +86,8 @@ fun AdaptiveStringListPreferenceItem(
     val visibility = calculatePreferenceVisibility(
         preferenceKey = stringKey,
         preferences = preferences,
-        config = config
+        config = config,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible) return

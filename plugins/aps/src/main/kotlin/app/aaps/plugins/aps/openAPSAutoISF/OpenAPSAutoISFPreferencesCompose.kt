@@ -1,14 +1,20 @@
 package app.aaps.plugins.aps.openAPSAutoISF
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.PreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.rememberPreferenceBooleanState
 import app.aaps.plugins.aps.keys.ApsIntentKey
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -20,12 +26,21 @@ import app.aaps.plugins.aps.R
  */
 class OpenAPSAutoISFPreferencesCompose(
     private val preferences: Preferences,
-    private val config: Config
+    private val config: Config,
+    private val activePlugin: ActivePlugin
 ) : NavigablePreferenceContent {
+
+    private val visibilityContext = object : PreferenceVisibilityContext {
+        override val preferences: Preferences = this@OpenAPSAutoISFPreferencesCompose.preferences
+        override val isPatchPump: Boolean get() = activePlugin.activePump.pumpDescription.isPatchPump
+        override val isBatteryReplaceable: Boolean get() = activePlugin.activePump.pumpDescription.isBatteryReplaceable
+        override val isBatteryChangeLoggingEnabled: Boolean get() = false
+        override val advancedFilteringSupported: Boolean get() = activePlugin.activeBgSource.advancedFilteringSupported()
+    }
 
     override val titleResId: Int = R.string.openaps_auto_isf
 
-    override val mainKeys: List<PreferenceKey> = listOf(
+    private val allMainKeys: List<PreferenceKey> = listOf(
         DoubleKey.ApsMaxBasal,
         DoubleKey.ApsSmbMaxIob,
         BooleanKey.ApsUseAutosens,
@@ -47,11 +62,34 @@ class OpenAPSAutoISFPreferencesCompose(
         IntKey.ApsCarbsRequestThreshold
     )
 
+    override val mainKeys: List<PreferenceKey> get() = allMainKeys
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // Shared state registry ensures reactivity - state reads inside derivedStateOf
+        // are automatically tracked for dependency changes
+        val smbAlwaysEnabledState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsUseSmbAlways)
+
+        // AutoISF-specific visibility logic - derivedStateOf auto-tracks state dependencies
+        val filteredKeys by remember {
+            derivedStateOf {
+                val smbAlwaysEnabled = smbAlwaysEnabledState.value
+                val advancedFiltering = activePlugin.activeBgSource.advancedFilteringSupported()
+
+                allMainKeys.filter { key ->
+                    when (key) {
+                        // AutoISF: visible when !smbAlways || !advancedFiltering
+                        BooleanKey.ApsUseSmbAfterCarbs -> !smbAlwaysEnabled || !advancedFiltering
+                        else -> true
+                    }
+                }
+            }
+        }
+
         AdaptivePreferenceList(
-            keys = mainKeys,
+            keys = filteredKeys,
             preferences = preferences,
-            config = config
+            config = config,
+            visibilityContext = visibilityContext
         )
     }
 

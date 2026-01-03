@@ -43,8 +43,7 @@
     <string name="smscommunicator_calibration_reply_with_code">To send calibration %1$.2f reply with code %2$s</string>
     <string name="smscommunicator_bolus_failed">Bolus failed. Verify real state before sending another command!</string>
     <string name="smscommunicator_remote_bolus_min_distance_summary">Minimum number of minutes that must elapse between one remote bolus and the next</string>
-    <string name="smscommunicator_remote_bolus_min_distance">How many minutes must elapse, at least, between one bolus and the next</string>
-    <string name="smscommunicator_remote_bolus_min_distance_caveat">For your safety, to edit this preference you need to add at least 2 phone numbers.</string>
+    <string name="smscommunicator_remote_bolus_min_distance">How many minutes must elapse, at least, between one bolus and the next. For your safety, to edit this preference you need to add at least 2 phone numbers. Otherwise 15 min is used.</string>
     <string name="smscommunicator_bolus_delivered">Bolus %1$.2f U delivered successfully</string>
     <string name="smscommunicator_meal_bolus_delivered">Meal Bolus %1$.2f U delivered successfully</string>
     <string name="smscommunicator_meal_bolus_delivered_tt">Target %1$s for %2$d minutes</string>

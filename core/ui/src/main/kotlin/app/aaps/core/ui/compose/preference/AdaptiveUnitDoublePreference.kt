@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.profile.ProfileUtil
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.UnitDoublePreferenceKey
 import java.math.BigDecimal
@@ -21,6 +22,7 @@ import java.math.RoundingMode
  * Handles glucose unit conversion (mg/dL <-> mmol/L).
  *
  * @param titleResId Optional title resource ID. If 0 or not provided, uses unitKey.titleResId
+ * @param visibilityContext Optional context for evaluating runtime visibility/enabled conditions
  */
 @Composable
 fun AdaptiveUnitDoublePreferenceItem(
@@ -28,7 +30,8 @@ fun AdaptiveUnitDoublePreferenceItem(
     config: Config,
     profileUtil: ProfileUtil,
     unitKey: UnitDoublePreferenceKey,
-    titleResId: Int = 0
+    titleResId: Int = 0,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else unitKey.titleResId
 
@@ -38,7 +41,8 @@ fun AdaptiveUnitDoublePreferenceItem(
     val visibility = calculatePreferenceVisibility(
         preferenceKey = unitKey,
         preferences = preferences,
-        config = config
+        config = config,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible || (preferences.simpleMode && unitKey.defaultedBySM)) return

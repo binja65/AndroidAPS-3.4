@@ -6,6 +6,7 @@ import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withEntries
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
@@ -25,15 +26,17 @@ class SafetyPreferencesCompose(
 
     override val titleResId: Int = R.string.safety
 
+    override val mainKeys: List<PreferenceKey> = listOf(
+        StringKey.SafetyAge.withEntries(
+            hardLimits.ageEntryValues().zip(hardLimits.ageEntries()).associate { it.first.toString() to it.second.toString() }
+        ),
+        DoubleKey.SafetyMaxBolus,
+        IntKey.SafetyMaxCarbs
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptivePreferenceList(
-            keys = listOf(
-                StringKey.SafetyAge.withEntries(
-                    hardLimits.ageEntryValues().zip(hardLimits.ageEntries()).associate { it.first.toString() to it.second.toString() }
-                ),
-                DoubleKey.SafetyMaxBolus,
-                IntKey.SafetyMaxCarbs
-            ),
+            keys = mainKeys,
             preferences = preferences,
             config = config
         )

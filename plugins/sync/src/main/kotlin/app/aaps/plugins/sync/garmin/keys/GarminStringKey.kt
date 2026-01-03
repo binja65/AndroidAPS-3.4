@@ -2,10 +2,12 @@ package app.aaps.plugins.sync.garmin.keys
 
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.StringPreferenceKey
+import app.aaps.plugins.sync.R
 
 enum class GarminStringKey(
     override val key: String,
     override val defaultValue: String,
+    override val titleResId: Int = 0,
     override val defaultedBySM: Boolean = false,
     override val showInApsMode: Boolean = true,
     override val showInNsClientMode: Boolean = true,
@@ -18,5 +20,5 @@ enum class GarminStringKey(
     override val exportable: Boolean = true
 ) : StringPreferenceKey {
 
-    RequestKey(key = "garmin_aaps_key", defaultValue = ""),
+    RequestKey(key = "garmin_aaps_key", defaultValue = "", titleResId = R.string.garmin_request_key),
 }

@@ -2,13 +2,14 @@ package app.aaps.core.keys
 
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceEnabledCondition
 
 enum class IntKey(
     override val key: String,
     override val defaultValue: Int,
     override val min: Int,
     override val max: Int,
-    override val titleResId: Int = 0,
+    override val titleResId: Int,
     override val summaryResId: Int? = null,
     override val preferenceType: PreferenceType = PreferenceType.TEXT_FIELD,
     override val entries: Map<Int, Int> = emptyMap(),
@@ -21,7 +22,8 @@ enum class IntKey(
     override val negativeDependency: BooleanPreferenceKey? = null,
     override val hideParentScreenIfHidden: Boolean = false,
     override val engineeringModeOnly: Boolean = false,
-    override val exportable: Boolean = true
+    override val exportable: Boolean = true,
+    override val enabledCondition: PreferenceEnabledCondition = PreferenceEnabledCondition.ALWAYS
 ) : IntPreferenceKey {
 
     OverviewCarbsButtonIncrement1(key = "carbs_button_increment_1", defaultValue = 5, min = -50, max = 50, titleResId = R.string.pref_title_carbs_button_increment_1, defaultedBySM = true, dependency = BooleanKey.OverviewShowCarbsButton),
@@ -45,9 +47,9 @@ enum class IntKey(
     OverviewBolusPercentage(key = "boluswizard_percentage", defaultValue = 100, min = 10, max = 100, titleResId = R.string.pref_title_bolus_percentage),
     OverviewResetBolusPercentageTime(key = "key_reset_boluswizard_percentage_time", defaultValue = 16, min = 6, max = 120, titleResId = R.string.pref_title_reset_bolus_percentage_time, defaultedBySM = true, engineeringModeOnly = true),
     ProtectionTimeout(key = "prot2ection_timeout", defaultValue = 1, min = 1, max = 180, titleResId = R.string.pref_title_protection_timeout, defaultedBySM = true),
-    ProtectionTypeSettings(key = "settings_protection", defaultValue = 0, min = 0, max = 5, titleResId = R.string.pref_title_protection_type_settings),
-    ProtectionTypeApplication(key = "application_protection", defaultValue = 0, min = 0, max = 5, titleResId = R.string.pref_title_protection_type_application),
-    ProtectionTypeBolus(key = "bolus_protection", defaultValue = 0, min = 0, max = 5, titleResId = R.string.pref_title_protection_type_bolus),
+    ProtectionTypeSettings(key = "settings_protection", defaultValue = 0, min = 0, max = 5, titleResId = R.string.pref_title_protection_type_settings, preferenceType = PreferenceType.LIST),
+    ProtectionTypeApplication(key = "application_protection", defaultValue = 0, min = 0, max = 5, titleResId = R.string.pref_title_protection_type_application, preferenceType = PreferenceType.LIST),
+    ProtectionTypeBolus(key = "bolus_protection", defaultValue = 0, min = 0, max = 5, titleResId = R.string.pref_title_protection_type_bolus, preferenceType = PreferenceType.LIST),
     SafetyMaxCarbs(key = "treatmentssafety_maxcarbs", defaultValue = 48, min = 1, max = 200, titleResId = R.string.pref_title_max_carbs),
     LoopOpenModeMinChange(key = "loop_openmode_min_change", defaultValue = 30, min = 0, max = 50, titleResId = R.string.pref_title_open_mode_min_change, defaultedBySM = true),
     ApsMaxSmbFrequency(key = "smbinterval", defaultValue = 3, min = 1, max = 10, titleResId = R.string.pref_title_smb_frequency, defaultedBySM = true, dependency = BooleanKey.ApsUseSmb),
@@ -65,7 +67,18 @@ enum class IntKey(
 
     AutotuneDefaultTuneDays(key = "autotune_default_tune_days", defaultValue = 5, min = 1, max = 30, titleResId = R.string.pref_title_autotune_days),
 
-    SmsRemoteBolusDistance(key = "smscommunicator_remotebolusmindistance", defaultValue = 15, min = 3, max = 60, titleResId = R.string.pref_title_sms_remote_bolus_distance),
+    SmsRemoteBolusDistance(
+        key = "smscommunicator_remotebolusmindistance",
+        defaultValue = 15,
+        min = 3,
+        max = 60,
+        titleResId = R.string.pref_title_sms_remote_bolus_distance,
+        // Enabled only when multiple phone numbers are configured (2FA requirement)
+        enabledCondition = PreferenceEnabledCondition { ctx ->
+            val allowedNumbers = ctx.preferences.get(StringKey.SmsAllowedNumbers)
+            allowedNumbers.split(";").filter { it.trim().isNotEmpty() }.size >= 2
+        }
+    ),
 
     BgSourceRandomInterval(key = "randombg_interval_min", defaultValue = 5, min = 1, max = 15, titleResId = R.string.pref_title_random_bg_interval, defaultedBySM = true),
     NsClientAlarmStaleData(key = "ns_alarm_stale_data_value", defaultValue = 16, min = 15, max = 120, titleResId = R.string.pref_title_alarm_stale_data),

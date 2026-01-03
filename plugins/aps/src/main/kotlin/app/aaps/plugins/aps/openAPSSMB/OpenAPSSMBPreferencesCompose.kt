@@ -1,16 +1,22 @@
 package app.aaps.plugins.aps.openAPSSMB
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.PreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.rememberPreferenceBooleanState
 import app.aaps.plugins.aps.keys.ApsIntentKey
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
 import app.aaps.core.ui.compose.preference.PreferenceSubScreen
@@ -23,12 +29,22 @@ import app.aaps.plugins.aps.R
 class OpenAPSSMBPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config,
-    private val profileUtil: ProfileUtil
+    private val profileUtil: ProfileUtil,
+    private val activePlugin: ActivePlugin
 ) : NavigablePreferenceContent {
+
+    private val visibilityContext = object : PreferenceVisibilityContext {
+        override val preferences: Preferences = this@OpenAPSSMBPreferencesCompose.preferences
+        override val isPatchPump: Boolean get() = activePlugin.activePump.pumpDescription.isPatchPump
+        override val isBatteryReplaceable: Boolean get() = activePlugin.activePump.pumpDescription.isBatteryReplaceable
+        override val isBatteryChangeLoggingEnabled: Boolean get() = false
+        override val advancedFilteringSupported: Boolean get() = activePlugin.activeBgSource.advancedFilteringSupported()
+    }
 
     override val titleResId: Int = R.string.openapssmb
 
-    override val mainKeys: List<PreferenceKey> = listOf(
+    // Base keys list - visibility is handled dynamically in mainContent
+    private val allMainKeys: List<PreferenceKey> = listOf(
         DoubleKey.ApsMaxBasal,
         DoubleKey.ApsSmbMaxIob,
         BooleanKey.ApsUseDynamicSensitivity,
@@ -51,12 +67,50 @@ class OpenAPSSMBPreferencesCompose(
         IntKey.ApsCarbsRequestThreshold
     )
 
+    override val mainKeys: List<PreferenceKey> get() = allMainKeys
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+        // Shared state registry ensures reactivity - state reads inside derivedStateOf
+        // are automatically tracked for dependency changes
+        val smbEnabledState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsUseSmb)
+        val smbAlwaysEnabledState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsUseSmbAlways)
+        val uamEnabledState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsUseUam)
+        val dynIsfEnabledState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsUseDynamicSensitivity)
+        val dynIsfAdjustSensState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsDynIsfAdjustSensitivity)
+        val autoSensEnabledState = rememberPreferenceBooleanState(preferences, BooleanKey.ApsUseAutosens)
+
+        // SMB-specific visibility logic - derivedStateOf auto-tracks state dependencies
+        val filteredKeys by remember {
+            derivedStateOf {
+                val smbEnabled = smbEnabledState.value
+                val smbAlwaysEnabled = smbAlwaysEnabledState.value
+                val uamEnabled = uamEnabledState.value
+                val advancedFiltering = activePlugin.activeBgSource.advancedFilteringSupported()
+                val autoSensOrDynIsfSensEnabled = if (dynIsfEnabledState.value) {
+                    dynIsfAdjustSensState.value
+                } else {
+                    autoSensEnabledState.value
+                }
+
+                allMainKeys.filter { key ->
+                    when (key) {
+                        BooleanKey.ApsUseSmbAlways -> smbEnabled && advancedFiltering
+                        BooleanKey.ApsUseSmbAfterCarbs -> smbEnabled && !smbAlwaysEnabled && advancedFiltering
+                        BooleanKey.ApsResistanceLowersTarget -> autoSensOrDynIsfSensEnabled
+                        BooleanKey.ApsSensitivityRaisesTarget -> autoSensOrDynIsfSensEnabled
+                        IntKey.ApsUamMaxMinutesOfBasalToLimitSmb -> smbEnabled && uamEnabled
+                        else -> true
+                    }
+                }
+            }
+        }
+
         AdaptivePreferenceList(
-            keys = mainKeys,
+            keys = filteredKeys,
             preferences = preferences,
             config = config,
-            profileUtil = profileUtil
+            profileUtil = profileUtil,
+            visibilityContext = visibilityContext
         )
     }
 

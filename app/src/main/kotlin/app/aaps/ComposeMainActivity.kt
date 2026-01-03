@@ -253,6 +253,7 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
                             plugins = activePlugin.getPluginsList(),
                             preferences = preferences,
                             config = config,
+                            rh = rh,
                             passwordCheck = passwordCheck,
                             skins = skinProvider.list,
                             onBackClick = { navController.popBackStack() }

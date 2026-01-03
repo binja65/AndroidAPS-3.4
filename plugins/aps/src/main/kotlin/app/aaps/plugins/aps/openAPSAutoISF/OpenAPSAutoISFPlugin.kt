@@ -219,6 +219,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         }
     }
 
+    // MIGRATED to OpenAPSAutoISFPreferencesCompose - kept for legacy XML preferences support
     override fun preprocessPreferences(preferenceFragment: PreferenceFragmentCompat) {
         super.preprocessPreferences(preferenceFragment)
         val smbAlwaysEnabled = preferences.get(BooleanKey.ApsUseSmbAlways)
@@ -942,7 +943,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
     override fun getPreferenceScreenContent(): Any = OpenAPSAutoISFPreferencesCompose(
         preferences = preferences,
-        config = config
+        config = config,
+        activePlugin = activePlugin
     )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {

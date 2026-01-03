@@ -21,6 +21,7 @@ import app.aaps.R
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.interfaces.protection.PasswordCheck
+import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceNavigationHost
@@ -112,12 +113,13 @@ fun AllPreferencesScreen(
     plugins: List<PluginBase>,
     preferences: Preferences,
     config: Config,
+    rh: ResourceHelper,
     passwordCheck: PasswordCheck,
     skins: List<SkinInterface>,
     onBackClick: () -> Unit
 ) {
     // Built-in preference screens
-    val generalPreferences = GeneralPreferencesCompose(preferences, config, skins)
+    val generalPreferences = GeneralPreferencesCompose(preferences, config, rh, skins)
     val protectionPreferences = ProtectionPreferencesCompose(preferences, config, passwordCheck)
     val pumpPreferences = PumpPreferencesCompose(preferences, config)
     val alertsPreferences = AlertsPreferencesCompose(preferences, config)

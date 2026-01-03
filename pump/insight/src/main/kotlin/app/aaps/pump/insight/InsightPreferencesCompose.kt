@@ -2,6 +2,7 @@ package app.aaps.pump.insight
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withActivity
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
@@ -24,23 +25,25 @@ class InsightPreferencesCompose(
 
     override val titleResId: Int = R.string.insight_local
 
+    override val mainKeys: List<PreferenceKey> = listOf(
+        InsightIntentKey.InsightPairing.withActivity(InsightPairingInformationActivity::class.java),
+        InsightBooleanKey.LogReservoirChanges,
+        InsightBooleanKey.LogTubeChanges,
+        InsightBooleanKey.LogSiteChanges,
+        InsightBooleanKey.LogBatteryChanges,
+        InsightBooleanKey.LogOperatingModeChanges,
+        InsightBooleanKey.LogAlerts,
+        InsightBooleanKey.EnableTbrEmulation,
+        InsightBooleanKey.DisableVibration,
+        InsightBooleanKey.DisableVibrationAuto,
+        InsightIntKey.MinRecoveryDuration,
+        InsightIntKey.MaxRecoveryDuration,
+        InsightIntKey.DisconnectDelay
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptivePreferenceList(
-            keys = listOf(
-                InsightIntentKey.InsightPairing.withActivity(InsightPairingInformationActivity::class.java),
-                InsightBooleanKey.LogReservoirChanges,
-                InsightBooleanKey.LogTubeChanges,
-                InsightBooleanKey.LogSiteChanges,
-                InsightBooleanKey.LogBatteryChanges,
-                InsightBooleanKey.LogOperatingModeChanges,
-                InsightBooleanKey.LogAlerts,
-                InsightBooleanKey.EnableTbrEmulation,
-                InsightBooleanKey.DisableVibration,
-                InsightBooleanKey.DisableVibrationAuto,
-                InsightIntKey.MinRecoveryDuration,
-                InsightIntKey.MaxRecoveryDuration,
-                InsightIntKey.DisconnectDelay
-            ),
+            keys = mainKeys,
             preferences = preferences,
             config = config
         )

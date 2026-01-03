@@ -35,4 +35,18 @@ interface PreferenceVisibilityContext {
      * Useful for dependent visibility (e.g., show PIN field only if protection type is PIN).
      */
     val preferences: Preferences
+
+    /**
+     * Whether the pump is currently paired/connected.
+     * Used by pump plugins like ComboV2 to enable/disable pairing preferences.
+     */
+    val isPumpPaired: Boolean
+        get() = false
+
+    /**
+     * Whether the pump is initialized and ready for operation.
+     * Used by pump plugins like Medtrum to disable serial input after initialization.
+     */
+    val isPumpInitialized: Boolean
+        get() = false
 }

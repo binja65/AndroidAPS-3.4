@@ -416,6 +416,8 @@ class ComboV2Plugin @Inject constructor(
         aapsLogger.info(LTag.PUMP, "combov2 driver stopped")
     }
 
+    // MIGRATED TO COMPOSE: ComboV2PreferencesCompose handles pair/unpair button enabled state
+    // via enabledCondition on ComboIntentKey using isPumpPaired from visibilityContext
     override fun preprocessPreferences(preferenceFragment: PreferenceFragmentCompat) {
         super.preprocessPreferences(preferenceFragment)
 
@@ -2277,7 +2279,12 @@ class ComboV2Plugin @Inject constructor(
             else                     -> false
         }
 
-    override fun getPreferenceScreenContent(): Any = ComboV2PreferencesCompose(preferences, config) { /* Unpair handled via dialog in preference screen */ }
+    override fun getPreferenceScreenContent(): Any = ComboV2PreferencesCompose(
+        preferences = preferences,
+        config = config,
+        pairedStateFlow = pairedStateUIFlow,
+        onUnpairClick = { /* Unpair handled via dialog in preference screen */ }
+    )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return

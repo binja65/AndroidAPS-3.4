@@ -24,6 +24,14 @@ interface StringPreferenceKey : PreferenceKey, StringNonPreferenceKey {
      */
     val resolvedEntries: Map<String, String>?
         get() = null
+
+    /**
+     * Validator for the string value.
+     * Used to validate input before accepting it.
+     * Default is no validation.
+     */
+    val validator: StringValidator
+        get() = StringValidator.NONE
 }
 
 /**

@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withEntries
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
@@ -32,6 +33,13 @@ class DanaRPreferencesCompose(
 ) : NavigablePreferenceContent {
 
     override val titleResId: Int = R.string.danarpump
+
+    override val mainKeys: List<PreferenceKey> = listOf(
+        DanaStringKey.RName,
+        DanaIntKey.Password,
+        DanaIntKey.BolusSpeed,
+        DanaBooleanKey.UseExtended
+    )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         val context = LocalContext.current

@@ -41,6 +41,7 @@ fun AdaptivePreferenceItem(
     preferences: Preferences,
     config: Config,
     profileUtil: ProfileUtil? = null,
+    visibilityContext: PreferenceVisibilityContext? = null,
     onIntentClick: (() -> Unit)? = null,
     intentUrl: String? = null,
     intentActivityClass: Class<*>? = null
@@ -50,7 +51,8 @@ fun AdaptivePreferenceItem(
             AdaptiveSwitchPreferenceItem(
                 preferences = preferences,
                 config = config,
-                booleanKey = key
+                booleanKey = key,
+                visibilityContext = visibilityContext
             )
         }
 
@@ -65,7 +67,8 @@ fun AdaptivePreferenceItem(
                             config = config,
                             intKey = key,
                             entries = resolved.values.toList(),
-                            entryValues = resolved.keys.toList()
+                            entryValues = resolved.keys.toList(),
+                            visibilityContext = visibilityContext
                         )
                     } else if (key.entries.isNotEmpty()) {
                         AdaptiveListIntPreferenceItem(
@@ -73,7 +76,8 @@ fun AdaptivePreferenceItem(
                             config = config,
                             intKey = key,
                             entries = key.entries.values.map { stringResource(it) },
-                            entryValues = key.entries.keys.toList()
+                            entryValues = key.entries.keys.toList(),
+                            visibilityContext = visibilityContext
                         )
                     }
                 }
@@ -82,7 +86,8 @@ fun AdaptivePreferenceItem(
                     AdaptiveIntPreferenceItem(
                         preferences = preferences,
                         config = config,
-                        intKey = key
+                        intKey = key,
+                        visibilityContext = visibilityContext
                     )
                 }
 
@@ -91,7 +96,8 @@ fun AdaptivePreferenceItem(
                     AdaptiveIntPreferenceItem(
                         preferences = preferences,
                         config = config,
-                        intKey = key
+                        intKey = key,
+                        visibilityContext = visibilityContext
                     )
                 }
             }
@@ -101,7 +107,8 @@ fun AdaptivePreferenceItem(
             AdaptiveDoublePreferenceItem(
                 preferences = preferences,
                 config = config,
-                doubleKey = key
+                doubleKey = key,
+                visibilityContext = visibilityContext
             )
         }
 
@@ -117,7 +124,8 @@ fun AdaptivePreferenceItem(
                             preferences = preferences,
                             config = config,
                             stringKey = key,
-                            entries = entriesMap
+                            entries = entriesMap,
+                            visibilityContext = visibilityContext
                         )
                     }
                 }
@@ -126,7 +134,8 @@ fun AdaptivePreferenceItem(
                     AdaptiveStringPreferenceItem(
                         preferences = preferences,
                         config = config,
-                        stringKey = key
+                        stringKey = key,
+                        visibilityContext = visibilityContext
                     )
                 }
 
@@ -134,7 +143,8 @@ fun AdaptivePreferenceItem(
                     AdaptiveStringPreferenceItem(
                         preferences = preferences,
                         config = config,
-                        stringKey = key
+                        stringKey = key,
+                        visibilityContext = visibilityContext
                     )
                 }
             }
@@ -146,7 +156,8 @@ fun AdaptivePreferenceItem(
                     preferences = preferences,
                     config = config,
                     profileUtil = it,
-                    unitKey = key
+                    unitKey = key,
+                    visibilityContext = visibilityContext
                 )
             }
         }
@@ -164,21 +175,24 @@ fun AdaptivePreferenceItem(
                     AdaptiveIntentPreferenceItem(
                         preferences = preferences,
                         intentKey = key,
-                        onClick = resolvedClick
+                        onClick = resolvedClick,
+                        visibilityContext = visibilityContext
                     )
                 }
                 resolvedActivity != null -> {
                     AdaptiveDynamicActivityPreferenceItem(
                         preferences = preferences,
                         intentKey = key,
-                        activityClass = resolvedActivity
+                        activityClass = resolvedActivity,
+                        visibilityContext = visibilityContext
                     )
                 }
                 resolvedUrl != null -> {
                     AdaptiveUrlPreferenceItem(
                         preferences = preferences,
                         intentKey = key,
-                        url = resolvedUrl
+                        url = resolvedUrl,
+                        visibilityContext = visibilityContext
                     )
                 }
             }
@@ -218,7 +232,8 @@ fun AdaptivePreferenceList(
             key = key,
             preferences = preferences,
             config = config,
-            profileUtil = profileUtil
+            profileUtil = profileUtil,
+            visibilityContext = visibilityContext
         )
     }
 }

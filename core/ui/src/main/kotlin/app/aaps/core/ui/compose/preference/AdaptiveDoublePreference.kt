@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.DoublePreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 
 /**
  * Composable double preference for use inside card sections.
  *
  * @param titleResId Optional title resource ID. If 0 or not provided, uses doubleKey.titleResId
+ * @param visibilityContext Optional context for evaluating runtime visibility/enabled conditions
  */
 @Composable
 fun AdaptiveDoublePreferenceItem(
@@ -23,7 +25,8 @@ fun AdaptiveDoublePreferenceItem(
     doubleKey: DoublePreferenceKey,
     titleResId: Int = 0,
     unit: String = "",
-    showRange: Boolean = true
+    showRange: Boolean = true,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else doubleKey.titleResId
 
@@ -33,7 +36,8 @@ fun AdaptiveDoublePreferenceItem(
     val visibility = calculatePreferenceVisibility(
         preferenceKey = doubleKey,
         preferences = preferences,
-        config = config
+        config = config,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible || (preferences.simpleMode && doubleKey.calculatedBySM)) return

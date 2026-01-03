@@ -6,7 +6,7 @@ import app.aaps.core.keys.interfaces.StringPreferenceKey
 enum class StringKey(
     override val key: String,
     override val defaultValue: String,
-    override val titleResId: Int = 0,
+    override val titleResId: Int,
     override val summaryResId: Int? = null,
     override val preferenceType: PreferenceType = PreferenceType.TEXT_FIELD,
     override val entries: Map<String, Int> = emptyMap(),
@@ -68,7 +68,7 @@ enum class StringKey(
         defaultedBySM = true
     ),
     GeneralPatientName(key = "patient_name", defaultValue = "", titleResId = R.string.pref_title_patient_name),
-    GeneralSkin(key = "skin", defaultValue = "", titleResId = R.string.pref_title_skin),
+    GeneralSkin(key = "skin", defaultValue = "", titleResId = R.string.pref_title_skin, preferenceType = PreferenceType.LIST),
     GeneralDarkMode(
         key = "use_dark_mode",
         defaultValue = "dark",
@@ -94,7 +94,7 @@ enum class StringKey(
 
     OverviewCopySettingsFromNs(key = "statuslights_copy_ns", defaultValue = "", titleResId = R.string.pref_title_copy_settings_from_ns, dependency = BooleanKey.OverviewShowStatusLights),
 
-    SafetyAge(key = "age", defaultValue = "adult", titleResId = R.string.pref_title_patient_age),
+    SafetyAge(key = "age", defaultValue = "adult", titleResId = R.string.pref_title_patient_age, preferenceType = PreferenceType.LIST),
     MaintenanceEmail(key = "maintenance_logs_email", defaultValue = "logs@aaps.app", titleResId = R.string.pref_title_logs_email, defaultedBySM = true),
     MaintenanceIdentification(key = "email_for_crash_report", defaultValue = "", titleResId = R.string.pref_title_identification),
     AutomationLocation(
@@ -113,13 +113,10 @@ enum class StringKey(
     SmsAllowedNumbers(key = "smscommunicator_allowednumbers", defaultValue = "", titleResId = R.string.pref_title_sms_allowed_numbers),
     SmsOtpPassword(key = "smscommunicator_otp_password", defaultValue = "", titleResId = R.string.pref_title_sms_otp_password, dependency = BooleanKey.SmsAllowRemoteCommands, isPassword = true),
 
-    VirtualPumpType(key = "virtualpump_type", defaultValue = "Generic AAPS", titleResId = R.string.pref_title_virtual_pump_type),
+    VirtualPumpType(key = "virtualpump_type", defaultValue = "Generic AAPS", titleResId = R.string.pref_title_virtual_pump_type, preferenceType = PreferenceType.LIST),
 
     NsClientUrl(key = "nsclientinternal_url", defaultValue = "", titleResId = R.string.pref_title_ns_url),
     NsClientApiSecret(key = "nsclientinternal_api_secret", defaultValue = "", titleResId = R.string.pref_title_ns_api_secret, isPassword = true),
     NsClientWifiSsids(key = "ns_wifi_ssids", defaultValue = "", titleResId = R.string.pref_title_ns_wifi_ssids, dependency = BooleanKey.NsClientUseWifi),
     NsClientAccessToken(key = "nsclient_token", defaultValue = "", titleResId = R.string.pref_title_ns_access_token, isPassword = true),
-
-    PumpCommonBolusStorage(key = "pump_sync_storage_bolus", defaultValue = ""),
-    PumpCommonTbrStorage(key = "pump_sync_storage_tbr", defaultValue = ""),
 }

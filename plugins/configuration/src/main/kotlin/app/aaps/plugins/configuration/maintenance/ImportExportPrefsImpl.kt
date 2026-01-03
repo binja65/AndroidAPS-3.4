@@ -49,7 +49,7 @@ import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.userEntry.UserEntryPresentationHelper
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.MidnightTime
-import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.BooleanNonKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.extensions.asSettingsExport
@@ -443,7 +443,7 @@ class ImportExportPrefsImpl @Inject constructor(
 
     private fun restartAppAfterImport(context: Context) {
         rxBus.send(EventDiaconnG8PumpLogReset())
-        preferences.put(BooleanKey.GeneralSetupWizardProcessed, true)
+        preferences.put(BooleanNonKey.GeneralSetupWizardProcessed, true)
         uiInteraction.showOkDialog(
             context = context,
             title = rh.gs(R.string.setting_imported),

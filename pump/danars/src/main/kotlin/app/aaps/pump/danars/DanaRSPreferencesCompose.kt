@@ -2,6 +2,7 @@ package app.aaps.pump.danars
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withActivity
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
@@ -26,15 +27,17 @@ class DanaRSPreferencesCompose(
 
     override val titleResId: Int = R.string.danarspump
 
+    override val mainKeys: List<PreferenceKey> = listOf(
+        DanaIntentKey.BtSelector.withActivity(BLEScanActivity::class.java),
+        DanaStringKey.Password,
+        DanaIntKey.BolusSpeed,
+        DanaBooleanKey.LogInsulinChange,
+        DanaBooleanKey.LogCannulaChange
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptivePreferenceList(
-            keys = listOf(
-                DanaIntentKey.BtSelector.withActivity(BLEScanActivity::class.java),
-                DanaStringKey.Password,
-                DanaIntKey.BolusSpeed,
-                DanaBooleanKey.LogInsulinChange,
-                DanaBooleanKey.LogCannulaChange
-            ),
+            keys = mainKeys,
             preferences = preferences,
             config = config
         )

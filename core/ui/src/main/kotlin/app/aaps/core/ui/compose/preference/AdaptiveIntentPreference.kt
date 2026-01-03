@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.keys.interfaces.IntentPreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 
 /**
@@ -18,6 +19,7 @@ import app.aaps.core.keys.interfaces.Preferences
  *
  * @param titleResId Optional title resource ID. If 0 or not provided, uses intentKey.titleResId
  * @param summaryResId Optional summary resource ID. If null, uses intentKey.summaryResId
+ * @param visibilityContext Optional context for evaluating runtime visibility/enabled conditions
  */
 @Composable
 fun AdaptiveIntentPreferenceItem(
@@ -25,7 +27,8 @@ fun AdaptiveIntentPreferenceItem(
     intentKey: IntentPreferenceKey,
     titleResId: Int = 0,
     summaryResId: Int? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
     val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
@@ -35,7 +38,8 @@ fun AdaptiveIntentPreferenceItem(
 
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
-        preferences = preferences
+        preferences = preferences,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible) return
@@ -58,7 +62,8 @@ fun AdaptiveUrlPreferenceItem(
     preferences: Preferences,
     intentKey: IntentPreferenceKey,
     titleResId: Int = 0,
-    url: String
+    url: String,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
 
@@ -67,7 +72,8 @@ fun AdaptiveUrlPreferenceItem(
 
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
-        preferences = preferences
+        preferences = preferences,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible) return
@@ -95,7 +101,8 @@ fun AdaptiveDynamicActivityPreferenceItem(
     intentKey: IntentPreferenceKey,
     titleResId: Int = 0,
     activityClass: Class<*>,
-    summaryResId: Int? = null
+    summaryResId: Int? = null,
+    visibilityContext: PreferenceVisibilityContext? = null
 ) {
     val effectiveTitleResId = if (titleResId != 0) titleResId else intentKey.titleResId
     val effectiveSummaryResId = summaryResId ?: intentKey.summaryResId
@@ -105,7 +112,8 @@ fun AdaptiveDynamicActivityPreferenceItem(
 
     val visibility = calculateIntentPreferenceVisibility(
         intentKey = intentKey,
-        preferences = preferences
+        preferences = preferences,
+        visibilityContext = visibilityContext
     )
 
     if (!visibility.visible) return

@@ -1,11 +1,12 @@
 package app.aaps.core.keys
 
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceVisibility
 
 enum class BooleanKey(
     override val key: String,
     override val defaultValue: Boolean,
-    override val titleResId: Int = 0,
+    override val titleResId: Int,
     override val summaryResId: Int? = null,
     override val preferenceType: PreferenceType = PreferenceType.SWITCH,
     override val calculatedDefaultValue: Boolean = false,
@@ -17,11 +18,11 @@ enum class BooleanKey(
     override val negativeDependency: BooleanPreferenceKey? = null,
     override val hideParentScreenIfHidden: Boolean = false,
     override val engineeringModeOnly: Boolean = false,
-    override val exportable: Boolean = true
+    override val exportable: Boolean = true,
+    override val visibility: PreferenceVisibility = PreferenceVisibility.ALWAYS
 ) : BooleanPreferenceKey {
 
     GeneralSimpleMode("simple_mode", true, R.string.pref_title_simple_mode),
-    GeneralSetupWizardProcessed("startupwizard_processed", false),
     OverviewKeepScreenOn("keep_screen_on", false, R.string.pref_title_keep_screen_on, calculatedDefaultValue = true),
     OverviewShowTreatmentButton("show_treatment_button", false, R.string.pref_title_show_treatment_button, defaultedBySM = true, hideParentScreenIfHidden = true),
     OverviewShowWizardButton("show_wizard_button", true, R.string.pref_title_show_wizard_button, defaultedBySM = true),
@@ -52,8 +53,14 @@ enum class BooleanKey(
     ApsUseSmb("use_smb", true, R.string.pref_title_aps_use_smb, R.string.pref_summary_aps_use_smb, defaultedBySM = true),
     ApsUseSmbWithHighTt("enableSMB_with_high_temptarget", false, R.string.pref_title_aps_use_smb_with_high_tt, defaultedBySM = true, dependency = ApsUseSmb),
     ApsUseSmbAlways("enableSMB_always", true, R.string.pref_title_aps_use_smb_always, defaultedBySM = true, dependency = ApsUseSmb),
-    ApsUseSmbWithCob("enableSMB_with_COB", true, R.string.pref_title_aps_use_smb_with_cob, defaultedBySM = true, dependency = ApsUseSmb),
-    ApsUseSmbWithLowTt("enableSMB_with_temptarget", true, R.string.pref_title_aps_use_smb_with_low_tt, defaultedBySM = true, dependency = ApsUseSmb),
+    ApsUseSmbWithCob(
+        "enableSMB_with_COB", true, R.string.pref_title_aps_use_smb_with_cob, defaultedBySM = true, dependency = ApsUseSmb,
+        visibility = PreferenceVisibility { !it.preferences.get(ApsUseSmbAlways) || !it.advancedFilteringSupported }
+    ),
+    ApsUseSmbWithLowTt(
+        "enableSMB_with_temptarget", true, R.string.pref_title_aps_use_smb_with_low_tt, defaultedBySM = true, dependency = ApsUseSmb,
+        visibility = PreferenceVisibility { !it.preferences.get(ApsUseSmbAlways) || !it.advancedFilteringSupported }
+    ),
     ApsUseSmbAfterCarbs("enableSMB_after_carbs", true, R.string.pref_title_aps_use_smb_after_carbs, defaultedBySM = true, dependency = ApsUseSmb),
     ApsUseUam("use_uam", true, R.string.pref_title_aps_use_uam, R.string.pref_summary_aps_use_uam, defaultedBySM = true),
     ApsSensitivityRaisesTarget("sensitivity_raises_target", true, R.string.pref_title_aps_sensitivity_raises_target, defaultedBySM = true),

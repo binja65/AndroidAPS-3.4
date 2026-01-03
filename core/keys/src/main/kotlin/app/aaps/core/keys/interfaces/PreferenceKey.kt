@@ -15,10 +15,8 @@ interface PreferenceKey : NonPreferenceKey {
     /**
      * String resource ID for preference title.
      * Use ResourceHelper.gs(titleResId) for localized string.
-     * 0 means not yet migrated.
      */
     val titleResId: Int
-        get() = 0
 
     /**
      * String resource ID for preference summary/description.
@@ -87,4 +85,19 @@ interface PreferenceKey : NonPreferenceKey {
      */
     val visibility: PreferenceVisibility
         get() = PreferenceVisibility.ALWAYS
+
+    /**
+     * Runtime enabled condition for this preference.
+     * Evaluated against [PreferenceVisibilityContext] to determine if preference should be enabled.
+     * Default is [PreferenceEnabledCondition.ALWAYS] (always enabled).
+     *
+     * Example usage in key definition:
+     * ```
+     * SmsRemoteBolusDistance(..., enabledCondition = PreferenceEnabledCondition { ctx ->
+     *     ctx.preferences.get(StringKey.SmsAllowedNumbers).split(";").size >= 2
+     * })
+     * ```
+     */
+    val enabledCondition: PreferenceEnabledCondition
+        get() = PreferenceEnabledCondition.ALWAYS
 }

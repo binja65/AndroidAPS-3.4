@@ -175,6 +175,8 @@ class SmsCommunicatorPlugin @Inject constructor(
         super.onStop()
     }
 
+    // MIGRATED to SmsCommunicatorPreferencesCompose + IntKey.SmsRemoteBolusDistance.enabledCondition
+    // Kept for legacy XML preferences support
     override fun preprocessPreferences(preferenceFragment: PreferenceFragmentCompat) {
         super.preprocessPreferences(preferenceFragment)
         val distance = preferenceFragment.findPreference(IntKey.SmsRemoteBolusDistance.key) as AdaptiveIntPreference?
@@ -182,23 +184,14 @@ class SmsCommunicatorPlugin @Inject constructor(
         val allowedNumbers = preferenceFragment.findPreference(StringKey.SmsAllowedNumbers.key) as AdaptiveStringPreference?
             ?: return
         if (!areMoreNumbers(allowedNumbers.text)) {
-            distance.title = (rh.gs(R.string.smscommunicator_remote_bolus_min_distance)
-                + ".\n"
-                + rh.gs(R.string.smscommunicator_remote_bolus_min_distance_caveat))
             distance.isEnabled = false
         } else {
-            distance.title = rh.gs(R.string.smscommunicator_remote_bolus_min_distance)
             distance.isEnabled = true
         }
         allowedNumbers.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
             if (!areMoreNumbers(newValue as String)) {
-                distance.text = (Constants.remoteBolusMinDistance / (60 * 1000L)).toString()
-                distance.title = (rh.gs(R.string.smscommunicator_remote_bolus_min_distance)
-                    + ".\n"
-                    + rh.gs(R.string.smscommunicator_remote_bolus_min_distance_caveat))
                 distance.isEnabled = false
             } else {
-                distance.title = rh.gs(R.string.smscommunicator_remote_bolus_min_distance)
                 distance.isEnabled = true
             }
             true
@@ -1343,5 +1336,9 @@ class SmsCommunicatorPlugin @Inject constructor(
         }
     }
 
-    override fun getPreferenceScreenContent(): Any = SmsCommunicatorPreferencesCompose(preferences, config)
+    override fun getPreferenceScreenContent(): Any = SmsCommunicatorPreferencesCompose(
+        preferences = preferences,
+        config = config,
+        activePlugin = activePlugin
+    )
 }

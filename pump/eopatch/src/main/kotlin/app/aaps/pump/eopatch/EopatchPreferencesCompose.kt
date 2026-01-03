@@ -2,6 +2,7 @@ package app.aaps.pump.eopatch
 
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withEntries
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
@@ -21,13 +22,15 @@ class EopatchPreferencesCompose(
 
     override val titleResId: Int = R.string.eopatch
 
+    override val mainKeys: List<PreferenceKey> = listOf(
+        EopatchIntKey.LowReservoirReminder.withEntries((10..50 step 5).associateWith { "$it U" }),
+        EopatchIntKey.ExpirationReminder.withEntries((1..24).associateWith { "$it hr" }),
+        EopatchBooleanKey.BuzzerReminder
+    )
+
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptivePreferenceList(
-            keys = listOf(
-                EopatchIntKey.LowReservoirReminder.withEntries((10..50 step 5).associateWith { "$it U" }),
-                EopatchIntKey.ExpirationReminder.withEntries((1..24).associateWith { "$it hr" }),
-                EopatchBooleanKey.BuzzerReminder
-            ),
+            keys = mainKeys,
             preferences = preferences,
             config = config
         )

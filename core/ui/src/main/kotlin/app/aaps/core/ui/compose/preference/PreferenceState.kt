@@ -8,6 +8,7 @@ package app.aaps.core.ui.compose.preference
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import app.aaps.core.interfaces.configuration.Config
@@ -34,7 +35,9 @@ data class PreferenceVisibilityState(
 
 /**
  * Calculates visibility and enabled state for a preference based on mode settings and dependencies.
+ * This is a @Composable function to enable reactive updates when dependency preferences change.
  */
+@Composable
 fun calculatePreferenceVisibility(
     preferenceKey: PreferenceKey,
     preferences: Preferences,
@@ -42,6 +45,14 @@ fun calculatePreferenceVisibility(
     engineeringModeOnly: Boolean = false,
     visibilityContext: PreferenceVisibilityContext? = null
 ): PreferenceVisibilityState {
+    // Use reactive state for dependency checks
+    val dependencyState = preferenceKey.dependency?.let {
+        rememberPreferenceBooleanState(preferences, it)
+    }
+    val negativeDependencyState = preferenceKey.negativeDependency?.let {
+        rememberPreferenceBooleanState(preferences, it)
+    }
+
     var visible = true
     var enabled = true
 
@@ -74,16 +85,16 @@ fun calculatePreferenceVisibility(
         enabled = false
     }
 
-    // Check dependency
-    preferenceKey.dependency?.let {
-        if (!preferences.get(it)) {
+    // Check dependency - now reactive
+    dependencyState?.let {
+        if (!it.value) {
             visible = false
         }
     }
 
-    // Check negative dependency
-    preferenceKey.negativeDependency?.let {
-        if (preferences.get(it)) {
+    // Check negative dependency - now reactive
+    negativeDependencyState?.let {
+        if (it.value) {
             visible = false
         }
     }
@@ -93,6 +104,10 @@ fun calculatePreferenceVisibility(
         if (!preferenceKey.visibility.isVisible(context)) {
             visible = false
         }
+        // Check runtime enabled condition
+        if (!preferenceKey.enabledCondition.isEnabled(context)) {
+            enabled = false
+        }
     }
 
     return PreferenceVisibilityState(visible, enabled)
@@ -100,12 +115,22 @@ fun calculatePreferenceVisibility(
 
 /**
  * Calculates visibility and enabled state for an intent preference based on mode settings and dependencies.
+ * This is a @Composable function to enable reactive updates when dependency preferences change.
  */
+@Composable
 fun calculateIntentPreferenceVisibility(
     intentKey: IntentPreferenceKey,
     preferences: Preferences,
     visibilityContext: PreferenceVisibilityContext? = null
 ): PreferenceVisibilityState {
+    // Use reactive state for dependency checks
+    val dependencyState = intentKey.dependency?.let {
+        rememberPreferenceBooleanState(preferences, it)
+    }
+    val negativeDependencyState = intentKey.negativeDependency?.let {
+        rememberPreferenceBooleanState(preferences, it)
+    }
+
     var visible = true
     var enabled = true
 
@@ -132,16 +157,16 @@ fun calculateIntentPreferenceVisibility(
         enabled = false
     }
 
-    // Check dependency
-    intentKey.dependency?.let {
-        if (!preferences.get(it)) {
+    // Check dependency - now reactive
+    dependencyState?.let {
+        if (!it.value) {
             visible = false
         }
     }
 
-    // Check negative dependency
-    intentKey.negativeDependency?.let {
-        if (preferences.get(it)) {
+    // Check negative dependency - now reactive
+    negativeDependencyState?.let {
+        if (it.value) {
             visible = false
         }
     }
@@ -151,9 +176,57 @@ fun calculateIntentPreferenceVisibility(
         if (!intentKey.visibility.isVisible(context)) {
             visible = false
         }
+        // Check runtime enabled condition
+        if (!intentKey.enabledCondition.isEnabled(context)) {
+            enabled = false
+        }
     }
 
     return PreferenceVisibilityState(visible, enabled)
+}
+
+// =================================
+// Global Shared State Registry
+// =================================
+
+/**
+ * Global registry for preference states. Ensures all components observing the same
+ * preference key share the same state, enabling proper reactivity across the UI.
+ *
+ * Key format: "type:key" (e.g., "string:sms_allowed_numbers", "boolean:use_smb")
+ */
+private val sharedPreferenceStates = mutableStateMapOf<String, Any?>()
+
+private fun getSharedBooleanState(key: String, initialValue: Boolean): Boolean {
+    return sharedPreferenceStates.getOrPut("boolean:$key") { initialValue } as Boolean
+}
+
+private fun setSharedBooleanState(key: String, value: Boolean) {
+    sharedPreferenceStates["boolean:$key"] = value
+}
+
+private fun getSharedStringState(key: String, initialValue: String): String {
+    return sharedPreferenceStates.getOrPut("string:$key") { initialValue } as String
+}
+
+private fun setSharedStringState(key: String, value: String) {
+    sharedPreferenceStates["string:$key"] = value
+}
+
+private fun getSharedIntState(key: String, initialValue: Int): Int {
+    return sharedPreferenceStates.getOrPut("int:$key") { initialValue } as Int
+}
+
+private fun setSharedIntState(key: String, value: Int) {
+    sharedPreferenceStates["int:$key"] = value
+}
+
+private fun getSharedDoubleState(key: String, initialValue: Double): Double {
+    return sharedPreferenceStates.getOrPut("double:$key") { initialValue } as Double
+}
+
+private fun setSharedDoubleState(key: String, value: Double) {
+    sharedPreferenceStates["double:$key"] = value
 }
 
 // =================================
@@ -222,12 +295,15 @@ internal class PreferenceBooleanState(
     private val key: BooleanPreferenceKey
 ) : MutableState<Boolean> {
 
-    private val state = mutableStateOf(preferences.get(key))
+    init {
+        // Initialize shared state if not present
+        getSharedBooleanState(key.key, preferences.get(key))
+    }
 
     override var value: Boolean
-        get() = state.value
+        get() = getSharedBooleanState(key.key, preferences.get(key))
         set(value) {
-            state.value = value
+            setSharedBooleanState(key.key, value)
             preferences.put(key, value)
         }
 
@@ -241,12 +317,15 @@ internal class PreferenceStringState(
     private val key: StringPreferenceKey
 ) : MutableState<String> {
 
-    private val state = mutableStateOf(preferences.get(key))
+    init {
+        // Initialize shared state if not present
+        getSharedStringState(key.key, preferences.get(key))
+    }
 
     override var value: String
-        get() = state.value
+        get() = getSharedStringState(key.key, preferences.get(key))
         set(value) {
-            state.value = value
+            setSharedStringState(key.key, value)
             preferences.put(key, value)
         }
 
@@ -260,14 +339,17 @@ internal class PreferenceIntState(
     private val key: IntPreferenceKey
 ) : MutableState<Int> {
 
-    private val state = mutableStateOf(preferences.get(key))
+    init {
+        // Initialize shared state if not present
+        getSharedIntState(key.key, preferences.get(key))
+    }
 
     override var value: Int
-        get() = state.value
+        get() = getSharedIntState(key.key, preferences.get(key))
         set(value) {
             // Clamp to min/max
             val clampedValue = value.coerceIn(key.min, key.max)
-            state.value = clampedValue
+            setSharedIntState(key.key, clampedValue)
             preferences.put(key, clampedValue)
         }
 
@@ -281,14 +363,17 @@ internal class PreferenceDoubleState(
     private val key: DoublePreferenceKey
 ) : MutableState<Double> {
 
-    private val state = mutableStateOf(preferences.get(key))
+    init {
+        // Initialize shared state if not present
+        getSharedDoubleState(key.key, preferences.get(key))
+    }
 
     override var value: Double
-        get() = state.value
+        get() = getSharedDoubleState(key.key, preferences.get(key))
         set(value) {
             // Clamp to min/max
             val clampedValue = value.coerceIn(key.min, key.max)
-            state.value = clampedValue
+            setSharedDoubleState(key.key, clampedValue)
             preferences.put(key, clampedValue)
         }
 
