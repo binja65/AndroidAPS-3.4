@@ -22,6 +22,9 @@ import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.StringPreferenceKey
 import app.aaps.core.keys.interfaces.UnitDoublePreferenceKey
+import app.aaps.core.interfaces.rx.bus.RxBus
+import app.aaps.core.interfaces.rx.events.EventPreferenceChange
+import app.aaps.core.ui.compose.LocalRxBus
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -36,6 +39,7 @@ data class PreferenceVisibilityState(
 /**
  * Calculates visibility and enabled state for a preference based on mode settings and dependencies.
  * This is a @Composable function to enable reactive updates when dependency preferences change.
+ * Uses reactive state for simpleMode and dependencies so UI recomposes automatically on changes.
  */
 @Composable
 fun calculatePreferenceVisibility(
@@ -45,6 +49,9 @@ fun calculatePreferenceVisibility(
     engineeringModeOnly: Boolean = false,
     visibilityContext: PreferenceVisibilityContext? = null
 ): PreferenceVisibilityState {
+    // Use reactive state for simpleMode - this triggers recomposition when it changes
+    val simpleModeState = rememberPreferenceBooleanState(preferences, app.aaps.core.keys.BooleanKey.GeneralSimpleMode)
+
     // Use reactive state for dependency checks
     val dependencyState = preferenceKey.dependency?.let {
         rememberPreferenceBooleanState(preferences, it)
@@ -56,8 +63,8 @@ fun calculatePreferenceVisibility(
     var visible = true
     var enabled = true
 
-    // Check simple mode
-    if (preferences.simpleMode && preferenceKey.defaultedBySM) {
+    // Check simple mode - now reactive
+    if (simpleModeState.value && preferenceKey.defaultedBySM) {
         visible = false
     }
 
@@ -116,6 +123,7 @@ fun calculatePreferenceVisibility(
 /**
  * Calculates visibility and enabled state for an intent preference based on mode settings and dependencies.
  * This is a @Composable function to enable reactive updates when dependency preferences change.
+ * Uses reactive state for simpleMode and dependencies so UI recomposes automatically on changes.
  */
 @Composable
 fun calculateIntentPreferenceVisibility(
@@ -123,6 +131,9 @@ fun calculateIntentPreferenceVisibility(
     preferences: Preferences,
     visibilityContext: PreferenceVisibilityContext? = null
 ): PreferenceVisibilityState {
+    // Use reactive state for simpleMode - this triggers recomposition when it changes
+    val simpleModeState = rememberPreferenceBooleanState(preferences, app.aaps.core.keys.BooleanKey.GeneralSimpleMode)
+
     // Use reactive state for dependency checks
     val dependencyState = intentKey.dependency?.let {
         rememberPreferenceBooleanState(preferences, it)
@@ -134,8 +145,8 @@ fun calculateIntentPreferenceVisibility(
     var visible = true
     var enabled = true
 
-    // Check simple mode
-    if (preferences.simpleMode && intentKey.defaultedBySM) {
+    // Check simple mode - now reactive
+    if (simpleModeState.value && intentKey.defaultedBySM) {
         visible = false
     }
 
@@ -241,8 +252,9 @@ fun rememberPreferenceBooleanState(
     preferences: Preferences,
     key: BooleanPreferenceKey
 ): MutableState<Boolean> {
+    val rxBus = LocalRxBus.current
     return remember(key, preferences) {
-        PreferenceBooleanState(preferences, key)
+        PreferenceBooleanState(preferences, key, rxBus)
     }
 }
 
@@ -254,8 +266,9 @@ fun rememberPreferenceStringState(
     preferences: Preferences,
     key: StringPreferenceKey
 ): MutableState<String> {
+    val rxBus = LocalRxBus.current
     return remember(key, preferences) {
-        PreferenceStringState(preferences, key)
+        PreferenceStringState(preferences, key, rxBus)
     }
 }
 
@@ -267,8 +280,9 @@ fun rememberPreferenceIntState(
     preferences: Preferences,
     key: IntPreferenceKey
 ): MutableState<Int> {
+    val rxBus = LocalRxBus.current
     return remember(key, preferences) {
-        PreferenceIntState(preferences, key)
+        PreferenceIntState(preferences, key, rxBus)
     }
 }
 
@@ -280,8 +294,9 @@ fun rememberPreferenceDoubleState(
     preferences: Preferences,
     key: DoublePreferenceKey
 ): MutableState<Double> {
+    val rxBus = LocalRxBus.current
     return remember(key, preferences) {
-        PreferenceDoubleState(preferences, key)
+        PreferenceDoubleState(preferences, key, rxBus)
     }
 }
 
@@ -292,7 +307,8 @@ fun rememberPreferenceDoubleState(
 @Stable
 internal class PreferenceBooleanState(
     private val preferences: Preferences,
-    private val key: BooleanPreferenceKey
+    private val key: BooleanPreferenceKey,
+    private val rxBus: RxBus
 ) : MutableState<Boolean> {
 
     init {
@@ -305,6 +321,7 @@ internal class PreferenceBooleanState(
         set(value) {
             setSharedBooleanState(key.key, value)
             preferences.put(key, value)
+            rxBus.send(EventPreferenceChange(key.key))
         }
 
     override fun component1(): Boolean = value
@@ -314,7 +331,8 @@ internal class PreferenceBooleanState(
 @Stable
 internal class PreferenceStringState(
     private val preferences: Preferences,
-    private val key: StringPreferenceKey
+    private val key: StringPreferenceKey,
+    private val rxBus: RxBus
 ) : MutableState<String> {
 
     init {
@@ -327,6 +345,7 @@ internal class PreferenceStringState(
         set(value) {
             setSharedStringState(key.key, value)
             preferences.put(key, value)
+            rxBus.send(EventPreferenceChange(key.key))
         }
 
     override fun component1(): String = value
@@ -336,7 +355,8 @@ internal class PreferenceStringState(
 @Stable
 internal class PreferenceIntState(
     private val preferences: Preferences,
-    private val key: IntPreferenceKey
+    private val key: IntPreferenceKey,
+    private val rxBus: RxBus
 ) : MutableState<Int> {
 
     init {
@@ -351,6 +371,7 @@ internal class PreferenceIntState(
             val clampedValue = value.coerceIn(key.min, key.max)
             setSharedIntState(key.key, clampedValue)
             preferences.put(key, clampedValue)
+            rxBus.send(EventPreferenceChange(key.key))
         }
 
     override fun component1(): Int = value
@@ -360,7 +381,8 @@ internal class PreferenceIntState(
 @Stable
 internal class PreferenceDoubleState(
     private val preferences: Preferences,
-    private val key: DoublePreferenceKey
+    private val key: DoublePreferenceKey,
+    private val rxBus: RxBus
 ) : MutableState<Double> {
 
     init {
@@ -375,6 +397,7 @@ internal class PreferenceDoubleState(
             val clampedValue = value.coerceIn(key.min, key.max)
             setSharedDoubleState(key.key, clampedValue)
             preferences.put(key, clampedValue)
+            rxBus.send(EventPreferenceChange(key.key))
         }
 
     override fun component1(): Double = value
@@ -393,7 +416,8 @@ class UnitDoublePreferenceState(
     private val preferences: Preferences,
     private val profileUtil: ProfileUtil,
     private val key: UnitDoublePreferenceKey,
-    private val _displayValue: MutableState<String>
+    private val _displayValue: MutableState<String>,
+    private val rxBus: RxBus
 ) {
     val displayValue: String
         get() = _displayValue.value
@@ -404,6 +428,7 @@ class UnitDoublePreferenceState(
         val displayDouble = newValue.toDoubleOrNull() ?: return
         val mgdlValue = profileUtil.convertToMgdlDetect(displayDouble)
         preferences.put(key, mgdlValue)
+        rxBus.send(EventPreferenceChange(key.key))
     }
 }
 
@@ -413,6 +438,7 @@ fun rememberUnitDoublePreferenceState(
     profileUtil: ProfileUtil,
     key: UnitDoublePreferenceKey
 ): UnitDoublePreferenceState {
+    val rxBus = LocalRxBus.current
     // Get stored value (in mg/dL) and convert to display units
     val storedValue = preferences.get(key)
     val displayValue = profileUtil.valueInCurrentUnitsDetect(storedValue)
@@ -424,6 +450,6 @@ fun rememberUnitDoublePreferenceState(
     val displayState = remember { mutableStateOf(formatted) }
 
     return remember(key) {
-        UnitDoublePreferenceState(preferences, profileUtil, key, displayState)
+        UnitDoublePreferenceState(preferences, profileUtil, key, displayState, rxBus)
     }
 }

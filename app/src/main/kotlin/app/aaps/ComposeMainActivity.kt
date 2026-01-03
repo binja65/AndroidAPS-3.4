@@ -28,12 +28,12 @@ import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.protection.ProtectionCheck
-import app.aaps.plugins.main.skins.SkinProvider
 import app.aaps.core.interfaces.rx.AapsSchedulers
 import app.aaps.core.interfaces.rx.events.EventPreferenceChange
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.StringKey
 import app.aaps.core.ui.UIRunnable
 import app.aaps.core.ui.compose.AapsTheme
 import app.aaps.core.ui.compose.LocalPreferences
@@ -43,6 +43,7 @@ import app.aaps.plugins.configuration.activities.SingleFragmentActivity
 import app.aaps.plugins.configuration.setupwizard.SetupWizardActivity
 import app.aaps.plugins.main.profile.ProfileScreen
 import app.aaps.plugins.main.profile.ProfileViewModel
+import app.aaps.plugins.main.skins.SkinProvider
 import app.aaps.ui.compose.ProfileHelperScreen
 import app.aaps.ui.compose.StatsScreen
 import app.aaps.ui.compose.TreatmentsScreen
@@ -293,8 +294,13 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
             .toObservable(EventPreferenceChange::class.java)
             .observeOn(aapsSchedulers.main)
             .subscribe({ event ->
+                           // Handle screen wake lock
                            if (event.isChanged(BooleanKey.OverviewKeepScreenOn.key)) {
                                setupWakeLock()
+                           }
+                           // Language change requires full restart to reload resources
+                           if (event.isChanged(StringKey.GeneralLanguage.key)) {
+                               finish()
                            }
                        }, fabricPrivacy::logException)
     }
