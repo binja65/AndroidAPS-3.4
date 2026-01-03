@@ -44,6 +44,8 @@ fun AdaptiveDoublePreferenceItem(
 
     val state = rememberPreferenceDoubleState(preferences, doubleKey)
     val value = state.value
+    // Only show range if both min and max are meaningful values
+    val hasValidRange = doubleKey.min != Double.MIN_VALUE && doubleKey.max != Double.MAX_VALUE
 
     TextFieldPreference(
         state = state,
@@ -52,7 +54,7 @@ fun AdaptiveDoublePreferenceItem(
             text.toDoubleOrNull()?.coerceIn(doubleKey.min, doubleKey.max)
         },
         enabled = visibility.enabled,
-        summary = if (showRange) {
+        summary = if (showRange && hasValidRange) {
             { Text("$value$unit (${doubleKey.min}-${doubleKey.max})") }
         } else {
             { Text("$value$unit") }

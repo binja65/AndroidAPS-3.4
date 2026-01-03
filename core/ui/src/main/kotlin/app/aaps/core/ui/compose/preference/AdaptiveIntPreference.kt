@@ -45,6 +45,8 @@ fun AdaptiveIntPreferenceItem(
 
     val state = rememberPreferenceIntState(preferences, intKey)
     val value = state.value
+    // Only show range if both min and max are meaningful values
+    val hasValidRange = intKey.min != Int.MIN_VALUE && intKey.max != Int.MAX_VALUE
 
     TextFieldPreference(
         state = state,
@@ -53,7 +55,7 @@ fun AdaptiveIntPreferenceItem(
             text.toIntOrNull()?.coerceIn(intKey.min, intKey.max)
         },
         enabled = visibility.enabled,
-        summary = if (showRange) {
+        summary = if (showRange && hasValidRange) {
             { Text("$value$unit (${intKey.min}-${intKey.max})") }
         } else {
             { Text("$value$unit") }

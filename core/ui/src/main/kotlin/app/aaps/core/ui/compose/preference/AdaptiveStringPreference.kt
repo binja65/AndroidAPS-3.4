@@ -57,6 +57,7 @@ fun AdaptiveStringPreferenceItem(
     val state = rememberPreferenceStringState(preferences, stringKey)
     val value = state.value
     val validator = stringKey.validator
+    val isSecure = isPassword || stringKey.isPassword || stringKey.isPin
 
     TextFieldPreference(
         state = state,
@@ -67,8 +68,12 @@ fun AdaptiveStringPreferenceItem(
         },
         enabled = visibility.enabled,
         summary = when {
-            isPassword || stringKey.isPassword -> {
-                { if (value.isNotEmpty()) Text("••••••••") else effectiveSummaryResId?.let { Text(stringResource(it)) } }
+            isSecure && value.isNotEmpty() -> {
+                { Text("••••••••") }
+            }
+            isSecure && value.isEmpty() -> {
+                val notSetResId = if (stringKey.isPin) app.aaps.core.ui.R.string.pin_not_set else app.aaps.core.ui.R.string.password_not_set
+                { Text(stringResource(effectiveSummaryResId ?: notSetResId)) }
             }
             value.isNotEmpty() -> {
                 { Text(value) }
