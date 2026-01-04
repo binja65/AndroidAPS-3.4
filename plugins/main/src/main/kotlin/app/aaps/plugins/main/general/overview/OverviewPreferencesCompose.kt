@@ -42,7 +42,6 @@ class OverviewPreferencesCompose(
             keys = listOf(
                 BooleanKey.OverviewKeepScreenOn,
                 quickWizardListActivity?.let { OverviewIntentKey.QuickWizardSettings.withActivity(it) } ?: OverviewIntentKey.QuickWizardSettings,
-                BooleanKey.OverviewShortTabTitles,
                 BooleanKey.OverviewShowNotesInDialogs,
                 IntKey.OverviewBolusPercentage,
                 IntKey.OverviewResetBolusPercentageTime,

@@ -173,9 +173,6 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
             //recreate() does not update language so better close settings
             activity?.finish()
         }
-        if (key == BooleanKey.OverviewShortTabTitles.key || key == BooleanKey.GeneralSimpleMode.key) {
-            rxBus.send(EventRebuildTabs())
-        }
         if (key == StringKey.GeneralUnits.key || key == BooleanKey.GeneralSimpleMode.key || preferences.getDependingOn(key).isNotEmpty()) {
             activity?.recreate()
             return
