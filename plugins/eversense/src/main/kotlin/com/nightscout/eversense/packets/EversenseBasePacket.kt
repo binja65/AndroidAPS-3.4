@@ -1,6 +1,6 @@
 package com.nightscout.eversense.packets
 
-import android.util.Log
+import com.nightscout.eversense.EversenseLogger
 import com.nightscout.eversense.enums.EversenseSecurityType
 import com.nightscout.eversense.packets.e3.EversenseE3Packets
 
@@ -8,7 +8,7 @@ abstract class EversenseBasePacket : Object() {
     abstract fun getRequestData(): ByteArray
     abstract fun parseResponse(): Response?
 
-    protected var receivedData = ByteArray(0)
+    protected var receivedData = UByteArray(0)
 
     fun getAnnotation(): EversensePacket? {
         return this.javaClass.annotations.find { it.annotationClass == EversensePacket::class } as? EversensePacket
@@ -16,7 +16,7 @@ abstract class EversenseBasePacket : Object() {
 
     protected fun getStartIndex(): Int {
         val annotation = getAnnotation() ?:run {
-            Log.e("EversenseBasePacket", this.javaClass.name + " does not have the EversensePacket annotation...")
+            EversenseLogger.error("EversenseBasePacket", this.javaClass.name + " does not have the EversensePacket annotation...")
             return 0
         }
 
@@ -29,13 +29,13 @@ abstract class EversenseBasePacket : Object() {
         }
     }
 
-    fun appendData(data: ByteArray) {
+    fun appendData(data: UByteArray) {
         receivedData += data
     }
 
     fun buildRequest(): ByteArray? {
         val annotation = getAnnotation() ?:run {
-            Log.e("EversenseBasePacket", this.javaClass.name + " does not have the EversensePacket annotation...")
+            EversenseLogger.error("EversenseBasePacket", this.javaClass.name + " does not have the EversensePacket annotation...")
             return null
         }
 
@@ -46,7 +46,7 @@ abstract class EversenseBasePacket : Object() {
 
             return requestData
         } else {
-            Log.e("EversenseBasePacket", "TODO: Implement Eversense 365 request builder...")
+            EversenseLogger.error("EversenseBasePacket", "TODO: Implement Eversense 365 request builder...")
             return null
         }
     }

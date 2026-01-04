@@ -8,8 +8,6 @@ import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.SharedPreferences
-import android.provider.Settings.Global.putString
-import android.util.Log
 import com.nightscout.eversense.enums.EversenseSecurityType
 import com.nightscout.eversense.exceptions.EversenseWriteException
 import com.nightscout.eversense.packets.EversenseBasePacket
@@ -55,7 +53,7 @@ class EversenseGattCallback(
 
     @SuppressLint("MissingPermission")
     override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-        Log.i(TAG, "Connection state changed - state: $status, newState: $newState")
+        EversenseLogger.info(TAG, "Connection state changed - state: $status, newState: $newState")
 
         if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
             bluetoothGatt = gatt
@@ -64,13 +62,14 @@ class EversenseGattCallback(
                 putString(StorageKeys.REMOTE_DEVICE_KEY, gatt.device.address)
             }
 
-            val success = gatt.requestMtu(512)
-            Log.i(TAG, "Requested MTU: $success")
+            if (!gatt.requestMtu(512)) {
+                EversenseLogger.error(TAG, "Failed to request MTU")
+            }
             return
         }
 
         if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-            Log.w(TAG, "Disconnected...")
+            EversenseLogger.warning(TAG, "Disconnected...")
             bluetoothGatt = null
         }
     }
@@ -79,35 +78,35 @@ class EversenseGattCallback(
     override fun onMtuChanged(gatt: BluetoothGatt?, mtu: Int, status: Int) {
         if (status == 0) {
             payloadSize = mtu - 3
-            Log.i(TAG, "New payload size: $payloadSize")
+            EversenseLogger.debug(TAG, "New payload size: $payloadSize")
         } else {
             payloadSize = 20
-            Log.e(TAG, "Failed to set payload size - status: $status")
+            EversenseLogger.error(TAG, "Failed to set payload size - status: $status")
         }
 
         val success = gatt?.discoverServices()
-        Log.i(TAG, "Trigger discover services - success: $success")
+        EversenseLogger.info(TAG, "Trigger discover services - success: $success")
     }
 
     @SuppressLint("MissingPermission")
     override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-        Log.i(TAG, "Discovered services - status: $status")
+        EversenseLogger.info(TAG, "Discovered services - status: $status")
 
         if (gatt == null) {
-            Log.e(TAG, "Gatt is empty")
+            EversenseLogger.error(TAG, "Gatt is empty")
             return
         }
 
         val service = gatt.services.first { it.uuid.toString() == serviceUUID }
         if (service == null) {
-            Log.e(TAG, "Service is empty -> disconnecting from device")
+            EversenseLogger.error(TAG, "Service is empty -> disconnecting from device")
             gatt.disconnect()
             return
         }
 
         eversenseBluetoothService = service
         if (service.characteristics.isEmpty()) {
-            Log.e(TAG, "Service has no characteristics -> disconnecting from device")
+            EversenseLogger.error(TAG, "Service has no characteristics -> disconnecting from device")
             gatt.disconnect()
             return
         }
@@ -115,7 +114,7 @@ class EversenseGattCallback(
         var requestChar = service.characteristics.find { it.uuid.toString() == requestUUID }
         var responseChar = service.characteristics.find { it.uuid.toString() == responseUUID }
         if (requestChar != null && responseChar != null) {
-            Log.i(TAG, "Connected to Eversense E3!")
+            EversenseLogger.info(TAG, "Connected to Eversense E3!")
             security = EversenseSecurityType.None
             requestCharacteristic = requestChar
             responseCharacteristic = responseChar
@@ -130,12 +129,12 @@ class EversenseGattCallback(
         requestChar = service.characteristics.find { it.uuid.toString() == requestSecureV2UUID }
         responseChar = service.characteristics.find { it.uuid.toString() == responseSecureV2UUID }
         if (requestChar == null || responseChar == null) {
-            Log.e(TAG, "No Eversense request/response characteristic found -> Disconnect from device...")
+            EversenseLogger.error(TAG, "No Eversense request/response characteristic found -> Disconnect from device...")
             gatt.disconnect()
             return
         }
 
-        Log.i(TAG, "Connected to Eversense 365!")
+        EversenseLogger.info(TAG, "Connected to Eversense 365!")
         security = EversenseSecurityType.SecureV2
         requestCharacteristic = requestChar
         responseCharacteristic = responseChar
@@ -146,7 +145,7 @@ class EversenseGattCallback(
     }
 
     override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-        Log.i(TAG, "onDescriptor (${descriptor.uuid}) write for characteristic (${descriptor.characteristic.uuid}) - status $status")
+        EversenseLogger.debug(TAG, "onDescriptor (${descriptor.uuid}) write for characteristic (${descriptor.characteristic.uuid}) - status $status")
 
         if (status == BluetoothGatt.GATT_SUCCESS && descriptor.uuid.toString() == magicDescriptorUUID) {
             if (descriptor.characteristic.uuid.toString() == responseUUID) {
@@ -159,7 +158,7 @@ class EversenseGattCallback(
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-        Log.i(TAG, "Received data: ${characteristic.value.toHexString()}")
+        EversenseLogger.debug(TAG, "Received data: ${characteristic.value.toHexString()}")
 
         var data = characteristic.value
         if (security == EversenseSecurityType.SecureV2) {
@@ -167,37 +166,40 @@ class EversenseGattCallback(
         }
 
         if (EversenseE3Packets.isPushPacket(data[0])) {
-            Log.i(TAG, "Keep Alive packet received!")
-            executor.submit { EversenseE3Communicator.readGlucose(this, preferences, plugin.watchers) }
+            EversenseLogger.debug(TAG, "Keep Alive packet received!")
+            executor.submit {
+                EversenseE3Communicator.readGlucose(this, preferences, plugin.watchers)
+                EversenseE3Communicator.fullSync(this, preferences, plugin.watchers)
+            }
             return
         }
 
         val packet = currentPacket ?:run {
-            Log.w(TAG, "currentPacket is empty -> Skip packet...")
+            EversenseLogger.warning(TAG, "currentPacket is empty -> Skip packet...")
             return
         }
 
         synchronized(packet) {
             val packetAnnotation = packet.getAnnotation() ?:run {
-                Log.w(TAG, "annotation is empty -> Skip packet...")
+                EversenseLogger.warning(TAG, "annotation is empty -> Skip packet...")
                 return
             }
 
             if (packetAnnotation.responseId != data[0]) {
-                Log.w(TAG, "Incorrect responseId received - Expected: ${packetAnnotation.responseId}, got: ${data[0]}")
+                EversenseLogger.warning(TAG, "Incorrect responseId received - Expected: ${packetAnnotation.responseId}, got: ${data[0]}")
                 return
             }
 
             if (security == EversenseSecurityType.None) {
-                packet.appendData(data)
+                packet.appendData(data.toUByteArray())
                 packet.notifyAll()
             } else {
                 if (packetAnnotation.responseType != data[1]) {
-                    Log.w(TAG, "Incorrect responseType received - Expected: ${packetAnnotation.responseType}, got: ${data[1]}")
+                    EversenseLogger.warning(TAG, "Incorrect responseType received - Expected: ${packetAnnotation.responseType}, got: ${data[1]}")
                     return
                 }
 
-                packet.appendData(data)
+                packet.appendData(data.toUByteArray())
                 packet.notifyAll()
             }
         }
@@ -222,7 +224,7 @@ class EversenseGattCallback(
 
         currentPacket = packet
 
-        Log.i(TAG, "Writing data: ${requestData.toHexString()}")
+        EversenseLogger.debug(TAG, "Writing data: ${requestData.toHexString()}")
 
         requestCharacteristic.setValue(requestData)
         gatt.writeCharacteristic(requestCharacteristic)
@@ -231,7 +233,7 @@ class EversenseGattCallback(
             try {
                 packet.wait(5000)
             } catch (e: Exception) {
-                Log.e(TAG, "Exception during await - exception: $e")
+                EversenseLogger.error(TAG, "Exception during await - exception: $e")
                 e.printStackTrace()
             }
         }
@@ -246,17 +248,17 @@ class EversenseGattCallback(
     }
 
     private fun authE3flow() {
-        Log.i(TAG, "Starting auth flow E3...")
+        EversenseLogger.info(TAG, "Starting auth flow E3...")
 
         try {
             writePacket<SaveBondingInformationPacket.SaveBondingInformationResponse>(SaveBondingInformationPacket())
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to do auth flow - exception: $exception")
+            EversenseLogger.error(TAG, "Failed to do auth flow - exception: $exception")
             return
         }
 
-        Log.i(TAG, "Ready for full sync!!")
-        EversenseE3Communicator.fullSync(this, preferences)
+        EversenseLogger.info(TAG, "Ready for full sync!!")
+        EversenseE3Communicator.fullSync(this, preferences, plugin.watchers)
     }
 
     private fun authV2flow() {

@@ -20,8 +20,7 @@ class EversenseE3Writer {
         }
 
         fun writeTime(timestamp: Long): ByteArray {
-            val calendar = Calendar.getInstance()
-            calendar.timeZone = TimeZone.getTimeZone("GMT")
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
             calendar.setTimeInMillis(timestamp)
 
             val hour = calendar.get(Calendar.HOUR_OF_DAY)

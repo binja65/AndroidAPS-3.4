@@ -1,6 +1,6 @@
 package com.nightscout.eversense.packets.e3
 
-import android.util.Log
+import com.nightscout.eversense.EversenseLogger
 import com.nightscout.eversense.enums.EversenseSecurityType
 import com.nightscout.eversense.packets.EversenseBasePacket
 import com.nightscout.eversense.packets.EversensePacket
@@ -30,18 +30,15 @@ class GetCurrentDatetimePacket : EversenseBasePacket() {
         val time = EversenseE3Parser.readTime(receivedData, start + 2)
         val timeZoneOffset = EversenseE3Parser.readTimezone(receivedData, start + 4)
 
-        Log.i("GetTransmitterDatePacket", "datetime: ${date + time}")
-        Log.i("GetTransmitterDatePacket", "timezoneOffset: $timeZoneOffset")
-
         var needsTimeSync = false
         val actualTimeZoneOffset = TimeZone.getDefault().getOffset(System.currentTimeMillis()).toLong()
 
         // Allow time drift <10s
         if (abs(System.currentTimeMillis() - (date + time)) > 10_000) {
-            Log.w("GetCurrentDatetimePacket", "time drift detected... drift: ${abs(System.currentTimeMillis() - (date + time))} ms")
+            EversenseLogger.warning("GetCurrentDatetimePacket", "time drift detected... drift: ${abs(System.currentTimeMillis() - (date + time))} ms")
             needsTimeSync = true
         } else if (actualTimeZoneOffset != timeZoneOffset) {
-            Log.w("GetCurrentDatetimePacket", "timezone mismatch - received: $timeZoneOffset, actual: $actualTimeZoneOffset")
+            EversenseLogger.warning("GetCurrentDatetimePacket", "timezone mismatch - received: $timeZoneOffset, actual: $actualTimeZoneOffset")
             needsTimeSync = true
         }
 

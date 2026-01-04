@@ -1,22 +1,20 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
+
     id("kotlin-android")
+    id("kotlinx-serialization")
     id("android-module-dependencies")
-    id("test-module-dependencies")
-    id("jacoco-module-dependencies")
 }
 
 android {
     namespace = "com.nightscout.eversense"
 }
 
-
 dependencies {
-    testImplementation(libs.androidx.work.testing)
+    api(libs.androidx.core)
+    api(libs.kotlinx.serialization.json)
 
-    implementation(libs.androidx.core)
-
-    ksp(libs.com.google.dagger.compiler)
-    ksp(libs.com.google.dagger.android.processor)
+    api(libs.org.slf4j.api)
+    api(libs.com.github.tony19.logback.android)
 }

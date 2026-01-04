@@ -1,53 +1,68 @@
 package com.nightscout.eversense.packets.e3.util
 
 import android.util.Log
-import java.util.GregorianCalendar
+import java.util.Calendar
 import java.util.TimeZone
-import java.util.concurrent.TimeUnit
 
 class EversenseE3Parser {
     companion object {
-        fun readDate(data: ByteArray, start: Int): Long {
-            val lowBit = data[start].toUByte().toUInt()
-            val highBit = data[start+1].toUByte().toUInt()
+        fun readDate(data: UByteArray, start: Int): Long {
+            val lowBit = data[start].toInt()
+            val highBit = data[start+1].toInt()
 
-            val day = lowBit and 31u
+            val day = lowBit and 31
             var month = lowBit shr 5
-            val year = (highBit shr 1) + 2000u
+            val year = (highBit shr 1) + 2000
 
-            if (highBit and 1u == 1u) {
-                month += 8u
+            if (highBit and 1 == 1) {
+                month += 8
             }
 
-            val date = GregorianCalendar(year.toInt(), (month - 1u).toInt(), day.toInt(), 0, 0, 0).getTime()
-            return date.time
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month - 1)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            return calendar.timeInMillis
         }
 
-        fun readTime(data: ByteArray, start: Int): Long {
-            val lowBit = data[start].toUByte().toUInt()
-            val highBit = data[start+1].toUByte().toUInt()
+        fun readTime(data: UByteArray, start: Int): Long {
+            val lowBit = data[start].toInt()
+            val highBit = data[start+1].toInt()
 
-            val hour = (highBit shr 3).toLong()
-            val minute = (((highBit and 7u) shl 3) or (lowBit shr 5)).toLong()
-            val second = ((lowBit and 31u) * 2u).toLong()
+            val hour = highBit shr 3
+            val minute = ((highBit and 7) shl 3) or (lowBit shr 5)
+            val second = (lowBit and 31) * 2
 
-            return TimeUnit.HOURS.toMillis(hour) +
-                TimeUnit.MINUTES.toMillis(minute) +
-                TimeUnit.SECONDS.toMillis(second)
+
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
+            calendar.set(Calendar.YEAR, 1970)
+            calendar.set(Calendar.MONTH, 0)
+            calendar.set(Calendar.DAY_OF_MONTH, 1)
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+            calendar.set(Calendar.MINUTE, minute)
+            calendar.set(Calendar.SECOND, second)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            return calendar.timeInMillis
         }
 
-        fun readTimezone(data: ByteArray, start: Int): Long {
+        fun readTimezone(data: UByteArray, start: Int): Long {
             var timezoneOffset = readTime(data, start)
-            if (data[start + 2] != 0.toByte()) {
+            if (data[start + 2] != 0.toUByte()) {
                 timezoneOffset *= -1
             }
 
             return timezoneOffset
         }
 
-        fun readGlucose(data: ByteArray, start: Int): Int {
-            val lowBit =  data[start].toUByte().toInt()
-            val highBit = data[start+1].toUByte().toInt() shl 8
+        fun readGlucose(data: UByteArray, start: Int): Int {
+            val lowBit =  data[start].toInt()
+            val highBit = data[start+1].toInt() shl 8
             return lowBit or highBit
         }
     }
