@@ -11,6 +11,8 @@ import android.os.ParcelUuid
 import com.nightscout.eversense.callbacks.EversenseScanCallback
 import com.nightscout.eversense.callbacks.EversenseWatcher
 import com.nightscout.eversense.models.EversenseState
+import com.nightscout.eversense.models.EversenseTransmitterSettings
+import com.nightscout.eversense.packets.EversenseE3Communicator
 import kotlinx.serialization.json.Json
 
 class EversenseCGMPlugin {
@@ -110,6 +112,25 @@ class EversenseCGMPlugin {
 
         remoteDevice.connectGatt(context, true, gattCallback)
         return true
+    }
+
+    fun writeSettings(settings: EversenseTransmitterSettings): Boolean {
+        val preferences = preferences ?:run {
+            EversenseLogger.error(TAG, "No preferences available. Make sure setContext has been called")
+            return false
+        }
+
+        val gattCallback = this.gattCallback ?:run {
+            EversenseLogger.error(TAG, "No gattCallback available. Make sure transmitter is connected before writing settings")
+            return false
+        }
+
+        if (!gattCallback.isConnected()) {
+            EversenseLogger.error(TAG, "Transmitter is not connected...")
+            return false
+        }
+
+        return EversenseE3Communicator.writeSettings(gattCallback, preferences, settings)
     }
 
     companion object {

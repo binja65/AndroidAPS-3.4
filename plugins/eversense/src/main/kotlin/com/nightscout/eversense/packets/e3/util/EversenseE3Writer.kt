@@ -2,9 +2,28 @@ package com.nightscout.eversense.packets.e3.util
 
 import java.util.Calendar
 import java.util.TimeZone
+import kotlin.math.PI
 
 class EversenseE3Writer {
     companion object {
+        fun generateChecksumCRC16(data: ByteArray): ByteArray {
+            var crc = 0xFFFF
+
+            for (byte in data) {
+                var currentByte = byte.toInt() and 0xFF
+                repeat(8) {
+                    val xor = ((crc shr 15) and 0x01) xor ((currentByte shr 7) and 0x01)
+                    crc = (crc shl 1) and 0xFFFF
+                    if (xor != 0) {
+                        crc = (crc xor 0x1021) and 0xFFFF
+                    }
+                    currentByte = (currentByte shl 1) and 0xFF
+                }
+            }
+
+            return writeInt16(crc)
+        }
+
         fun writeDate(timestamp: Long): ByteArray {
             val calendar = Calendar.getInstance()
             calendar.setTimeInMillis(timestamp)
@@ -38,6 +57,17 @@ class EversenseE3Writer {
             val timezoneNegative = if (timezoneOffset < 0) 255 else 0
 
             return writeTime(timezoneOffset.toLong()) + byteArrayOf(timezoneNegative.toByte())
+        }
+
+        fun writeBoolean(value: Boolean): ByteArray {
+            return byteArrayOf(if (value) 0x55 else 0x00)
+        }
+
+        fun writeInt16(value: Int): ByteArray {
+            return byteArrayOf(
+                value.toByte(),
+                (value shr 8).toByte()
+            )
         }
     }
 }

@@ -3,6 +3,7 @@ package com.nightscout.eversense.packets
 import com.nightscout.eversense.EversenseLogger
 import com.nightscout.eversense.enums.EversenseSecurityType
 import com.nightscout.eversense.packets.e3.EversenseE3Packets
+import com.nightscout.eversense.packets.e3.util.EversenseE3Writer
 
 abstract class EversenseBasePacket : Object() {
     abstract fun getRequestData(): ByteArray
@@ -42,7 +43,7 @@ abstract class EversenseBasePacket : Object() {
         if (annotation.securityType == EversenseSecurityType.None) {
             var requestData = byteArrayOf(annotation.requestId)
             requestData += this.getRequestData()
-            requestData += BinaryOperations.generateChecksumCRC16(requestData)
+            requestData += EversenseE3Writer.generateChecksumCRC16(requestData)
 
             return requestData
         } else {
