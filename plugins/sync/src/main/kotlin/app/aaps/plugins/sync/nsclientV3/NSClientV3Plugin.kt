@@ -825,13 +825,13 @@ class NSClientV3Plugin @Inject constructor(
             initialExpandedChildrenCount = 0
             addPreference(
                 AdaptiveStringPreference(
-                    ctx = context, stringKey = StringKey.NsClientUrl, dialogMessage = R.string.ns_client_url_dialog_message, title = R.string.ns_client_url_title,
+                    ctx = context, stringKey = StringKey.NsClientUrl, dialogMessage = app.aaps.core.keys.R.string.ns_client_url_summary, title = app.aaps.core.keys.R.string.ns_client_url_title,
                     validatorParams = DefaultEditTextValidator.Parameters(testType = EditTextValidator.TEST_HTTPS_URL)
                 )
             )
             addPreference(
                 AdaptiveStringPreference(
-                    ctx = context, stringKey = StringKey.NsClientAccessToken, dialogMessage = R.string.nsclient_token_dialog_message, title = R.string.nsclient_token_title,
+                    ctx = context, stringKey = StringKey.NsClientAccessToken, dialogMessage = app.aaps.core.keys.R.string.nsclient_token_summary, title = app.aaps.core.keys.R.string.nsclient_token_title,
                     validatorParams = DefaultEditTextValidator.Parameters(testType = EditTextValidator.TEST_MIN_LENGTH, minLength = 17)
                 )
             )
@@ -867,7 +867,7 @@ class NSClientV3Plugin @Inject constructor(
                 addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.NsClientUseWifi, title = R.string.ns_wifi))
                 addPreference(
                     AdaptiveStringPreference(
-                        ctx = context, stringKey = StringKey.NsClientWifiSsids, dialogMessage = R.string.ns_wifi_allowed_ssids, title = R.string.ns_wifi_ssids,
+                        ctx = context, stringKey = StringKey.NsClientWifiSsids, dialogMessage = app.aaps.core.keys.R.string.ns_wifi_ssids_summary, title = app.aaps.core.keys.R.string.ns_wifi_ssids,
                         validatorParams = DefaultEditTextValidator.Parameters(emptyAllowed = true)
                     )
                 )

@@ -2,6 +2,7 @@ package app.aaps.core.keys
 
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.StringPreferenceKey
+import app.aaps.core.keys.interfaces.StringValidator
 
 enum class StringKey(
     override val key: String,
@@ -19,7 +20,8 @@ enum class StringKey(
     override val hideParentScreenIfHidden: Boolean = false,
     override val isPassword: Boolean = false,
     override val isPin: Boolean = false,
-    override val exportable: Boolean = true
+    override val exportable: Boolean = true,
+    override val validator: StringValidator = StringValidator.NONE
 ) : StringPreferenceKey {
 
     GeneralUnits(
@@ -67,17 +69,24 @@ enum class StringKey(
         ),
         defaultedBySM = true
     ),
-    GeneralPatientName(key = "patient_name", defaultValue = "", titleResId = R.string.pref_title_patient_name),
+    GeneralPatientName(
+        key = "patient_name",
+        defaultValue = "",
+        titleResId = R.string.pref_title_patient_name,
+        summaryResId = R.string.pref_summary_patient_name,
+        validator = StringValidator.personName()
+    ),
     GeneralSkin(key = "skin", defaultValue = "", titleResId = R.string.pref_title_skin, preferenceType = PreferenceType.LIST),
     GeneralDarkMode(
         key = "use_dark_mode",
         defaultValue = "dark",
-        titleResId = R.string.pref_title_dark_mode,
+        titleResId = R.string.pref_title_app_color_scheme,
+        summaryResId = R.string.pref_summary_theme_switcher,
         preferenceType = PreferenceType.LIST,
         entries = mapOf(
-            "dark" to R.string.dark_mode_dark,
-            "light" to R.string.dark_mode_light,
-            "system" to R.string.dark_mode_system
+            "dark" to R.string.pref_dark_theme,
+            "light" to R.string.pref_light_theme,
+            "system" to R.string.pref_follow_system_theme
         ),
         defaultedBySM = true
     ),
@@ -95,7 +104,13 @@ enum class StringKey(
     OverviewCopySettingsFromNs(key = "statuslights_copy_ns", defaultValue = "", titleResId = R.string.pref_title_copy_settings_from_ns, dependency = BooleanKey.OverviewShowStatusLights),
 
     SafetyAge(key = "age", defaultValue = "adult", titleResId = R.string.pref_title_patient_age, preferenceType = PreferenceType.LIST),
-    MaintenanceEmail(key = "maintenance_logs_email", defaultValue = "logs@aaps.app", titleResId = R.string.pref_title_logs_email, defaultedBySM = true),
+    MaintenanceEmail(
+        key = "maintenance_logs_email",
+        defaultValue = "logs@aaps.app",
+        titleResId = R.string.maintenance_email,
+        defaultedBySM = true,
+        validator = StringValidator.email()
+    ),
     MaintenanceIdentification(key = "email_for_crash_report", defaultValue = "", titleResId = R.string.pref_title_identification),
     AutomationLocation(
         key = "location",
@@ -110,13 +125,53 @@ enum class StringKey(
         hideParentScreenIfHidden = true
     ),
 
-    SmsAllowedNumbers(key = "smscommunicator_allowednumbers", defaultValue = "", titleResId = R.string.pref_title_sms_allowed_numbers),
-    SmsOtpPassword(key = "smscommunicator_otp_password", defaultValue = "", titleResId = R.string.pref_title_sms_otp_password, dependency = BooleanKey.SmsAllowRemoteCommands, isPassword = true),
+    SmsAllowedNumbers(
+        key = "smscommunicator_allowednumbers",
+        defaultValue = "",
+        titleResId = R.string.smscommunicator_allowednumbers,
+        summaryResId = R.string.smscommunicator_allowednumbers_summary,
+        validator = StringValidator.multiPhone()
+    ),
+    SmsOtpPassword(
+        key = "smscommunicator_otp_password",
+        defaultValue = "",
+        titleResId = R.string.smscommunicator_otp_pin,
+        summaryResId = R.string.smscommunicator_otp_pin_summary,
+        dependency = BooleanKey.SmsAllowRemoteCommands,
+        isPassword = true,
+        validator = StringValidator.pinStrength()
+    ),
 
     VirtualPumpType(key = "virtualpump_type", defaultValue = "Generic AAPS", titleResId = R.string.pref_title_virtual_pump_type, preferenceType = PreferenceType.LIST),
 
-    NsClientUrl(key = "nsclientinternal_url", defaultValue = "", titleResId = R.string.pref_title_ns_url),
-    NsClientApiSecret(key = "nsclientinternal_api_secret", defaultValue = "", titleResId = R.string.pref_title_ns_api_secret, isPassword = true),
-    NsClientWifiSsids(key = "ns_wifi_ssids", defaultValue = "", titleResId = R.string.pref_title_ns_wifi_ssids, dependency = BooleanKey.NsClientUseWifi),
-    NsClientAccessToken(key = "nsclient_token", defaultValue = "", titleResId = R.string.pref_title_ns_access_token, isPassword = true),
+    NsClientUrl(
+        key = "nsclientinternal_url",
+        defaultValue = "",
+        titleResId = R.string.ns_client_url_title,
+        summaryResId = R.string.ns_client_url_summary,
+        validator = StringValidator.httpsUrl()
+    ),
+    NsClientApiSecret(
+        key = "nsclientinternal_api_secret",
+        defaultValue = "",
+        titleResId = R.string.ns_client_secret_title,
+        summaryResId = R.string.ns_client_secret_summary,
+        isPassword = true,
+        validator = StringValidator.minLength(12)
+    ),
+    NsClientWifiSsids(
+        key = "ns_wifi_ssids",
+        defaultValue = "",
+        titleResId = R.string.ns_wifi_ssids,
+        summaryResId = R.string.ns_wifi_ssids_summary,
+        dependency = BooleanKey.NsClientUseWifi
+    ),
+    NsClientAccessToken(
+        key = "nsclient_token",
+        defaultValue = "",
+        titleResId = R.string.nsclient_token_title,
+        summaryResId = R.string.nsclient_token_summary,
+        isPassword = true,
+        validator = StringValidator.minLength(17)
+    ),
 }

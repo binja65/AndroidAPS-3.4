@@ -374,9 +374,9 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
         }
 
         val darkModeEntries = arrayOf<CharSequence>(
-            rh.gs(app.aaps.plugins.main.R.string.dark_theme),
-            rh.gs(app.aaps.plugins.main.R.string.light_theme),
-            rh.gs(app.aaps.plugins.main.R.string.follow_system_theme),
+            rh.gs(app.aaps.core.keys.R.string.pref_dark_theme),
+            rh.gs(app.aaps.core.keys.R.string.pref_light_theme),
+            rh.gs(app.aaps.core.keys.R.string.pref_follow_system_theme),
         )
         val darkModeValues = arrayOf<CharSequence>(
             UiMode.DARK.stringValue,
@@ -395,7 +395,7 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.GeneralSimpleMode, title = R.string.simple_mode))
             addPreference(
                 AdaptiveStringPreference(
-                    ctx = context, stringKey = StringKey.GeneralPatientName, summary = app.aaps.plugins.configuration.R.string.patient_name_summary, title = app.aaps.plugins.configuration.R.string.patient_name,
+                    ctx = context, stringKey = StringKey.GeneralPatientName, summary = app.aaps.core.keys.R.string.pref_summary_patient_name, title = app.aaps.core.keys.R.string.pref_title_patient_name,
                     validatorParams = DefaultEditTextValidator.Parameters(testType = EditTextValidator.TEST_PERSONNAME)
                 )
             )
@@ -406,8 +406,8 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
                     stringKey = StringKey.GeneralDarkMode,
                     entries = darkModeEntries,
                     entryValues = darkModeValues,
-                    title = app.aaps.plugins.main.R.string.app_color_scheme,
-                    summary = app.aaps.plugins.main.R.string.theme_switcher_summary
+                    title = app.aaps.core.keys.R.string.pref_title_app_color_scheme,
+                    summary = app.aaps.core.keys.R.string.pref_summary_theme_switcher
                 )
             )
         }

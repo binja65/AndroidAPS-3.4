@@ -43,6 +43,10 @@ import app.aaps.plugins.configuration.activities.SingleFragmentActivity
 import app.aaps.plugins.configuration.setupwizard.SetupWizardActivity
 import app.aaps.plugins.main.profile.ProfileScreen
 import app.aaps.plugins.main.profile.ProfileViewModel
+import app.aaps.plugins.aps.autotune.AutotunePlugin
+import app.aaps.plugins.automation.AutomationPlugin
+import app.aaps.plugins.configuration.maintenance.MaintenancePlugin
+import app.aaps.plugins.main.general.smsCommunicator.SmsCommunicatorPlugin
 import app.aaps.plugins.main.skins.SkinProvider
 import app.aaps.ui.compose.ProfileHelperScreen
 import app.aaps.ui.compose.StatsScreen
@@ -66,6 +70,10 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
     @Inject lateinit var config: Config
     @Inject lateinit var uiInteraction: UiInteraction
     @Inject lateinit var skinProvider: SkinProvider
+    @Inject lateinit var smsCommunicatorPlugin: SmsCommunicatorPlugin
+    @Inject lateinit var automationPlugin: AutomationPlugin
+    @Inject lateinit var autotunePlugin: AutotunePlugin
+    @Inject lateinit var maintenancePlugin: MaintenancePlugin
 
     // ViewModels
     @Inject lateinit var mainViewModel: MainViewModel
@@ -251,11 +259,15 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
 
                     composable(AppRoute.Preferences.route) {
                         AllPreferencesScreen(
-                            plugins = activePlugin.getPluginsList(),
+                            activePlugin = activePlugin,
                             preferences = preferences,
                             config = config,
                             rh = rh,
                             passwordCheck = passwordCheck,
+                            smsCommunicatorPlugin = smsCommunicatorPlugin,
+                            automationPlugin = automationPlugin,
+                            autotunePlugin = autotunePlugin,
+                            maintenancePlugin = maintenancePlugin,
                             skins = skinProvider.list,
                             onBackClick = { navController.popBackStack() }
                         )

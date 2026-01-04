@@ -3,6 +3,7 @@ package app.aaps.pump.dana.keys
 import app.aaps.core.keys.PreferenceType
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.StringPreferenceKey
+import app.aaps.core.keys.interfaces.StringValidator
 import app.aaps.pump.dana.R
 
 enum class DanaStringKey(
@@ -19,11 +20,18 @@ enum class DanaStringKey(
     override val hideParentScreenIfHidden: Boolean = false,
     override val isPassword: Boolean = false,
     override val isPin: Boolean = false,
-    override val exportable: Boolean = true
+    override val exportable: Boolean = true,
+    override val validator: StringValidator = StringValidator.NONE
 ) : StringPreferenceKey {
 
     RName("danar_bt_name", "", titleResId = R.string.danar_bt_name_title, preferenceType = PreferenceType.LIST),
     RsName("danars_name", "", titleResId = R.string.selectedpump),
     MacAddress("danars_address", ""),
-    Password("danars_password", "", titleResId = R.string.danars_password_title, isPassword = true),
+    Password(
+        key = "danars_password",
+        defaultValue = "",
+        titleResId = R.string.danars_password_title,
+        isPassword = true,
+        validator = StringValidator.regex("^[A-F0-9]{4}$", "Must be 4 hexadecimal digits (0-9, A-F)")
+    ),
 }

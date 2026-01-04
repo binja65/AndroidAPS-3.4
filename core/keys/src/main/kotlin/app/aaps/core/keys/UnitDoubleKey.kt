@@ -26,5 +26,5 @@ enum class UnitDoubleKey(
     OverviewHypoTarget(key = "hypo_target", defaultValue = 160.0, minMgdl = 108, maxMgdl = 180, titleResId = R.string.pref_title_hypo_target, defaultedBySM = true),
     OverviewLowMark(key = "low_mark", defaultValue = 72.0, minMgdl = 25, maxMgdl = 160, titleResId = R.string.pref_title_low_mark, showInNsClientMode = false, hideParentScreenIfHidden = true),
     OverviewHighMark(key = "high_mark", defaultValue = 180.0, minMgdl = 90, maxMgdl = 250, titleResId = R.string.pref_title_high_mark, showInNsClientMode = false),
-    ApsLgsThreshold(key = "lgsThreshold", defaultValue = 65.0, minMgdl = 60, maxMgdl = 100, titleResId = R.string.pref_title_lgs_threshold, defaultedBySM = true, dependency = BooleanKey.ApsUseDynamicSensitivity)
+    ApsLgsThreshold(key = "lgsThreshold", defaultValue = 65.0, minMgdl = 60, maxMgdl = 100, titleResId = R.string.pref_title_lgs_threshold, summaryResId = R.string.lgs_threshold_summary, defaultedBySM = true, dependency = BooleanKey.ApsUseDynamicSensitivity)
 }

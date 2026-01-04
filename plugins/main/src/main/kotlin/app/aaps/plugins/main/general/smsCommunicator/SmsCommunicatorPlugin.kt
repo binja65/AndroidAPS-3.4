@@ -202,7 +202,7 @@ class SmsCommunicatorPlugin @Inject constructor(
         super.updatePreferenceSummary(pref)
         if (pref is EditTextPreference) {
             if (pref.key.contains(StringKey.SmsAllowedNumbers.key) && (TextUtils.isEmpty(pref.text?.trim { it <= ' ' }))) {
-                pref.setSummary(rh.gs(R.string.smscommunicator_allowednumbers_summary))
+                pref.setSummary(rh.gs(app.aaps.core.keys.R.string.smscommunicator_allowednumbers_summary))
             }
         }
     }
@@ -1312,7 +1312,7 @@ class SmsCommunicatorPlugin @Inject constructor(
             initialExpandedChildrenCount = 0
             addPreference(
                 AdaptiveStringPreference(
-                    ctx = context, stringKey = StringKey.SmsAllowedNumbers, summary = R.string.smscommunicator_allowednumbers_summary, title = R.string.smscommunicator_allowednumbers,
+                    ctx = context, stringKey = StringKey.SmsAllowedNumbers, summary = app.aaps.core.keys.R.string.smscommunicator_allowednumbers_summary, title = app.aaps.core.keys.R.string.smscommunicator_allowednumbers,
                     validatorParams = DefaultEditTextValidator.Parameters(testType = EditTextValidator.TEST_MULTI_PHONE)
                 )
             )
@@ -1320,7 +1320,7 @@ class SmsCommunicatorPlugin @Inject constructor(
             addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.SmsRemoteBolusDistance, summary = R.string.smscommunicator_remote_bolus_min_distance_summary, title = R.string.smscommunicator_remote_bolus_min_distance))
             addPreference(
                 AdaptiveStringPreference(
-                    ctx = context, stringKey = StringKey.SmsOtpPassword, summary = R.string.smscommunicator_otp_pin_summary, title = R.string.smscommunicator_otp_pin,
+                    ctx = context, stringKey = StringKey.SmsOtpPassword, summary = app.aaps.core.keys.R.string.smscommunicator_otp_pin_summary, title = app.aaps.core.keys.R.string.smscommunicator_otp_pin,
                     validatorParams = DefaultEditTextValidator.Parameters(testType = EditTextValidator.TEST_PIN_STRENGTH)
                 )
             )

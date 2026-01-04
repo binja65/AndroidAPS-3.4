@@ -256,7 +256,7 @@ class MaintenancePlugin @Inject constructor(
             initialExpandedChildrenCount = 0
             addPreference(
                 AdaptiveStringPreference(
-                    ctx = context, stringKey = StringKey.MaintenanceEmail, dialogMessage = R.string.maintenance_email, title = R.string.maintenance_email,
+                    ctx = context, stringKey = StringKey.MaintenanceEmail, dialogMessage = app.aaps.core.keys.R.string.maintenance_email, title = app.aaps.core.keys.R.string.maintenance_email,
                     validatorParams = DefaultEditTextValidator.Parameters(testType = EditTextValidator.TEST_EMAIL)
                 )
             )

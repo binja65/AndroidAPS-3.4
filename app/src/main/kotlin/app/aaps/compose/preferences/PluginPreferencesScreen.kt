@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import app.aaps.R
+import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.interfaces.configuration.Config
+import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.resources.ResourceHelper
@@ -29,6 +31,10 @@ import app.aaps.core.ui.compose.preference.ProvidePreferenceTheme
 import app.aaps.core.ui.compose.preference.addNavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.rememberPreferenceSectionState
 import app.aaps.core.ui.compose.preference.verticalScrollIndicators
+import app.aaps.plugins.automation.AutomationPlugin
+import app.aaps.plugins.aps.autotune.AutotunePlugin
+import app.aaps.plugins.configuration.maintenance.MaintenancePlugin
+import app.aaps.plugins.main.general.smsCommunicator.SmsCommunicatorPlugin
 import app.aaps.plugins.main.skins.SkinInterface
 
 /**
@@ -99,22 +105,32 @@ fun PluginPreferencesScreen(
 
 /**
  * Screen for displaying all preferences from all plugins.
+ * Maintains the same ordering as the legacy MyPreferenceFragment.
  *
- * @param plugins List of plugins to display preferences for
+ * @param activePlugin ActivePlugin instance for accessing active plugins
  * @param preferences Preferences instance for built-in settings
  * @param config Config instance
+ * @param rh ResourceHelper instance
  * @param passwordCheck PasswordCheck for protection settings
+ * @param smsCommunicatorPlugin SmsCommunicatorPlugin instance
+ * @param automationPlugin AutomationPlugin instance
+ * @param autotunePlugin AutotunePlugin instance
+ * @param maintenancePlugin MaintenancePlugin instance
  * @param skins List of available skins
  * @param onBackClick Callback when back button is clicked
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllPreferencesScreen(
-    plugins: List<PluginBase>,
+    activePlugin: ActivePlugin,
     preferences: Preferences,
     config: Config,
     rh: ResourceHelper,
     passwordCheck: PasswordCheck,
+    smsCommunicatorPlugin: SmsCommunicatorPlugin,
+    automationPlugin: AutomationPlugin,
+    autotunePlugin: AutotunePlugin,
+    maintenancePlugin: MaintenancePlugin,
     skins: List<SkinInterface>,
     onBackClick: () -> Unit
 ) {
@@ -124,11 +140,62 @@ fun AllPreferencesScreen(
     val pumpPreferences = PumpPreferencesCompose(preferences, config)
     val alertsPreferences = AlertsPreferencesCompose(preferences, config)
 
-    // Plugin preference screens
-    val pluginContents = plugins
-        .mapNotNull { it.getPreferenceScreenContent() }
-        .filterIsInstance<NavigablePreferenceContent>()
-        .distinctBy { it.keyPrefix }
+    // Helper function to get preference content if plugin is enabled
+    fun getPreferenceContentIfEnabled(plugin: PluginBase, enabledCondition: Boolean = true): NavigablePreferenceContent? {
+        // Check simple mode visibility
+        if (preferences.simpleMode && !plugin.pluginDescription.preferencesVisibleInSimpleMode && !config.isDev()) {
+            return null
+        }
+        // Check if plugin is enabled
+        if (!enabledCondition || !plugin.isEnabled()) {
+            return null
+        }
+        return plugin.getPreferenceScreenContent() as? NavigablePreferenceContent
+    }
+
+    // Build plugin preference screens in the same order as MyPreferenceFragment
+    val pluginContents = buildList {
+        // 1. Overview plugin (always enabled)
+        getPreferenceContentIfEnabled(activePlugin.activeOverview as PluginBase)?.let { add(it) }
+
+        // 2. Safety plugin (always enabled)
+        getPreferenceContentIfEnabled(activePlugin.activeSafety as PluginBase)?.let { add(it) }
+
+        // 3. BG Source plugin
+        getPreferenceContentIfEnabled(activePlugin.activeBgSource as PluginBase)?.let { add(it) }
+
+        // 4. LOOP type plugins (enabled only if APS is configured)
+        activePlugin.getSpecificPluginsList(PluginType.LOOP).forEach { plugin ->
+            getPreferenceContentIfEnabled(plugin, config.APS)?.let { add(it) }
+        }
+
+        // 5. APS plugin (enabled only if APS is configured)
+        getPreferenceContentIfEnabled(activePlugin.activeAPS as PluginBase, config.APS)?.let { add(it) }
+
+        // 6. Sensitivity plugin
+        getPreferenceContentIfEnabled(activePlugin.activeSensitivity as PluginBase)?.let { add(it) }
+
+        // 7. Pump plugin
+        getPreferenceContentIfEnabled(activePlugin.activePump as PluginBase)?.let { add(it) }
+
+        // 8. Insulin plugin
+        getPreferenceContentIfEnabled(activePlugin.activeInsulin as PluginBase)?.let { add(it) }
+
+        // 9. SYNC type plugins
+        activePlugin.getSpecificPluginsList(PluginType.SYNC).forEach { plugin ->
+            getPreferenceContentIfEnabled(plugin)?.let { add(it) }
+        }
+
+        // 10. SMS Communicator plugin
+        getPreferenceContentIfEnabled(smsCommunicatorPlugin)?.let { add(it) }
+
+        // 11. Automation plugin
+        getPreferenceContentIfEnabled(automationPlugin)?.let { add(it) }
+
+        // 12. Autotune plugin
+        getPreferenceContentIfEnabled(autotunePlugin)?.let { add(it) }
+    }
+    // Note: Maintenance plugin is added after Alerts in the LazyColumn below
 
     ProvidePreferenceTheme {
         Scaffold(
@@ -166,7 +233,7 @@ fun AllPreferencesScreen(
                 // Built-in: Protection settings
                 addNavigablePreferenceContent(protectionPreferences, sectionState)
 
-                // Plugin preferences
+                // Plugin preferences (in fixed order, only enabled plugins)
                 pluginContents.forEach { content ->
                     addNavigablePreferenceContent(content, sectionState)
                 }
@@ -174,8 +241,13 @@ fun AllPreferencesScreen(
                 // Built-in: Pump settings
                 addNavigablePreferenceContent(pumpPreferences, sectionState)
 
-                // Built-in: Alerts settings (last)
+                // Built-in: Alerts settings
                 addNavigablePreferenceContent(alertsPreferences, sectionState)
+
+                // Maintenance plugin (last)
+                getPreferenceContentIfEnabled(maintenancePlugin)?.let { content ->
+                    addNavigablePreferenceContent(content, sectionState)
+                }
             }
         }
     }

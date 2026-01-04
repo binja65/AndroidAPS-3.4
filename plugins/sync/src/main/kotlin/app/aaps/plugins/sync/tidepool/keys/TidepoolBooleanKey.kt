@@ -7,6 +7,7 @@ enum class TidepoolBooleanKey(
     override val key: String,
     override val defaultValue: Boolean,
     override val titleResId: Int,
+    override val summaryResId: Int? = null,
     override val calculatedDefaultValue: Boolean = false,
     override val defaultedBySM: Boolean = false,
     override val showInApsMode: Boolean = true,
@@ -19,5 +20,5 @@ enum class TidepoolBooleanKey(
     override val exportable: Boolean = true
 ) : BooleanPreferenceKey {
 
-    UseTestServers("tidepool_dev_servers", false, titleResId = R.string.title_tidepool_dev_servers),
+    UseTestServers("tidepool_dev_servers", false, titleResId = R.string.title_tidepool_dev_servers, summaryResId = R.string.summary_tidepool_dev_servers),
 }

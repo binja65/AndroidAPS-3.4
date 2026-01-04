@@ -25,7 +25,13 @@ enum class DanaIntKey(
     override val exportable: Boolean = true
 ) : IntPreferenceKey {
 
-    Password("danar_password", 0, titleResId = R.string.danar_password_title),
+    Password(
+        key = "danar_password",
+        defaultValue = 0,
+        titleResId = R.string.danar_password_title,
+        min = 0,
+        max = 9999  // 4-digit password (0000-9999)
+    ),
     BolusSpeed(
         key = "danars_bolusspeed",
         defaultValue = 0,

@@ -29,8 +29,6 @@
     <string name="common_values">Use values of your largest food you usually eat\n</string>
     <string name="syncinfotext">Synchronize data to the cloud. You can skip this part now but you will not be able to pass objectives until you set up Nightscout or Tidepool client.</string>
     <string name="status">Status:</string>
-    <string name="patient_name">Patient name</string>
-    <string name="patient_name_summary">Please provide patient name or nickname to differentiate among multiple setups</string>
     <string name="diawarning">Please remember: new insulin profiles require DIA at least 5h. DIA 5–6h on new profile is equal to DIA 3h on old insulin profiles.</string>
     <string name="profile">Profile</string>
     <string name="doprofileswitch">Do Profile Switch</string>
@@ -170,5 +168,6 @@
     <string name="metadata_format_other">Unknown export format</string>
     <string name="reset_aps_results">Reset APS results</string>
     <string name="error_accessing_filesystem_select_aaps_directory_properly">Error accessing filesystem. Select AAPS directory properly.</string>
+    <!-- maintenance_email moved to core:keys module -->
 
 </resources>

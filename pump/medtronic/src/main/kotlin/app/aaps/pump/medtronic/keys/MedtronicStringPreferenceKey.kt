@@ -3,6 +3,7 @@ package app.aaps.pump.medtronic.keys
 import app.aaps.core.keys.PreferenceType
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.StringPreferenceKey
+import app.aaps.core.keys.interfaces.StringValidator
 import app.aaps.pump.medtronic.R
 import app.aaps.pump.medtronic.defs.BatteryType
 
@@ -22,13 +23,15 @@ enum class MedtronicStringPreferenceKey(
     override val hideParentScreenIfHidden: Boolean = false,
     override val isPassword: Boolean = false,
     override val isPin: Boolean = false,
-    override val exportable: Boolean = true
+    override val exportable: Boolean = true,
+    override val validator: StringValidator = StringValidator.NONE
 ) : StringPreferenceKey {
 
     Serial(
         key = "pref_medtronic_serial",
         defaultValue = "000000",
-        titleResId = R.string.medtronic_serial_number
+        titleResId = R.string.medtronic_serial_number,
+        validator = StringValidator.regex("^\\d{6}$", "Must be 6 digits")
     ),
     PumpType(
         key = "pref_medtronic_pump_type",

@@ -23,7 +23,7 @@ class GeneralPreferencesCompose(
     private val preferences: Preferences,
     private val config: Config,
     private val rh: ResourceHelper,
-    private val skins: List<SkinInterface>
+    skins: List<SkinInterface>
 ) : NavigablePreferenceContent {
 
     override val titleResId: Int = app.aaps.plugins.configuration.R.string.configbuilder_general

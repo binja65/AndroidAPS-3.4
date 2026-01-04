@@ -85,6 +85,20 @@ fun interface StringValidator {
             errorMessage = errorMessage
         )
 
+        /** Validates person name (letters, spaces, hyphens, apostrophes) */
+        fun personName(errorMessage: String = "Invalid name format") = regex(
+            pattern = "^[a-zA-Z\\s'-]+$",
+            errorMessage = errorMessage
+        )
+
+        /** Validates PIN strength (minimum 6 digits) */
+        fun pinStrength(errorMessage: String = "PIN must be at least 6 digits") = StringValidator { value ->
+            if (value.isEmpty()) return@StringValidator ValidationResult.VALID
+            if (value.length < 6) return@StringValidator ValidationResult.invalid("PIN must be at least 6 digits")
+            if (!Regex("^[0-9]+$").matches(value)) return@StringValidator ValidationResult.invalid("PIN must contain only digits")
+            ValidationResult.VALID
+        }
+
         /** Combines multiple validators - all must pass */
         fun all(vararg validators: StringValidator) = StringValidator { value ->
             for (validator in validators) {

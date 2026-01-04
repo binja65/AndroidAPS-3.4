@@ -271,9 +271,9 @@ class SWDefinition @Inject constructor(
             .validator { activePlugin.activeNsClient?.connected == true && activePlugin.activeNsClient?.hasWritePermission == true }
 
     private val screenPatientName
-        get() = swScreenProvider.get().with(R.string.patient_name)
+        get() = swScreenProvider.get().with(app.aaps.core.keys.R.string.pref_title_patient_name)
             .skippable(true)
-            .add(swInfoTextProvider.get().label(R.string.patient_name_summary))
+            .add(swInfoTextProvider.get().label(app.aaps.core.keys.R.string.pref_summary_patient_name))
             .add(swEditStringProvider.get().validator(String::isNotEmpty).preference(StringKey.GeneralPatientName))
 
     private val screenMasterPassword

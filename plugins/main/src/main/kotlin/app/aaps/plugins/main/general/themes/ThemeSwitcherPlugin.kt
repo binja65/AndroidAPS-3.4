@@ -33,7 +33,7 @@ class ThemeSwitcherPlugin @Inject constructor(
         .neverVisible(true)
         .alwaysEnabled(true)
         .showInList { false }
-        .pluginName(R.string.theme_switcher),
+        .pluginName(app.aaps.core.keys.R.string.theme_switcher),
     aapsLogger, rh
 ) {
 
