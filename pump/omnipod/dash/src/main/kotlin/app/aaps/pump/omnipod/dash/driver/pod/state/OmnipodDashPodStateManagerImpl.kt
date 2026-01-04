@@ -297,7 +297,6 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             // Determine rate at segment midpoint
             val segmentMid = (segmentStart + segmentEnd) / 2
             val rate = when {
-                isSuspended -> 0.0
                 tempBasal?.let { 
                     segmentMid >= it.startTime && 
                     segmentMid < it.startTime + it.durationInMinutes * 60_000L 
