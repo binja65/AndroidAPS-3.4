@@ -3,14 +3,13 @@ package app.aaps.plugins.main.general.overview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import app.aaps.core.interfaces.configuration.Config
-import app.aaps.core.interfaces.nsclient.NSSettingsStatus
+import app.aaps.core.interfaces.overview.Overview
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.core.keys.interfaces.PreferenceItem
-import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withActivity
@@ -28,12 +27,12 @@ import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
  * Uses lightweight PreferenceSubScreenDef with auto-generated content.
  */
 class OverviewPreferencesCompose(
-    private val nsSettingStatus: NSSettingsStatus,
     private val preferences: Preferences,
     private val config: Config,
     private val profileUtil: ProfileUtil,
     private val visibilityContext: PreferenceVisibilityContext,
-    private val quickWizardListActivity: Class<*>? = null
+    quickWizardListActivity: Class<*>? = null,
+    private val overview: Overview,
 ) : NavigablePreferenceContent {
 
     override val titleResId: Int = R.string.overview
@@ -146,9 +145,7 @@ class OverviewPreferencesCompose(
                         IntKey.OverviewBattCritical,
                         IntKey.OverviewBageWarning,
                         IntKey.OverviewBageCritical,
-                        OverviewIntentKey.CopyStatusLightsFromNS.withClick {
-                            nsSettingStatus.copyStatusLightsNsSettings(activityContext)
-                        }
+                        OverviewIntentKey.CopyStatusLightsFromNS.withClick { overview.applyStatusLightsFromNs(activityContext) }
                     ),
                     preferences = preferences,
                     config = config,

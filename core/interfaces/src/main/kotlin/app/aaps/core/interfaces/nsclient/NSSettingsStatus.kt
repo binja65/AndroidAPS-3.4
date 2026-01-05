@@ -9,5 +9,5 @@ interface NSSettingsStatus {
     fun getVersion(): String
     fun extendedPumpSettings(setting: String?): Double
     fun pumpExtendedSettingsFields(): String
-    fun copyStatusLightsNsSettings(context: Context?)
+    fun getExtendedWarnValue(plugin: String, property: String): Double?
 }

@@ -10,9 +10,12 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceScreen
 import app.aaps.core.data.plugin.PluginType
+import app.aaps.core.data.ue.Action
+import app.aaps.core.data.ue.Sources
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.logging.AAPSLogger
+import app.aaps.core.interfaces.logging.UserEntryLogger
 import app.aaps.core.interfaces.nsclient.NSSettingsStatus
 import app.aaps.core.interfaces.overview.Overview
 import app.aaps.core.interfaces.overview.OverviewData
@@ -30,7 +33,6 @@ import app.aaps.core.interfaces.rx.events.EventNewHistoryData
 import app.aaps.core.interfaces.rx.events.EventNewNotification
 import app.aaps.core.interfaces.rx.events.EventPumpStatusChanged
 import app.aaps.core.interfaces.rx.events.EventUpdateOverviewCalcProgress
-import app.aaps.core.interfaces.sharedPreferences.SP
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
 import app.aaps.core.keys.BooleanKey
@@ -70,7 +72,6 @@ class OverviewPlugin @Inject constructor(
     aapsLogger: AAPSLogger,
     rh: ResourceHelper,
     preferences: Preferences,
-    private val sp: SP,
     private val notificationStore: NotificationStore,
     private val fabricPrivacy: FabricPrivacy,
     private val rxBus: RxBus,
@@ -84,7 +85,8 @@ class OverviewPlugin @Inject constructor(
     private val config: Config,
     private val activePlugin: ActivePlugin,
     private val profileUtil: ProfileUtil,
-    private val visibilityContext: PreferenceVisibilityContext
+    private val visibilityContext: PreferenceVisibilityContext,
+    private val uel: UserEntryLogger,
 ) : PluginBaseWithPreferences(
     pluginDescription = PluginDescription()
         .mainType(PluginType.GENERAL)
@@ -230,12 +232,12 @@ class OverviewPlugin @Inject constructor(
     }
 
     override fun getPreferenceScreenContent(): Any = OverviewPreferencesCompose(
-        nsSettingStatus = nsSettingStatus,
         preferences = preferences,
         config = config,
         profileUtil = profileUtil,
         visibilityContext = visibilityContext,
-        quickWizardListActivity = uiInteraction.quickWizardListActivity
+        quickWizardListActivity = uiInteraction.quickWizardListActivity,
+        overview = this
     )
 
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
@@ -321,7 +323,7 @@ class OverviewPlugin @Inject constructor(
                     AdaptiveClickPreference(
                         ctx = context, stringKey = StringKey.OverviewCopySettingsFromNs, title = R.string.statuslights_copy_ns,
                         onPreferenceClickListener = {
-                            nsSettingStatus.copyStatusLightsNsSettings(context)
+                            applyStatusLightsFromNs(context)
                             true
                         })
                 )
@@ -338,20 +340,28 @@ class OverviewPlugin @Inject constructor(
         }
     }
 
-    override fun applyStatusLightsFromNs(
-        cageWarn: Int?, cageCritical: Int?,
-        iageWarn: Int?, iageCritical: Int?,
-        sageWarn: Int?, sageCritical: Int?,
-        bageWarn: Int?, bageCritical: Int?
-    ) {
-        cageWarn?.let { preferences.put(IntKey.OverviewCageWarning, it) }
-        cageCritical?.let { preferences.put(IntKey.OverviewCageCritical, it) }
-        iageWarn?.let { preferences.put(OverviewIntKey.IageWarning, it) }
-        iageCritical?.let { preferences.put(OverviewIntKey.IageCritical, it) }
-        sageWarn?.let { preferences.put(IntKey.OverviewSageWarning, it) }
-        sageCritical?.let { preferences.put(IntKey.OverviewSageCritical, it) }
-        bageWarn?.let { preferences.put(IntKey.OverviewBageWarning, it) }
-        bageCritical?.let { preferences.put(IntKey.OverviewBageCritical, it) }
+    override fun applyStatusLightsFromNs(context: Context?) {
+        val action = {
+            val cageWarn = nsSettingStatus.getExtendedWarnValue("cage", "warn")?.toInt()
+            val cageCritical = nsSettingStatus.getExtendedWarnValue("cage", "urgent")?.toInt()
+            val iageWarn = nsSettingStatus.getExtendedWarnValue("iage", "warn")?.toInt()
+            val iageCritical = nsSettingStatus.getExtendedWarnValue("iage", "urgent")?.toInt()
+            val sageWarn = nsSettingStatus.getExtendedWarnValue("sage", "warn")?.toInt()
+            val sageCritical = nsSettingStatus.getExtendedWarnValue("sage", "urgent")?.toInt()
+            val bageWarn = nsSettingStatus.getExtendedWarnValue("bage", "warn")?.toInt()
+            val bageCritical = nsSettingStatus.getExtendedWarnValue("bage", "urgent")?.toInt()
+            cageWarn?.let { preferences.put(IntKey.OverviewCageWarning, it) }
+            cageCritical?.let { preferences.put(IntKey.OverviewCageCritical, it) }
+            iageWarn?.let { preferences.put(OverviewIntKey.IageWarning, it) }
+            iageCritical?.let { preferences.put(OverviewIntKey.IageCritical, it) }
+            sageWarn?.let { preferences.put(IntKey.OverviewSageWarning, it) }
+            sageCritical?.let { preferences.put(IntKey.OverviewSageCritical, it) }
+            bageWarn?.let { preferences.put(IntKey.OverviewBageWarning, it) }
+            bageCritical?.let { preferences.put(IntKey.OverviewBageCritical, it) }
+            uel.log(Action.NS_SETTINGS_COPIED, Sources.NSClient)
+        }
+        if (context != null) uiInteraction.showOkCancelDialog(context = context, title = app.aaps.core.ui.R.string.statuslights, message = R.string.copy_existing_values, ok = action)
+        else action.invoke()
     }
 
     private val dismissReceiver = DismissNotificationReceiver()
