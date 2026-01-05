@@ -239,13 +239,9 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             store()
         }
 
-    private var bolusPulsesDelivered: Short?
+    private val bolusPulsesDelivered: Short?
         // Track pulses delivered via bolus for basal delivery detection
         get() = podState.bolusPulsesDelivered
-        set(value) {
-            podState.bolusPulsesDelivered = value
-            store()
-        }
 
     private val basalPulsesDelivered: Short?
         // Compute basal pulses delivered by subtracting bolus pulses from total pulses delivered
@@ -263,8 +259,14 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
         // Compute drift (actual - expected: positive = over-delivery, negative = under-delivery)
         get() = basalDelivered - (podState.basalExpected ?: basalDelivered)
 
-    private fun integrateExpectedDelivery(startTime: Long, endTime: Long): Double {
+    private fun integrateExpectedDelivery(startTime: Long, endTime: Long): Double? {
         logger.debug(LTag.PUMP, "integrateExpectedDelivery: period ${(endTime - startTime) / 1000.0}s")
+        
+        // Validate time period
+        if (startTime > endTime) {
+            logger.error(LTag.PUMP, "Invalid time period: startTime=$startTime > endTime=$endTime")
+            return null
+        }
         
         // Build list of time boundaries where rate changes
         val boundaries = mutableListOf(startTime)
@@ -299,7 +301,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             val rate = tempBasal?.takeIf { 
                 segmentMid >= it.startTime && 
                 segmentMid < it.startTime + it.durationInMinutes * 60_000L 
-            }?.rate ?: basalProgram?.rateAt(segmentMid) ?: 0.0
+            }?.rate ?: basalProgram?.rateAt(segmentMid) ?: return null
 
             total += rate * segmentHours
             
@@ -322,8 +324,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             Basal Drift:
               actual   = ${"%.3f".format(basalDelivered)}U
                 total delivered = ${"%.3f".format((pulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS)}U
-                bolus deliverd = ${"%.3f".format((bolusPulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS)}U
-                basal delivered= ${"%.3f".format(basalDelivered)}U
+                bolus delivered = ${"%.3f".format((bolusPulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS)}U
               expected = ${"%.3f".format(podState.basalExpected ?: basalDelivered)}U
               error    = ${"%.3f".format(basalDrift)}U
             """.trimIndent()
@@ -687,8 +688,8 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
         logger.debug(LTag.PUMPCOMM, "Default status response :$response")
         podState.deliveryStatus = response.deliveryStatus
         podState.podStatus = response.podStatus
-        podState.basalExpected = podState.basalExpected?.let { 
-            it + integrateExpectedDelivery(podState.lastUpdatedSystem, now)
+        podState.basalExpected = podState.basalExpected?.let {
+            integrateExpectedDelivery(podState.lastUpdatedSystem, now)?.let { delta -> it + delta }
         } ?: basalDelivered
         podState.bolusPulsesDelivered = podState.bolusPulsesDelivered?.let { current ->
             podState.pulsesDelivered?.takeIf { podState.lastBolus?.deliveryComplete == false }?.let { prev ->
@@ -772,8 +773,8 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
         )
         podState.deliveryStatus = response.deliveryStatus
         podState.podStatus = response.podStatus
-        podState.basalExpected = podState.basalExpected?.let { 
-            it + integrateExpectedDelivery(podState.lastUpdatedSystem, now)
+        podState.basalExpected = podState.basalExpected?.let {
+            integrateExpectedDelivery(podState.lastUpdatedSystem, now)?.let { delta -> it + delta }
         } ?: basalDelivered
         podState.bolusPulsesDelivered = podState.bolusPulsesDelivered?.let { current ->
             podState.pulsesDelivered?.takeIf { podState.lastBolus?.deliveryComplete == false }?.let { prev ->
