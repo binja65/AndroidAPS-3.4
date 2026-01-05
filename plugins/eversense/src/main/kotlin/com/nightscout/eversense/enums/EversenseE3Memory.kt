@@ -2,6 +2,8 @@ package com.nightscout.eversense.enums
 
 enum class EversenseE3Memory(private val address: Long) {
     BatteryPercentage(0x0000_0406),
+    SensorInsertionDate(0x0000_0890),
+    SensorInsertionTime(0x0000_0892),
     VibrateMode(0x0000_0902),
     HighGlucoseAlarmEnabled(0x0000_1029),
     HighGlucoseAlarmThreshold(0x0000_110C),

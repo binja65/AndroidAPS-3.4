@@ -13,6 +13,8 @@ import com.nightscout.eversense.models.EversenseTransmitterSettings
 import com.nightscout.eversense.packets.e3.GetBatteryPercentagePacket
 import com.nightscout.eversense.packets.e3.GetCurrentDatetimePacket
 import com.nightscout.eversense.packets.e3.GetCurrentGlucosePacket
+import com.nightscout.eversense.packets.e3.GetInsertionDatePacket
+import com.nightscout.eversense.packets.e3.GetInsertionTimePacket
 import com.nightscout.eversense.packets.e3.GetSettingGlucoseHighEnabled
 import com.nightscout.eversense.packets.e3.GetSettingGlucoseHighThresholdPacket
 import com.nightscout.eversense.packets.e3.GetSettingGlucoseLowThresholdPacket
@@ -65,7 +67,7 @@ class EversenseE3Communicator {
             }
 
             try {
-                EversenseLogger.debug(TAG, "Send GetCurrentGlucosePacket...")
+                EversenseLogger.debug(TAG, "Reading current glucose...")
                 val currentGlucose = gatt.writePacket<GetCurrentGlucosePacket.Response>(GetCurrentGlucosePacket())
                 if (currentGlucose.datetime <= state.recentGlucoseDatetime) {
                     EversenseLogger.warning(TAG, "Glucose data is still recent after reading - currentReading: ${currentGlucose.datetime}, lastReading: ${state.recentGlucoseDatetime}")
@@ -111,19 +113,24 @@ class EversenseE3Communicator {
                     return
                 }
 
-                EversenseLogger.debug(TAG, "Send GetCurrentDatetimePacket...")
+                EversenseLogger.debug(TAG, "Reading current datetime...")
                 val currentDatetime = gatt.writePacket<GetCurrentDatetimePacket.Response>(GetCurrentDatetimePacket())
                 if (currentDatetime.needsTimeSync) {
                     EversenseLogger.debug(TAG, "Send SetCurrentDatetimePacket...")
                     gatt.writePacket<SetCurrentDatetimePacket.Response>(SetCurrentDatetimePacket())
                 }
 
-                EversenseLogger.debug(TAG, "Send GetBatteryPercentagePacket...")
+                EversenseLogger.debug(TAG, "Reading battery percentage...")
                 val batteryPercentage = gatt.writePacket<GetBatteryPercentagePacket.Response>(GetBatteryPercentagePacket())
                 state.batteryPercentage = batteryPercentage.percentage
 
+                EversenseLogger.debug(TAG, "Reading insertion datetime...")
+                val insertionDate = gatt.writePacket<GetInsertionDatePacket.Response>(GetInsertionDatePacket())
+                val insertionTime = gatt.writePacket<GetInsertionTimePacket.Response>(GetInsertionTimePacket())
+                state.insertionDate = insertionDate.date + insertionTime.time
+
                 // Transmitter settings
-                EversenseLogger.debug(TAG, "Getting transmitter settings...")
+                EversenseLogger.debug(TAG, "Reading transmitter settings...")
                 val vibrateEnabled = gatt.writePacket<GetSettingVibratePacket.Response>(GetSettingVibratePacket())
                 val glucoseHighEnabled = gatt.writePacket<GetSettingGlucoseHighEnabled.Response>(GetSettingGlucoseHighEnabled())
                 val glucoseHighThreshold = gatt.writePacket<GetSettingGlucoseHighThresholdPacket.Response>(GetSettingGlucoseHighThresholdPacket())

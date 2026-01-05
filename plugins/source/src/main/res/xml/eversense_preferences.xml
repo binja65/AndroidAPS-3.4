@@ -13,12 +13,27 @@
 
     </androidx.preference.PreferenceCategory>
 
-    <androidx.preference.PreferenceCategory app:title="Device">
-        
+    <androidx.preference.PreferenceCategory app:title="Information">
+
         <androidx.preference.Preference
-            app:key="eversense_connect"
-            app:title="Connect"
-            app:summary="Pair with Smart Transmitter" />
+            app:key="eversense_information_connected"
+            app:title="Connected"
+            app:summary="" />
+
+        <androidx.preference.Preference
+            app:key="eversense_information_battery"
+            app:title="Battery status"
+            app:summary="" />
+
+        <androidx.preference.Preference
+            app:key="eversense_information_insertion_date"
+            app:title="Insertion date"
+            app:summary="" />
+
+        <androidx.preference.Preference
+            app:key="eversense_information_last_sync"
+            app:title="Last synchronisation"
+            app:summary="" />
 
     </androidx.preference.PreferenceCategory>
 
@@ -26,9 +41,14 @@
         
         <androidx.preference.Preference
             app:key="eversense_settings_glucose"
-            app:title="Settings > Glucose"
+            app:title="Transmitter settings"
             app:fragment="app.aaps.plugins.cgm.eversense.GlucoseSettingsFragment" />
-            
+
+        <androidx.preference.Preference
+            app:key="eversense_connect"
+            app:title="Re-pair"
+            app:summary="Remove old connection and connect with new Smart Transmitter" />
+
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

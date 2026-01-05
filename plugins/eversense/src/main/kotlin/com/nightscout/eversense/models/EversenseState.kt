@@ -5,7 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 class EversenseState {
     var lastSync: Long = 0
+    var insertionDate: Long = 0
+
     var batteryPercentage: Int = 0
+
     var recentGlucoseDatetime: Long = 0
     var recentGlucoseValue: Int = 0
 

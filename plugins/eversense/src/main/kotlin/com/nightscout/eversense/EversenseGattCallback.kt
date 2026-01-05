@@ -62,6 +62,10 @@ class EversenseGattCallback(
                 putString(StorageKeys.REMOTE_DEVICE_KEY, gatt.device.address)
             }
 
+            for (watcher in plugin.watchers) {
+                watcher.onConnectionChanged(true)
+            }
+
             if (!gatt.requestMtu(512)) {
                 EversenseLogger.error(TAG, "Failed to request MTU")
             }
@@ -71,6 +75,10 @@ class EversenseGattCallback(
         if (newState == BluetoothProfile.STATE_DISCONNECTED) {
             EversenseLogger.warning(TAG, "Disconnected...")
             bluetoothGatt = null
+
+            for (watcher in plugin.watchers) {
+                watcher.onConnectionChanged(false)
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.data.ue.Sources
 import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.logging.AAPSLogger
+import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.source.BgSource
@@ -51,14 +52,17 @@ class EversensePlugin @Inject constructor(
     }
 
     override fun onStateChanged(state: EversenseState) {
-        Log.i("onStateChanged", "New state received: ${Json.encodeToString(state)}")
+        aapsLogger.info(LTag.BGSOURCE, "New state received: ${Json.encodeToString(state)}")
+    }
+
+    override fun onConnectionChanged(connected: Boolean) {
+        aapsLogger.info(LTag.BGSOURCE, "Connection changed - connected: $connected")
     }
 
     override fun onCGMRead(type: EversenseType, readings: List<EversenseCGMResult>) {
         val glucoseValues = mutableListOf<GV>()
 
         for (reading in readings) {
-            Log.w("onCGMRead", "Received glucose data: ${reading.glucoseInMgDl} mg/dl, time: ${reading.datetime}")
             glucoseValues += GV(
                 timestamp = reading.datetime,
                 value = reading.glucoseInMgDl.toDouble(),
