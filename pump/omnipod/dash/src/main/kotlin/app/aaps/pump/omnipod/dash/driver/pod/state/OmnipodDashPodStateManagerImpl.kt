@@ -695,7 +695,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             podState.pulsesDelivered?.takeIf { podState.lastBolus?.deliveryComplete == false }?.let { prev ->
                 (current + response.totalPulsesDelivered - prev).toShort()
             } ?: current
-        } ?: response.totalPulsesDelivered
+        } ?: response.totalPulsesDelivered.takeIf { isActivationCompleted }
         podState.pulsesDelivered = response.totalPulsesDelivered
         if (response.reservoirPulsesRemaining < 1023) {
             podState.pulsesRemaining = response.reservoirPulsesRemaining
@@ -780,7 +780,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             podState.pulsesDelivered?.takeIf { podState.lastBolus?.deliveryComplete == false }?.let { prev ->
                 (current + response.totalPulsesDelivered - prev).toShort()
             } ?: current
-        } ?: response.totalPulsesDelivered
+        } ?: response.totalPulsesDelivered.takeIf { isActivationCompleted }
         podState.pulsesDelivered = response.totalPulsesDelivered
 
         if (response.reservoirPulsesRemaining < 1023) {
