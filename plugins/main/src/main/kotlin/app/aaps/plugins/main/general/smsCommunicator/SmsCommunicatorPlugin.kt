@@ -202,7 +202,7 @@ class SmsCommunicatorPlugin @Inject constructor(
         super.updatePreferenceSummary(pref)
         if (pref is EditTextPreference) {
             if (pref.key.contains(StringKey.SmsAllowedNumbers.key) && (TextUtils.isEmpty(pref.text?.trim { it <= ' ' }))) {
-                pref.setSummary(rh.gs(app.aaps.core.keys.R.string.smscommunicator_allowednumbers_summary))
+                pref.setSummary(rh.gs(StringKey.SmsAllowedNumbers.summaryResId!!))
             }
         }
     }

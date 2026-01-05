@@ -3,9 +3,17 @@ package app.aaps.core.keys.interfaces
 import app.aaps.core.keys.PreferenceType
 
 /**
+ * Marker interface for items that can appear in a preference list.
+ * Can be either a [PreferenceKey] or a [app.aaps.core.ui.compose.preference.PreferenceSubScreen].
+ *
+ * Note: Not sealed to allow cross-module implementation.
+ */
+interface PreferenceItem
+
+/**
  * Defines shared preference encapsulation
  */
-interface PreferenceKey : NonPreferenceKey {
+interface PreferenceKey : NonPreferenceKey, PreferenceItem {
 
     /**
      * Associated [android.content.SharedPreferences] key

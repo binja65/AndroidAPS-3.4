@@ -36,10 +36,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.aaps.core.keys.interfaces.PreferenceItem
 import app.aaps.core.keys.interfaces.PreferenceKey
 
 /**
- * Represents a preference subscreen that can be navigated to.
+ * Lightweight preference subscreen definition.
+ * Content is auto-generated from keys using AdaptivePreferenceList unless customContent is provided.
+ *
+ * @param key Unique key for this subscreen
+ * @param titleResId String resource ID for the screen title
+ * @param keys List of preference keys - content is auto-generated from these
+ * @param summaryResId Optional string resource ID for summary shown in parent list
+ * @param customContent Optional custom content - when null, content is auto-generated from keys
+ */
+data class PreferenceSubScreenDef(
+    val key: String,
+    val titleResId: Int,
+    val keys: List<PreferenceKey> = emptyList(),
+    val summaryResId: Int? = null,
+    val customContent: (@Composable (PreferenceSectionState?) -> Unit)? = null
+) : PreferenceItem {
+    /** Effective summary items - from keys' titleResId */
+    fun effectiveSummaryItems(): List<Int> =
+        keys.map { it.titleResId }.filter { it != 0 }
+}
+
+/**
+ * Legacy: Represents a preference subscreen that can be navigated to.
+ * Kept for backward compatibility. New code should use PreferenceSubScreenDef.
  *
  * @param key Unique key for this subscreen
  * @param titleResId String resource ID for the screen title
@@ -55,7 +79,7 @@ class PreferenceSubScreen(
     val summaryItems: List<Int> = emptyList(),
     val summaryResId: Int? = null,
     val content: @Composable (PreferenceSectionState?) -> Unit
-) {
+) : PreferenceItem {
     /** Effective summary items - from keys if provided, otherwise direct summaryItems */
     fun effectiveSummaryItems(): List<Int> =
         if (keys.isNotEmpty()) keys.map { it.titleResId }.filter { it != 0 }
@@ -80,27 +104,42 @@ interface NavigablePreferenceContent {
     val titleResId: Int
 
     /**
+     * Unified list of preference items (keys and subscreens) preserving display order.
+     * This allows subscreens to be interspersed with regular preferences.
+     * If not overridden, derived from mainKeys + subscreens for backward compatibility.
+     */
+    val items: List<PreferenceItem>
+        get() = mainKeys + subscreens
+
+    /**
      * Main preference keys shown at top level.
      * Summary is auto-derived from keys' titleResId.
+     * For backward compatibility - new code should use [items] instead.
      */
     val mainKeys: List<PreferenceKey>
-        get() = emptyList()
+        get() = items.filterIsInstance<PreferenceKey>()
 
     /**
      * Optional list of preference title resource IDs to show as summary when collapsed.
      * Used when the card is collapsed to show what preferences are available.
-     * If empty, derived from mainKeys + subscreens keys.
+     * If empty, derived from items.
      */
     val summaryItems: List<Int>
         get() = emptyList()
 
     /**
-     * Effective summary items - from mainKeys + subscreens if available, otherwise summaryItems.
+     * Effective summary items - from items if available, otherwise summaryItems.
      */
     fun effectiveSummaryItems(): List<Int> {
-        val fromKeys = mainKeys.map { it.titleResId }.filter { it != 0 } +
-            subscreens.flatMap { it.keys.map { k -> k.titleResId } }.filter { it != 0 }
-        return if (fromKeys.isNotEmpty()) fromKeys else summaryItems.ifEmpty {
+        val fromItems = items.flatMap { item ->
+            when (item) {
+                is PreferenceKey -> listOf(item.titleResId).filter { it != 0 }
+                is PreferenceSubScreenDef -> item.keys.map { it.titleResId }.filter { it != 0 }
+                is PreferenceSubScreen -> item.keys.map { it.titleResId }.filter { it != 0 }
+                else -> emptyList()
+            }
+        }
+        return if (fromItems.isNotEmpty()) fromItems else summaryItems.ifEmpty {
             subscreens.map { it.titleResId }
         }
     }
@@ -114,8 +153,42 @@ interface NavigablePreferenceContent {
 
     /**
      * List of subscreens available in this preference screen.
+     * For backward compatibility - new code should use [items] instead.
+     * Converts PreferenceSubScreenDef to PreferenceSubScreen with auto-generated content.
      */
     val subscreens: List<PreferenceSubScreen>
+        get() = items.mapNotNull { item ->
+            when (item) {
+                is PreferenceSubScreen -> item
+                is PreferenceSubScreenDef -> item.toPreferenceSubScreen()
+                else -> null
+            }
+        }
+
+    /**
+     * Converts PreferenceSubScreenDef to PreferenceSubScreen.
+     * Auto-generates content from keys if customContent is not provided.
+     */
+    private fun PreferenceSubScreenDef.toPreferenceSubScreen(): PreferenceSubScreen =
+        PreferenceSubScreen(
+            key = key,
+            titleResId = titleResId,
+            keys = keys,
+            summaryResId = summaryResId,
+            content = customContent ?: { _ ->
+                // Auto-generate content - implementation provided by concrete class
+                renderAutoGeneratedContent(this)
+            }
+        )
+
+    /**
+     * Override this to provide auto-generated content for PreferenceSubScreenDef.
+     * Default implementation shows a placeholder.
+     */
+    @Composable
+    fun renderAutoGeneratedContent(def: PreferenceSubScreenDef) {
+        Text("Auto-generated content for ${def.key} - override renderAutoGeneratedContent")
+    }
 }
 
 /**

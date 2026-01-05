@@ -5,17 +5,18 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.PreferenceItem
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.PreferenceSubScreenDef
 import app.aaps.plugins.sync.R
 
 /**
  * Compose implementation of NSClientV3 preferences using navigable subscreens.
- * Uses key-based rendering - UI is auto-generated from preference keys.
+ * Uses lightweight PreferenceSubScreenDef with auto-generated content.
  */
 class NSClientV3PreferencesCompose(
     private val preferences: Preferences,
@@ -24,113 +25,86 @@ class NSClientV3PreferencesCompose(
 
     override val titleResId: Int = R.string.ns_client_v3_title
 
-    // Main keys shown at top level
-    override val mainKeys: List<PreferenceKey> = listOf(
+    // Unified list with lightweight subscreen definitions
+    override val items: List<PreferenceItem> = listOf(
+        // Main preferences
         StringKey.NsClientUrl,
         StringKey.NsClientAccessToken,
-        BooleanKey.NsClient3UseWs
-    )
+        BooleanKey.NsClient3UseWs,
 
-    // Synchronization keys
-    private val syncKeys: List<PreferenceKey> = listOf(
-        BooleanKey.NsClientUploadData,
-        BooleanKey.BgSourceUploadToNs,
-        BooleanKey.NsClientAcceptCgmData,
-        BooleanKey.NsClientAcceptProfileStore,
-        BooleanKey.NsClientAcceptTempTarget,
-        BooleanKey.NsClientAcceptProfileSwitch,
-        BooleanKey.NsClientAcceptInsulin,
-        BooleanKey.NsClientAcceptCarbs,
-        BooleanKey.NsClientAcceptTherapyEvent,
-        BooleanKey.NsClientAcceptRunningMode,
-        BooleanKey.NsClientAcceptTbrEb
-    )
+        // Synchronization subscreen (auto-generated content)
+        PreferenceSubScreenDef(
+            key = "ns_client_synchronization",
+            titleResId = R.string.ns_sync_options,
+            keys = listOf(
+                BooleanKey.NsClientUploadData,
+                BooleanKey.BgSourceUploadToNs,
+                BooleanKey.NsClientAcceptCgmData,
+                BooleanKey.NsClientAcceptProfileStore,
+                BooleanKey.NsClientAcceptTempTarget,
+                BooleanKey.NsClientAcceptProfileSwitch,
+                BooleanKey.NsClientAcceptInsulin,
+                BooleanKey.NsClientAcceptCarbs,
+                BooleanKey.NsClientAcceptTherapyEvent,
+                BooleanKey.NsClientAcceptRunningMode,
+                BooleanKey.NsClientAcceptTbrEb
+            )
+        ),
 
-    // Alarm keys
-    private val alarmKeys: List<PreferenceKey> = listOf(
-        BooleanKey.NsClientNotificationsFromAlarms,
-        BooleanKey.NsClientNotificationsFromAnnouncements,
-        IntKey.NsClientAlarmStaleData,
-        IntKey.NsClientUrgentAlarmStaleData
-    )
+        // Alarm options subscreen (auto-generated content)
+        PreferenceSubScreenDef(
+            key = "ns_client_alarm_options",
+            titleResId = R.string.ns_alarm_options,
+            keys = listOf(
+                BooleanKey.NsClientNotificationsFromAlarms,
+                BooleanKey.NsClientNotificationsFromAnnouncements,
+                IntKey.NsClientAlarmStaleData,
+                IntKey.NsClientUrgentAlarmStaleData
+            )
+        ),
 
-    // Connection keys
-    private val connectionKeys: List<PreferenceKey> = listOf(
-        BooleanKey.NsClientUseCellular,
-        BooleanKey.NsClientUseRoaming,
-        BooleanKey.NsClientUseWifi,
-        StringKey.NsClientWifiSsids,
-        BooleanKey.NsClientUseOnBattery,
-        BooleanKey.NsClientUseOnCharging
-    )
+        // Connection settings subscreen (auto-generated content)
+        PreferenceSubScreenDef(
+            key = "ns_client_connection_options",
+            titleResId = R.string.connection_settings_title,
+            keys = listOf(
+                BooleanKey.NsClientUseCellular,
+                BooleanKey.NsClientUseRoaming,
+                BooleanKey.NsClientUseWifi,
+                StringKey.NsClientWifiSsids,
+                BooleanKey.NsClientUseOnBattery,
+                BooleanKey.NsClientUseOnCharging
+            )
+        ),
 
-    // Advanced keys
-    private val advancedKeys: List<PreferenceKey> = listOf(
-        BooleanKey.NsClientLogAppStart,
-        BooleanKey.NsClientCreateAnnouncementsFromErrors,
-        BooleanKey.NsClientCreateAnnouncementsFromCarbsReq,
-        BooleanKey.NsClientSlowSync
+        // Advanced settings subscreen (auto-generated content)
+        PreferenceSubScreenDef(
+            key = "ns_client_advanced",
+            titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
+            keys = listOf(
+                BooleanKey.NsClientLogAppStart,
+                BooleanKey.NsClientCreateAnnouncementsFromErrors,
+                BooleanKey.NsClientCreateAnnouncementsFromCarbsReq,
+                BooleanKey.NsClientSlowSync
+            )
+        )
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
         AdaptivePreferenceList(
-            keys = mainKeys,
+            keys = mainKeys,  // Derived from items.filterIsInstance<PreferenceKey>()
             preferences = preferences,
             config = config
         )
     }
 
-    override val subscreens: List<PreferenceSubScreen> = listOf(
-        // Synchronization subscreen
-        PreferenceSubScreen(
-            key = "ns_client_synchronization",
-            titleResId = R.string.ns_sync_options,
-            keys = syncKeys
-        ) { _ ->
-            AdaptivePreferenceList(
-                keys = syncKeys,
-                preferences = preferences,
-                config = config
-            )
-        },
-
-        // Alarm options subscreen
-        PreferenceSubScreen(
-            key = "ns_client_alarm_options",
-            titleResId = R.string.ns_alarm_options,
-            keys = alarmKeys
-        ) { _ ->
-            AdaptivePreferenceList(
-                keys = alarmKeys,
-                preferences = preferences,
-                config = config
-            )
-        },
-
-        // Connection settings subscreen
-        PreferenceSubScreen(
-            key = "ns_client_connection_options",
-            titleResId = R.string.connection_settings_title,
-            keys = connectionKeys
-        ) { _ ->
-            AdaptivePreferenceList(
-                keys = connectionKeys,
-                preferences = preferences,
-                config = config
-            )
-        },
-
-        // Advanced settings subscreen
-        PreferenceSubScreen(
-            key = "ns_client_advanced",
-            titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
-            keys = advancedKeys
-        ) { _ ->
-            AdaptivePreferenceList(
-                keys = advancedKeys,
-                preferences = preferences,
-                config = config
-            )
-        }
-    )
+    // Auto-generate content for PreferenceSubScreenDef (when customContent is null)
+    @Composable
+    override fun renderAutoGeneratedContent(def: PreferenceSubScreenDef) {
+        AdaptivePreferenceList(
+            keys = def.keys,
+            preferences = preferences,
+            config = config
+        )
+    }
 }
