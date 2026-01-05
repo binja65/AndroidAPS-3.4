@@ -185,6 +185,12 @@ class EversenseGattCallback(
                 return
             }
 
+            if (EversenseE3Packets.isErrorPacket(data[0])) {
+                EversenseLogger.error(TAG, "Received error response - data: ${data.toHexString()}")
+                packet.notifyAll()
+                return
+            }
+
             if (packetAnnotation.responseId != data[0]) {
                 EversenseLogger.warning(TAG, "Incorrect responseId received - Expected: ${packetAnnotation.responseId}, got: ${data[0]}")
                 return

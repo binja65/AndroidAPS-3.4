@@ -107,10 +107,11 @@ class EversenseE3Packets {
         const val WriteTwoByteSerialFlashRegisterResponseId = 173.toByte()
 
         fun isPushPacket(data: Byte): Boolean {
-            return when (data) {
-                KeepAlivePush -> true
-                else -> false
-            }
+            return data == KeepAlivePush
+        }
+
+        fun isErrorPacket(data: Byte): Boolean {
+            return data == ErrorResponseId
         }
     }
 }

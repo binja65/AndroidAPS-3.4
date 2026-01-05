@@ -6,31 +6,29 @@ import com.nightscout.eversense.EversenseGattCallback
 import com.nightscout.eversense.EversenseLogger
 import com.nightscout.eversense.StorageKeys
 import com.nightscout.eversense.callbacks.EversenseWatcher
-import com.nightscout.eversense.enums.EversenseTrendArrow
 import com.nightscout.eversense.enums.EversenseType
+import com.nightscout.eversense.models.EversenseCGMResult
 import com.nightscout.eversense.models.EversenseState
 import com.nightscout.eversense.models.EversenseTransmitterSettings
 import com.nightscout.eversense.packets.e3.GetBatteryPercentagePacket
-import com.nightscout.eversense.packets.e3.GetRecentGlucoseDatePacket
-import com.nightscout.eversense.packets.e3.GetRecentGlucoseTimePacket
-import com.nightscout.eversense.packets.e3.GetRecentGlucoseValuePacket
 import com.nightscout.eversense.packets.e3.GetCurrentDatetimePacket
-import com.nightscout.eversense.packets.e3.GetSettingRateFallingEnabledPacket
-import com.nightscout.eversense.packets.e3.GetSettingRateFallingThresholdPacket
+import com.nightscout.eversense.packets.e3.GetCurrentGlucosePacket
+import com.nightscout.eversense.packets.e3.GetSettingGlucoseHighEnabled
 import com.nightscout.eversense.packets.e3.GetSettingGlucoseHighThresholdPacket
 import com.nightscout.eversense.packets.e3.GetSettingGlucoseLowThresholdPacket
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveAlarmEnabledPacket
-import com.nightscout.eversense.packets.e3.GetSettingRateEnabledPacket
-import com.nightscout.eversense.packets.e3.GetSettingRateRisingEnabledPacket
-import com.nightscout.eversense.packets.e3.GetSettingRateRisingThresholdPacket
-import com.nightscout.eversense.packets.e3.GetSettingVibratePacket
-import com.nightscout.eversense.packets.e3.GetSettingGlucoseHighEnabled
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveHighEnabledPacket
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveHighThresholdPacket
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveHighTimePacket
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveLowEnabledPacket
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveLowThresholdPacket
 import com.nightscout.eversense.packets.e3.GetSettingPredictiveLowTimePacket
+import com.nightscout.eversense.packets.e3.GetSettingRateEnabledPacket
+import com.nightscout.eversense.packets.e3.GetSettingRateFallingEnabledPacket
+import com.nightscout.eversense.packets.e3.GetSettingRateFallingThresholdPacket
+import com.nightscout.eversense.packets.e3.GetSettingRateRisingEnabledPacket
+import com.nightscout.eversense.packets.e3.GetSettingRateRisingThresholdPacket
+import com.nightscout.eversense.packets.e3.GetSettingVibratePacket
 import com.nightscout.eversense.packets.e3.SetCurrentDatetimePacket
 import com.nightscout.eversense.packets.e3.SetSettingGlucoseHighEnablePacket
 import com.nightscout.eversense.packets.e3.SetSettingGlucoseHighThresholdPacket
@@ -50,49 +48,52 @@ import com.nightscout.eversense.packets.e3.SetSettingRateRisingThresholdPacket
 import com.nightscout.eversense.packets.e3.SetSettingVibratePacket
 import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
-import java.util.prefs.Preferences
 
 class EversenseE3Communicator {
     companion object {
         private const val TAG = "EversenseE3Communicator"
+        private val JSON = Json { ignoreUnknownKeys = true }
 
         fun readGlucose(gatt: EversenseGattCallback, preferences: SharedPreferences, watchers: List<EversenseWatcher>) {
             val stateJson = preferences.getString(StorageKeys.STATE, null) ?: "{}"
-            val state = Json.decodeFromString<EversenseState>(stateJson)
+            val state = JSON.decodeFromString<EversenseState>(stateJson)
             val fourHalfMinAgo = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(270)
 
             if (fourHalfMinAgo < state.recentGlucoseDatetime) {
-                EversenseLogger.warning(TAG, "Glucose data is still recent - lastReading: $state.recentGlucoseDatetime")
+                EversenseLogger.warning(TAG, "Glucose data is still recent - lastReading: ${state.recentGlucoseDatetime}")
                 return
             }
 
             try {
-                val recentDate = gatt.writePacket<GetRecentGlucoseDatePacket.Response>(GetRecentGlucoseDatePacket())
-                val recentTime = gatt.writePacket<GetRecentGlucoseTimePacket.Response>(GetRecentGlucoseTimePacket())
-
-                val recentDatetime = recentDate.date + recentTime.time
-                if (recentDatetime <= state.recentGlucoseDatetime) {
-                    EversenseLogger.warning(TAG, "Glucose data is still recent after reading - currentReading: $recentDatetime, lastReading: $state.recentGlucoseDatetime")
+                EversenseLogger.debug(TAG, "Send GetCurrentGlucosePacket...")
+                val currentGlucose = gatt.writePacket<GetCurrentGlucosePacket.Response>(GetCurrentGlucosePacket())
+                if (currentGlucose.datetime <= state.recentGlucoseDatetime) {
+                    EversenseLogger.warning(TAG, "Glucose data is still recent after reading - currentReading: ${currentGlucose.datetime}, lastReading: ${state.recentGlucoseDatetime}")
                     return
                 }
 
-                val recentGlucose = gatt.writePacket<GetRecentGlucoseValuePacket.Response>(GetRecentGlucoseValuePacket())
-                if (recentGlucose.glucoseInMgDl > 1000) {
-                    EversenseLogger.error(TAG, "recentGlucose exceeds range - received: ${recentGlucose.glucoseInMgDl}")
+                if (currentGlucose.glucoseInMgDl > 1000) {
+                    EversenseLogger.error(TAG, "recentGlucose exceeds range - received: ${currentGlucose.glucoseInMgDl}")
                     return
                 }
 
-                state.recentGlucoseDatetime = recentDatetime
-                state.recentGlucoseValue = recentGlucose.glucoseInMgDl
+                val result = mutableListOf<EversenseCGMResult>()
+                state.recentGlucoseDatetime = currentGlucose.datetime
+                state.recentGlucoseValue = currentGlucose.glucoseInMgDl
+                result += EversenseCGMResult(
+                    glucoseInMgDl = currentGlucose.glucoseInMgDl,
+                    datetime = currentGlucose.datetime,
+                    trend = currentGlucose.trend
+                )
 
                 // TODO: read history for backfill
 
                 preferences.edit(commit = true) {
-                    putString(StorageKeys.STATE, Json.encodeToString(state))
+                    putString(StorageKeys.STATE, JSON.encodeToString(state))
                 }
 
                 watchers.forEach {
-                    it.onCGMRead(EversenseType.EVERSENSE_E3, recentGlucose.glucoseInMgDl, recentDatetime, EversenseTrendArrow.FLAT)
+                    it.onCGMRead(EversenseType.EVERSENSE_E3, result)
                 }
             } catch (exception: Exception) {
                 EversenseLogger.error(TAG, "Got exception during readGlucose - exception $exception")
@@ -102,17 +103,27 @@ class EversenseE3Communicator {
         fun fullSync(gatt: EversenseGattCallback, preferences: SharedPreferences, watchers: List<EversenseWatcher>) {
             try {
                 val stateJson = preferences.getString(StorageKeys.STATE, null) ?: "{}"
-                val state = Json.decodeFromString<EversenseState>(stateJson)
+                val state = JSON.decodeFromString<EversenseState>(stateJson)
+                val fourHalfMinAgo = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(270)
 
+                if (fourHalfMinAgo < state.lastSync) {
+                    EversenseLogger.warning(TAG, "State is still fresh - lastSync: ${state.lastSync}")
+                    return
+                }
+
+                EversenseLogger.debug(TAG, "Send GetCurrentDatetimePacket...")
                 val currentDatetime = gatt.writePacket<GetCurrentDatetimePacket.Response>(GetCurrentDatetimePacket())
                 if (currentDatetime.needsTimeSync) {
+                    EversenseLogger.debug(TAG, "Send SetCurrentDatetimePacket...")
                     gatt.writePacket<SetCurrentDatetimePacket.Response>(SetCurrentDatetimePacket())
                 }
 
+                EversenseLogger.debug(TAG, "Send GetBatteryPercentagePacket...")
                 val batteryPercentage = gatt.writePacket<GetBatteryPercentagePacket.Response>(GetBatteryPercentagePacket())
                 state.batteryPercentage = batteryPercentage.percentage
 
                 // Transmitter settings
+                EversenseLogger.debug(TAG, "Getting transmitter settings...")
                 val vibrateEnabled = gatt.writePacket<GetSettingVibratePacket.Response>(GetSettingVibratePacket())
                 val glucoseHighEnabled = gatt.writePacket<GetSettingGlucoseHighEnabled.Response>(GetSettingGlucoseHighEnabled())
                 val glucoseHighThreshold = gatt.writePacket<GetSettingGlucoseHighThresholdPacket.Response>(GetSettingGlucoseHighThresholdPacket())
@@ -148,8 +159,9 @@ class EversenseE3Communicator {
                 state.settings.predictiveLowAlarmThreshold = predictiveLowThreshold.threshold
 
                 state.lastSync = System.currentTimeMillis()
+                EversenseLogger.info(TAG, "Completed full sync - datetime: ${state.lastSync}")
                 preferences.edit(commit = true) {
-                    putString(StorageKeys.STATE, Json.encodeToString(state))
+                    putString(StorageKeys.STATE, JSON.encodeToString(state))
                 }
                 watchers.forEach {
                     it.onStateChanged(state)
@@ -182,10 +194,10 @@ class EversenseE3Communicator {
                 gatt.writePacket<SetSettingPredictiveLowThresholdPacket.Response>(SetSettingPredictiveLowThresholdPacket(settings.predictiveLowAlarmThreshold))
 
                 val stateJson = preferences.getString(StorageKeys.STATE, null) ?: "{}"
-                val state = Json.decodeFromString<EversenseState>(stateJson)
+                val state = JSON.decodeFromString<EversenseState>(stateJson)
                 state.settings = settings
                 preferences.edit(commit = true) {
-                    putString(StorageKeys.STATE, Json.encodeToString(state))
+                    putString(StorageKeys.STATE, JSON.encodeToString(state))
                 }
 
                 return true

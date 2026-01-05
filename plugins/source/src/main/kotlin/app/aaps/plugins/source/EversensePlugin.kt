@@ -17,6 +17,7 @@ import com.nightscout.eversense.EversenseCGMPlugin
 import com.nightscout.eversense.callbacks.EversenseWatcher
 import com.nightscout.eversense.enums.EversenseTrendArrow
 import com.nightscout.eversense.enums.EversenseType
+import com.nightscout.eversense.models.EversenseCGMResult
 import com.nightscout.eversense.models.EversenseState
 import kotlinx.serialization.json.Json
 import java.util.Date
@@ -53,23 +54,27 @@ class EversensePlugin @Inject constructor(
         Log.i("onStateChanged", "New state received: ${Json.encodeToString(state)}")
     }
 
-    override fun onCGMRead(type: EversenseType, glucoseInMgDl: Int, datetime: Long, trend: EversenseTrendArrow) {
-        Log.w("onCGMRead", "Received glucose data: $glucoseInMgDl mg/dl, time: $datetime")
-        val value = GV(
-            timestamp = datetime,
-            value = glucoseInMgDl.toDouble(),
-            noise = null,
-            raw = null,
-            trendArrow = TrendArrow.fromString(trend.type),
-            sourceSensor = when(type) {
-                EversenseType.EVERSENSE_365 -> SourceSensor.EVERSENSE_365
-                EversenseType.EVERSENSE_E3 -> SourceSensor.EVERSENSE_E3
-            }
-        )
+    override fun onCGMRead(type: EversenseType, readings: List<EversenseCGMResult>) {
+        val glucoseValues = mutableListOf<GV>()
+
+        for (reading in readings) {
+            Log.w("onCGMRead", "Received glucose data: ${reading.glucoseInMgDl} mg/dl, time: ${reading.datetime}")
+            glucoseValues += GV(
+                timestamp = reading.datetime,
+                value = reading.glucoseInMgDl.toDouble(),
+                noise = null,
+                raw = null,
+                trendArrow = TrendArrow.fromString(reading.trend.type),
+                sourceSensor = when (type) {
+                    EversenseType.EVERSENSE_365 -> SourceSensor.EVERSENSE_365
+                    EversenseType.EVERSENSE_E3  -> SourceSensor.EVERSENSE_E3
+                }
+            )
+        }
 
         val result = persistenceLayer.insertCgmSourceData(
             Sources.Eversense,
-            listOf(value),
+            glucoseValues,
             listOf(),
             null
         ).blockingGet()
