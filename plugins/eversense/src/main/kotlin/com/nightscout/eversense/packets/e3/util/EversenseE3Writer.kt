@@ -63,6 +63,10 @@ class EversenseE3Writer {
             return byteArrayOf(if (value) 0x55 else 0x00)
         }
 
+        fun writeDouble(value: Double): ByteArray {
+            return writeInt16((value * 10).toInt())
+        }
+
         fun writeInt16(value: Int): ByteArray {
             return byteArrayOf(
                 value.toByte(),

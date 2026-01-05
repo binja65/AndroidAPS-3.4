@@ -35,6 +35,18 @@ import com.nightscout.eversense.packets.e3.SetCurrentDatetimePacket
 import com.nightscout.eversense.packets.e3.SetSettingGlucoseHighEnablePacket
 import com.nightscout.eversense.packets.e3.SetSettingGlucoseHighThresholdPacket
 import com.nightscout.eversense.packets.e3.SetSettingGlucoseLowThresholdPacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveAlarmEnabledPacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveHighAlarmEnabledPacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveHighThresholdPacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveHighTimePacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveLowAlarmEnabledPacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveLowThresholdPacket
+import com.nightscout.eversense.packets.e3.SetSettingPredictiveLowTimePacket
+import com.nightscout.eversense.packets.e3.SetSettingRateEnabledPacket
+import com.nightscout.eversense.packets.e3.SetSettingRateFallingEnabledPacket
+import com.nightscout.eversense.packets.e3.SetSettingRateFallingThresholdPacket
+import com.nightscout.eversense.packets.e3.SetSettingRateRisingEnabledPacket
+import com.nightscout.eversense.packets.e3.SetSettingRateRisingThresholdPacket
 import com.nightscout.eversense.packets.e3.SetSettingVibratePacket
 import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
@@ -155,7 +167,19 @@ class EversenseE3Communicator {
                 gatt.writePacket<SetSettingGlucoseHighThresholdPacket.Response>(SetSettingGlucoseHighThresholdPacket(settings.glucoseHighAlarmThreshold))
                 gatt.writePacket<SetSettingGlucoseLowThresholdPacket.Response>(SetSettingGlucoseLowThresholdPacket(settings.glucoseLowAlarmThreshold))
 
-                // TODO: Write Rate & predictive settings...
+                gatt.writePacket<SetSettingRateEnabledPacket.Response>(SetSettingRateEnabledPacket(settings.rateAlarmEnabled))
+                gatt.writePacket<SetSettingRateFallingEnabledPacket.Response>(SetSettingRateFallingEnabledPacket(settings.rateFallingAlarmEnabled))
+                gatt.writePacket<SetSettingRateFallingThresholdPacket.Response>(SetSettingRateFallingThresholdPacket(settings.rateFallingAlarmThreshold))
+                gatt.writePacket<SetSettingRateRisingEnabledPacket.Response>(SetSettingRateRisingEnabledPacket(settings.rateRisingAlarmEnabled))
+                gatt.writePacket<SetSettingRateRisingThresholdPacket.Response>(SetSettingRateRisingThresholdPacket(settings.rateRisingAlarmThreshold))
+
+                gatt.writePacket<SetSettingPredictiveAlarmEnabledPacket.Response>(SetSettingPredictiveAlarmEnabledPacket(settings.predictiveAlarmEnabled))
+                gatt.writePacket<SetSettingPredictiveHighAlarmEnabledPacket.Response>(SetSettingPredictiveHighAlarmEnabledPacket(settings.predictiveHighAlarmEnabled))
+                gatt.writePacket<SetSettingPredictiveHighTimePacket.Response>(SetSettingPredictiveHighTimePacket(settings.predictiveHighAlarmMinutes))
+                gatt.writePacket<SetSettingPredictiveHighThresholdPacket.Response>(SetSettingPredictiveHighThresholdPacket(settings.predictiveHighAlarmThreshold))
+                gatt.writePacket<SetSettingPredictiveLowAlarmEnabledPacket.Response>(SetSettingPredictiveLowAlarmEnabledPacket(settings.predictiveLowAlarmEnabled))
+                gatt.writePacket<SetSettingPredictiveLowTimePacket.Response>(SetSettingPredictiveLowTimePacket(settings.predictiveLowAlarmMinutes))
+                gatt.writePacket<SetSettingPredictiveLowThresholdPacket.Response>(SetSettingPredictiveLowThresholdPacket(settings.predictiveLowAlarmThreshold))
 
                 val stateJson = preferences.getString(StorageKeys.STATE, null) ?: "{}"
                 val state = Json.decodeFromString<EversenseState>(stateJson)
