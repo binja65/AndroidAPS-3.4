@@ -151,7 +151,7 @@ class NsIncomingDataProcessor @Inject constructor(
                 when (treatment) {
                     is NSBolus                  ->
                         if (preferences.get(BooleanKey.NsClientAcceptInsulin) || config.AAPSCLIENT || doFullSync)
-                            storeDataForDb.addToBoluses(treatment.toBolus())
+                            storeDataForDb.addToBoluses(treatment.toBolus(activePlugin.activeInsulin))
 
                     is NSCarbs                  ->
                         if (preferences.get(BooleanKey.NsClientAcceptCarbs) || config.AAPSCLIENT || doFullSync)
@@ -180,14 +180,14 @@ class NsIncomingDataProcessor @Inject constructor(
 
                     is NSEffectiveProfileSwitch ->
                         if (preferences.get(BooleanKey.NsClientAcceptProfileSwitch) || config.AAPSCLIENT || doFullSync) {
-                            treatment.toEffectiveProfileSwitch(dateUtil)?.let { effectiveProfileSwitch ->
+                            treatment.toEffectiveProfileSwitch(dateUtil, activePlugin.activeInsulin)?.let { effectiveProfileSwitch ->
                                 storeDataForDb.addToEffectiveProfileSwitches(effectiveProfileSwitch)
                             }
                         }
 
                     is NSProfileSwitch          ->
                         if (preferences.get(BooleanKey.NsClientAcceptProfileSwitch) || config.AAPSCLIENT || doFullSync) {
-                            treatment.toProfileSwitch(activePlugin, dateUtil)?.let { profileSwitch ->
+                            treatment.toProfileSwitch(activePlugin, dateUtil, activePlugin.activeInsulin)?.let { profileSwitch ->
                                 storeDataForDb.addToProfileSwitches(profileSwitch)
                             }
                         }

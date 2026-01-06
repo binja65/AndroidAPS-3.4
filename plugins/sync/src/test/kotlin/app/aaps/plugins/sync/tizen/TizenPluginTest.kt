@@ -44,7 +44,7 @@ internal class TizenPluginTest : TestBaseWithProfile() {
         )
         whenever(iobCobCalculator.ads).thenReturn(autosensDataStore)
         whenever(autosensDataStore.lastBg()).thenReturn(InMemoryGlucoseValue(1000, 100.0, sourceSensor = SourceSensor.UNKNOWN))
-        whenever(profileFunction.getProfile()).thenReturn(validProfile)
+        whenever(profileFunction.getProfile()).thenReturn(effectiveProfile)
         whenever(profileFunction.getUnits()).thenReturn(GlucoseUnit.MGDL)
         whenever(profileFunction.getProfileName()).thenReturn("TestProfile")
         whenever(iobCobCalculator.calculateIobFromBolus()).thenReturn(IobTotal(System.currentTimeMillis()))

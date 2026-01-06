@@ -15,6 +15,7 @@ import app.aaps.core.interfaces.db.ProcessedTbrEbData
 import app.aaps.core.interfaces.iob.GlucoseStatusProvider
 import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.plugin.ActivePlugin
+import app.aaps.core.interfaces.profile.EffectiveProfile
 import app.aaps.core.interfaces.profile.ProfileFunction
 import app.aaps.core.interfaces.profile.ProfileStore
 import app.aaps.core.interfaces.profile.ProfileUtil
@@ -89,6 +90,8 @@ open class TestBaseWithProfile : TestBase() {
     lateinit var deltaCalculator: DeltaCalculator
     lateinit var apsResultProvider: Provider<APSResult>
 
+    val someICfg = ICfg(insulinLabel = "Fake", insulinEndTime = 9 * 3600 * 1000, insulinPeakTime = 60 * 60 * 1000, concentration = 1.0)
+
     val smbGlucoseStatusProvider = object : GlucoseStatusProvider {
         override val glucoseStatusData: GlucoseStatus?
             get() = getGlucoseStatusData(false)
@@ -140,10 +143,10 @@ open class TestBaseWithProfile : TestBase() {
         }
     }
 
-    private lateinit var validProfileJSON: String
-    private lateinit var invalidProfileJSON: String
+    protected lateinit var validProfileJSON: String
     lateinit var preferenceManager: PreferenceManager
     lateinit var validProfile: ProfileSealed.Pure
+    lateinit var effectiveProfile: ProfileSealed.EPS
     lateinit var effectiveProfileSwitch: EPS
     lateinit var profileSwitch: PS
     lateinit var testPumpPlugin: TestPumpPlugin
@@ -155,9 +158,6 @@ open class TestBaseWithProfile : TestBase() {
     @BeforeEach
     fun prepareMock() {
         validProfileJSON = "{\"dia\":\"5\",\"carbratio\":[{\"time\":\"00:00\",\"value\":\"30\"}],\"carbs_hr\":\"20\",\"delay\":\"20\",\"sens\":[{\"time\":\"00:00\",\"value\":\"3\"}," +
-            "{\"time\":\"2:00\",\"value\":\"3.4\"}],\"timezone\":\"UTC\",\"basal\":[{\"time\":\"00:00\",\"value\":\"1\"}],\"target_low\":[{\"time\":\"00:00\",\"value\":\"4.5\"}]," +
-            "\"target_high\":[{\"time\":\"00:00\",\"value\":\"7\"}],\"startDate\":\"1970-01-01T00:00:00.000Z\",\"units\":\"mmol\"}"
-        invalidProfileJSON = "{\"dia\":\"1\",\"carbratio\":[{\"time\":\"00:00\",\"value\":\"30\"}],\"carbs_hr\":\"20\",\"delay\":\"20\",\"sens\":[{\"time\":\"00:00\",\"value\":\"3\"}," +
             "{\"time\":\"2:00\",\"value\":\"3.4\"}],\"timezone\":\"UTC\",\"basal\":[{\"time\":\"00:00\",\"value\":\"1\"}],\"target_low\":[{\"time\":\"00:00\",\"value\":\"4.5\"}]," +
             "\"target_high\":[{\"time\":\"00:00\",\"value\":\"7\"}],\"startDate\":\"1970-01-01T00:00:00.000Z\",\"units\":\"mmol\"}"
         preferenceManager = PreferenceManager(context)
@@ -189,8 +189,9 @@ open class TestBaseWithProfile : TestBase() {
             originalPercentage = 100,
             originalDuration = 0,
             originalEnd = 0,
-            iCfg = ICfg("", 0, 0)
+            iCfg = someICfg
         )
+        effectiveProfile = ProfileSealed.EPS(effectiveProfileSwitch, activePlugin)
         profileSwitch = PS(
             timestamp = dateUtil.now(),
             basalBlocks = validProfile.basalBlocks,
@@ -315,25 +316,6 @@ open class TestBaseWithProfile : TestBase() {
         val store = JSONObject()
         store.put(TESTPROFILENAME, JSONObject(validProfileJSON))
         json.put("defaultProfile", TESTPROFILENAME)
-        json.put("store", store)
-        return ProfileStoreObject(aapsLogger, activePlugin, config, rh, rxBus, hardLimits, dateUtil).with(json)
-    }
-
-    fun getInvalidProfileStore1(): ProfileStore {
-        val json = JSONObject()
-        val store = JSONObject()
-        store.put(TESTPROFILENAME, JSONObject(invalidProfileJSON))
-        json.put("defaultProfile", TESTPROFILENAME)
-        json.put("store", store)
-        return ProfileStoreObject(aapsLogger, activePlugin, config, rh, rxBus, hardLimits, dateUtil).with(json)
-    }
-
-    fun getInvalidProfileStore2(): ProfileStore {
-        val json = JSONObject()
-        val store = JSONObject()
-        store.put(TESTPROFILENAME, JSONObject(validProfileJSON))
-        store.put("invalid", JSONObject(invalidProfileJSON))
-        json.put("defaultProfile", TESTPROFILENAME + "invalid")
         json.put("store", store)
         return ProfileStoreObject(aapsLogger, activePlugin, config, rh, rxBus, hardLimits, dateUtil).with(json)
     }

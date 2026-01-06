@@ -5,6 +5,7 @@ import app.aaps.core.data.configuration.Constants
 import app.aaps.core.data.iob.CobInfo
 import app.aaps.core.data.iob.InMemoryGlucoseValue
 import app.aaps.core.data.model.GV
+import app.aaps.core.data.model.ICfg
 import app.aaps.core.data.model.RM
 import app.aaps.core.data.model.SourceSensor
 import app.aaps.core.data.model.TT
@@ -15,6 +16,7 @@ import app.aaps.core.interfaces.aps.IobTotal
 import app.aaps.core.interfaces.configuration.ConfigBuilder
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.db.PersistenceLayer
+import app.aaps.core.interfaces.insulin.Insulin
 import app.aaps.core.interfaces.logging.UserEntryLogger
 import app.aaps.core.interfaces.profile.ProfileSource
 import app.aaps.core.interfaces.pump.PumpStatusProvider
@@ -27,6 +29,7 @@ import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.UnitDoubleKey
+import app.aaps.core.nssdk.localmodel.treatment.NSICfg
 import app.aaps.core.objects.constraints.ConstraintObject
 import app.aaps.core.objects.extensions.fromGv
 import app.aaps.plugins.aps.loop.LoopPlugin
@@ -68,6 +71,9 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
     @Mock lateinit var smsManager: SmsManager
     @Mock lateinit var configBuilder: ConfigBuilder
     @Mock lateinit var pumpStatusProvider: PumpStatusProvider
+    @Mock lateinit var insulin: Insulin
+
+    private val iCfg = ICfg(insulinLabel = "Fake", insulinEndTime = 9 * 3600 * 1000, insulinPeakTime = 60 * 60 * 1000, concentration = 1.0)
 
     private lateinit var smsCommunicatorPlugin: SmsCommunicatorPlugin
     private val modeClosed = "Closed Loop"
@@ -90,7 +96,8 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
             persistenceLayer.insertAndCancelCurrentTemporaryTarget(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         ).thenReturn(Single.just(PersistenceLayer.TransactionResult<TT>().apply {
         }))
-
+        whenever(activePlugin.activeInsulin).thenReturn(insulin)
+        whenever(insulin.iCfg).thenReturn(iCfg)
         val authRequestProvider = Provider { AuthRequest(aapsLogger, smsCommunicatorPlugin, rh, otp, dateUtil, commandQueue) }
         smsCommunicatorPlugin = SmsCommunicatorPlugin(
             aapsLogger, rh, smsManager, aapsSchedulers, preferences, constraintChecker, rxBus, profileFunction, profileUtil, fabricPrivacy, activePlugin, commandQueue,
@@ -148,7 +155,7 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
         whenever(iobCobCalculator.calculateIobFromTempBasalsIncludingConvertedExtended()).thenReturn(IobTotal(0))
 
         whenever(activePlugin.activeProfileSource).thenReturn(profileSource)
-        whenever(profileFunction.getProfile()).thenReturn(validProfile)
+        whenever(profileFunction.getProfile()).thenReturn(effectiveProfile)
         whenever(pumpStatusProvider.shortStatus(anyBoolean())).thenReturn(testPumpPlugin.pumpSpecificShortStatus(true))
         whenever(otp.name()).thenReturn("User")
         whenever(otp.checkOTP(anyString())).thenReturn(OneTimePasswordValidationResult.OK)
@@ -557,7 +564,7 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
         assertThat(smsCommunicatorPlugin.messages[1].text).isEqualTo("Wrong duration")
 
         //PUMP DISCONNECT 30
-        whenever(profileFunction.getProfile()).thenReturn(validProfile)
+        whenever(profileFunction.getProfile()).thenReturn(effectiveProfile)
         smsCommunicatorPlugin.messages = ArrayList()
         sms = Sms("1234", "PUMP DISCONNECT 30")
         smsCommunicatorPlugin.processSms(sms)
@@ -734,6 +741,7 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
                 anyOrNull(),
                 anyOrNull(),
                 anyOrNull(),
+                anyOrNull(),
                 anyOrNull()
             )
         ).thenReturn(true)
@@ -777,7 +785,7 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
         assertThat(smsCommunicatorPlugin.messages[2].text).isEqualTo(passCode)
         assertThat(smsCommunicatorPlugin.messages[3].text).contains("Temp basal canceled")
 
-        whenever(profileFunction.getProfile()).thenReturn(validProfile)
+        whenever(profileFunction.getProfile()).thenReturn(effectiveProfile)
         //BASAL a%
         smsCommunicatorPlugin.messages = ArrayList()
         sms = Sms("1234", "BASAL a%")
@@ -976,7 +984,7 @@ class SmsCommunicatorPluginTest : TestBaseWithProfile() {
         assertThat(smsCommunicatorPlugin.messages[0].text).isEqualTo("BOLUS 1 a")
         assertThat(smsCommunicatorPlugin.messages[1].text).isEqualTo("Wrong format")
 
-        whenever(profileFunction.getProfile()).thenReturn(validProfile)
+        whenever(profileFunction.getProfile()).thenReturn(effectiveProfile)
         whenever(preferences.get(UnitDoubleKey.OverviewEatingSoonTarget)).thenReturn(5.0)
         whenever(preferences.get(IntKey.OverviewEatingSoonDuration)).thenReturn(45)
         //BOLUS 1 MEAL

@@ -7,7 +7,7 @@ import app.aaps.core.data.pump.defs.PumpType
 import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
-import app.aaps.core.interfaces.profile.ProfileFunction
+import app.aaps.core.interfaces.pump.PumpRate
 import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.AapsSchedulers
@@ -42,7 +42,6 @@ class EopatchOverviewViewModel @Inject constructor(
     private val tempBasalManager: TempBasalManager,
     private val normalBasalManager: NormalBasalManager,
     val preferenceManager: PreferenceManager,
-    private val profileFunction: ProfileFunction,
     private val aapsSchedulers: AapsSchedulers,
     private val aapsLogger: AAPSLogger,
     private val dateUtil: DateUtil,
@@ -184,7 +183,7 @@ class EopatchOverviewViewModel @Inject constructor(
     }
 
     fun onClickActivation() {
-        val profile = profileFunction.getProfile()
+        val profile = pumpSync.expectedPumpState().profile
         if (profile == null) {
             _eventHandler.postValue(UIEvent(EventType.PROFILE_NOT_SET))
         } else {
@@ -227,7 +226,7 @@ class EopatchOverviewViewModel @Inject constructor(
                            if (response.isSuccess) {
                                val result = pumpSync.syncTemporaryBasalWithPumpId(
                                    timestamp = dateUtil.now(),
-                                   rate = 0.0,
+                                   rate = PumpRate(0.0),
                                    duration = T.mins((pauseDurationHour * 60).toLong()).msecs(),
                                    isAbsolute = true,
                                    type = PumpSync.TemporaryBasalType.PUMP_SUSPEND,

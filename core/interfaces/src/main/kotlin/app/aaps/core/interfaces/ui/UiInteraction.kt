@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentManager
+import app.aaps.core.data.model.ICfg
 import app.aaps.core.interfaces.nsclient.NSAlarm
 
 /**
@@ -17,6 +18,7 @@ interface UiInteraction {
     val historyBrowseActivity: Class<*>
     val errorHelperActivity: Class<*>
     val bolusProgressHelperActivity: Class<*>
+    val concentrationActivity: Class<*>
     val singleFragmentActivity: Class<*>
     val preferencesActivity: Class<*>
     val myPreferenceFragment: Class<*>
@@ -48,16 +50,19 @@ interface UiInteraction {
      * @param soundId sound resource. if == 0 alarm is not started
      */
     fun runAlarm(status: String, title: String, @RawRes soundId: Int = 0)
+    fun runInsulinConfirmation()
 
     fun updateWidget(context: Context, from: String)
 
     fun runWizardDialog(fragmentManager: FragmentManager, carbs: Int? = null, name: String? = null)
     fun runLoopDialog(fragmentManager: FragmentManager, showOkCancel: Int)
-    fun runProfileSwitchDialog(fragmentManager: FragmentManager, profileName: String? = null)
+    fun runProfileSwitchDialog(fragmentManager: FragmentManager, profileName: String? = null, iCfg: ICfg? = null)
     fun runTempBasalDialog(fragmentManager: FragmentManager)
     fun runTreatmentDialog(fragmentManager: FragmentManager)
     fun runInsulinDialog(fragmentManager: FragmentManager)
+    fun runInsulinSwitchDialog(fragmentManager: FragmentManager, concentration: Double? = null, iCfg: ICfg? = null)
     fun runCalibrationDialog(fragmentManager: FragmentManager)
+    fun runConcentrationDialog(fragmentManager: FragmentManager)
     fun runCarbsDialog(fragmentManager: FragmentManager)
     fun runTempTargetDialog(fragmentManager: FragmentManager)
     fun runExtendedBolusDialog(fragmentManager: FragmentManager)

@@ -85,7 +85,7 @@ internal class NSClientV3PluginTest : TestBaseWithProfile() {
             )
         sut.nsAndroidClient = nsAndroidClient
         sut.nsClientV3Service = nsClientV3Service
-        whenever(mockedProfileFunction.getProfile(anyLong())).thenReturn(validProfile)
+        whenever(mockedProfileFunction.getProfile(anyLong())).thenReturn(effectiveProfile)
     }
 
     @Test
@@ -184,7 +184,8 @@ internal class NSClientV3PluginTest : TestBaseWithProfile() {
                 pumpId = 11000,
                 pumpType = PumpType.DANA_I,
                 pumpSerial = "bbbb"
-            )
+            ),
+            iCfg = someICfg
         )
         val dataPair = DataSyncSelector.PairBolus(bolus, 1000)
         // create
@@ -283,11 +284,11 @@ internal class NSClientV3PluginTest : TestBaseWithProfile() {
         val profileSwitch = EPS(
             timestamp = 10000,
             isValid = true,
-            basalBlocks = validProfile.basalBlocks,
-            isfBlocks = validProfile.isfBlocks,
-            icBlocks = validProfile.icBlocks,
-            targetBlocks = validProfile.targetBlocks,
-            glucoseUnit = validProfile.units,
+            basalBlocks = effectiveProfile.basalBlocks,
+            isfBlocks = effectiveProfile.isfBlocks,
+            icBlocks = effectiveProfile.icBlocks,
+            targetBlocks = effectiveProfile.targetBlocks,
+            glucoseUnit = effectiveProfile.units,
             originalProfileName = "SomeProfile",
             originalCustomizedName = "SomeProfile (150%, 1h)",
             originalTimeshift = 3600000,
@@ -295,7 +296,7 @@ internal class NSClientV3PluginTest : TestBaseWithProfile() {
             originalDuration = 3600000,
             originalEnd = 0,
             iCfg = activePlugin.activeInsulin.iCfg.also {
-                it.insulinEndTime = (validProfile.dia * 3600 * 1000).toLong()
+                it.insulinEndTime = (effectiveProfile.iCfg.dia * 3600 * 1000).toLong()
             },
             ids = IDs(
                 nightscoutId = "nightscoutId",
@@ -321,17 +322,17 @@ internal class NSClientV3PluginTest : TestBaseWithProfile() {
         val profileSwitch = PS(
             timestamp = 10000,
             isValid = true,
-            basalBlocks = validProfile.basalBlocks,
-            isfBlocks = validProfile.isfBlocks,
-            icBlocks = validProfile.icBlocks,
-            targetBlocks = validProfile.targetBlocks,
-            glucoseUnit = validProfile.units,
+            basalBlocks = effectiveProfile.basalBlocks,
+            isfBlocks = effectiveProfile.isfBlocks,
+            icBlocks = effectiveProfile.icBlocks,
+            targetBlocks = effectiveProfile.targetBlocks,
+            glucoseUnit = effectiveProfile.units,
             profileName = "SomeProfile",
             timeshift = 0,
             percentage = 100,
             duration = 0,
             iCfg = activePlugin.activeInsulin.iCfg.also {
-                it.insulinEndTime = (validProfile.dia * 3600 * 1000).toLong()
+                it.insulinEndTime = (effectiveProfile.iCfg.dia * 3600 * 1000).toLong()
             },
             ids = IDs(
                 nightscoutId = "nightscoutId",

@@ -3,11 +3,14 @@ package app.aaps.pump.equil.manager
 import android.os.SystemClock
 import android.text.TextUtils
 import app.aaps.core.data.pump.defs.PumpType
+import app.aaps.core.interfaces.insulin.ConcentrationHelper
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.notifications.Notification
 import app.aaps.core.interfaces.pump.DetailedBolusInfo
 import app.aaps.core.interfaces.pump.PumpEnactResult
+import app.aaps.core.interfaces.pump.PumpInsulin
+import app.aaps.core.interfaces.pump.PumpRate
 import app.aaps.core.interfaces.pump.PumpSync
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
@@ -80,7 +83,8 @@ class EquilManager @Inject constructor(
     private val equilHistoryRecordDao: EquilHistoryRecordDao,
     private val equilHistoryPumpDao: EquilHistoryPumpDao,
     private val pumpEnactResultProvider: Provider<PumpEnactResult>,
-    private val dateUtil: DateUtil
+    private val dateUtil: DateUtil,
+    private val ch: ConcentrationHelper
 ) {
 
     private val gsonInstance: Gson = createGson()
@@ -171,7 +175,7 @@ class EquilManager @Inject constructor(
                     setTempBasal(tempBasalRecord)
                     pumpSync.syncTemporaryBasalWithPumpId(
                         currentTime,
-                        insulin,
+                        PumpRate(insulin),
                         time.toLong() * 60 * 1000,
                         true,
                         PumpSync.TemporaryBasalType.NORMAL,
@@ -217,7 +221,7 @@ class EquilManager @Inject constructor(
                 } else {
                     pumpSync.syncExtendedBolusWithPumpId(
                         currentTimeMillis,
-                        insulin,
+                        PumpRate(insulin),
                         time.toLong() * 60 * 1000,
                         true,
                         currentTimeMillis,
@@ -256,7 +260,7 @@ class EquilManager @Inject constructor(
                 result.success = true
                 result.enacted(true)
                 while (!bolusProfile.stop && percent < 100) {
-                    rxBus.send(EventOverviewBolusProgress(rh, percent / 100.0 * detailedBolusInfo.insulin, id = detailedBolusInfo.id))
+                    rxBus.send(EventOverviewBolusProgress(ch, PumpInsulin(percent / 100.0 * detailedBolusInfo.insulin), id = detailedBolusInfo.id))
                     SystemClock.sleep(sleep.toLong())
                     percent = percent + percent1
                     aapsLogger.debug(LTag.PUMPCOMM, "isCmdStatus===" + percent + "====" + bolusProfile.stop)
@@ -275,7 +279,7 @@ class EquilManager @Inject constructor(
                 val currentTime = System.currentTimeMillis()
                 pumpSync.syncBolusWithPumpId(
                     currentTime,
-                    result.bolusDelivered,
+                    PumpInsulin(result.bolusDelivered),
                     detailedBolusInfo.bolusType,
                     detailedBolusInfo.timestamp,
                     PumpType.EQUIL,

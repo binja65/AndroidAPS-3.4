@@ -16,13 +16,13 @@ import app.aaps.core.interfaces.logging.UserEntryLogger
 import app.aaps.core.interfaces.nsclient.ProcessedDeviceStatusData
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.pump.PumpStatusProvider
+import app.aaps.core.interfaces.pump.PumpWithConcentration
 import app.aaps.core.interfaces.queue.CommandQueue
 import app.aaps.core.interfaces.receivers.ReceiverStatusStore
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.nssdk.interfaces.RunningConfiguration
 import app.aaps.core.objects.constraints.ConstraintObject
-import app.aaps.pump.virtual.VirtualPumpPlugin
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
 import io.reactivex.rxjava3.core.Single
@@ -42,7 +42,7 @@ class LoopPluginTest : TestBaseWithProfile() {
 
     @Mock lateinit var constraintChecker: ConstraintsChecker
     @Mock lateinit var commandQueue: CommandQueue
-    @Mock lateinit var virtualPumpPlugin: VirtualPumpPlugin
+    @Mock lateinit var virtualPumpPlugin: PumpWithConcentration
     @Mock lateinit var receiverStatusStore: ReceiverStatusStore
     @Mock lateinit var notificationManager: NotificationManager
     @Mock lateinit var persistenceLayer: PersistenceLayer
@@ -59,7 +59,7 @@ class LoopPluginTest : TestBaseWithProfile() {
         preferenceManager = PreferenceManager(context)
         loopPlugin = LoopPlugin(
             aapsLogger, aapsSchedulers, rxBus, preferences, config,
-            constraintChecker, rh, profileFunction, context, commandQueue, activePlugin, virtualPumpPlugin, iobCobCalculator, processedTbrEbData, receiverStatusStore, fabricPrivacy, dateUtil, uel,
+            constraintChecker, rh, profileFunction, context, commandQueue, activePlugin, iobCobCalculator, processedTbrEbData, receiverStatusStore, fabricPrivacy, dateUtil, uel,
             persistenceLayer, runningConfiguration, uiInteraction, pumpEnactResultProvider, processedDeviceStatusData, pumpStatusProvider
         )
         whenever(activePlugin.activePump).thenReturn(virtualPumpPlugin)

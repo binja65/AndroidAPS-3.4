@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import app.aaps.core.data.configuration.Constants
+import app.aaps.core.data.model.ICfg
 import app.aaps.core.data.model.TT
 import app.aaps.core.data.time.T
 import app.aaps.core.data.ue.Action
@@ -24,19 +25,24 @@ import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.protection.ProtectionCheck
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
+import app.aaps.core.interfaces.rx.events.EventConcentrationChange
 import app.aaps.core.interfaces.utils.HardLimits
 import app.aaps.core.keys.BooleanNonKey
+import app.aaps.core.keys.DoubleNonKey
 import app.aaps.core.keys.UnitDoubleKey
+import app.aaps.core.objects.extensions.fromJson
 import app.aaps.core.objects.profile.ProfileSealed
 import app.aaps.core.ui.dialogs.OKDialog
 import app.aaps.core.ui.extensions.toVisibility
 import app.aaps.core.ui.toast.ToastUtils
 import app.aaps.core.utils.HtmlHelper
 import app.aaps.ui.R
+import app.aaps.ui.activities.ConcentrationActivity
 import app.aaps.ui.databinding.DialogProfileswitchBinding
 import com.google.common.base.Joiner
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
+import org.json.JSONObject
 import java.text.DecimalFormat
 import java.util.LinkedList
 import java.util.concurrent.TimeUnit
@@ -58,7 +64,15 @@ class ProfileSwitchDialog : DialogFragmentWithDate() {
 
     private var queryingProtection = false
     private var profileName: String? = null
+    private var iCfg: ICfg? = null
     private val disposable = CompositeDisposable()
+    private val currentConcentration: Double
+        get()= preferences.get(DoubleNonKey.ApprovedConcentration)
+    private val targetConcentration: Double
+        get()= preferences.get(DoubleNonKey.NewConcentration)
+    private val confirmOnly: Boolean
+        get() = currentConcentration == targetConcentration
+
     private var _binding: DialogProfileswitchBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
@@ -91,6 +105,7 @@ class ProfileSwitchDialog : DialogFragmentWithDate() {
         onCreateViewGeneral()
         arguments?.let { bundle ->
             profileName = bundle.getString("profileName", null)
+            iCfg = bundle.getString("iCfg", null)?.let { ICfg.fromJson(JSONObject(it))}
         }
         _binding = DialogProfileswitchBinding.inflate(inflater, container, false)
         return binding.root
@@ -193,7 +208,8 @@ class ProfileSwitchDialog : DialogFragmentWithDate() {
             actions.add(rh.gs(app.aaps.core.ui.R.string.temporary_target) + ": " + rh.gs(app.aaps.core.ui.R.string.activity))
 
         activity?.let { activity ->
-            val ps = profileFunction.buildProfileSwitch(profileStore, profileName, duration, percent, timeShift, eventTime) ?: return@let
+            val newICfg = iCfg ?:activePlugin.activeInsulin.iCfg
+            val ps = profileFunction.buildProfileSwitch(profileStore, profileName, duration, percent, timeShift, eventTime, newICfg) ?: return@let
             val validity = ProfileSealed.PS(ps, activePlugin).isValid(rh.gs(app.aaps.core.ui.R.string.careportal_profileswitch), activePlugin.activePump, config, rh, rxBus, hardLimits, false)
             if (validity.isValid)
                 OKDialog.showConfirmation(activity, rh.gs(app.aaps.core.ui.R.string.careportal_profileswitch), HtmlHelper.fromHtml(Joiner.on("<br/>").join(actions)), {
@@ -210,10 +226,12 @@ class ProfileSwitchDialog : DialogFragmentWithDate() {
                             listValues = listOf(
                                 ValueWithUnit.Timestamp(eventTime).takeIf { eventTimeChanged },
                                 ValueWithUnit.SimpleString(profileName),
+                                ValueWithUnit.SimpleString(newICfg.insulinLabel),
                                 ValueWithUnit.Percent(percent),
                                 ValueWithUnit.Hour(timeShift).takeIf { timeShift != 0 },
                                 ValueWithUnit.Minute(duration).takeIf { duration != 0 }
-                            ).filterNotNull()
+                            ).filterNotNull(),
+                            iCfg = newICfg
                         )
                     ) {
                         if (percent == 90 && duration == 10) preferences.put(BooleanNonKey.ObjectivesProfileSwitchUsed, true)
@@ -237,13 +255,25 @@ class ProfileSwitchDialog : DialogFragmentWithDate() {
                                 ).filterNotNull()
                             ).subscribe()
                         }
+                        iCfg?.let {
+                            activePlugin.activeInsulin.approveConcentration(it.concentration)
+                            rxBus.send(EventConcentrationChange())
+                        }
+                        if (activity is ConcentrationActivity) {
+                            activity.finish()
+                        }
                     }
                 })
             else {
                 OKDialog.show(
-                    activity,
-                    rh.gs(app.aaps.core.ui.R.string.careportal_profileswitch),
-                    HtmlHelper.fromHtml(Joiner.on("<br/>").join(validity.reasons))
+                    context = activity,
+                    title = rh.gs(app.aaps.core.ui.R.string.careportal_profileswitch),
+                    message = HtmlHelper.fromHtml(Joiner.on("<br/>").join(validity.reasons)),
+                    runnable = {
+                        if (activity is ConcentrationActivity) {
+                            activity.finish()
+                        }
+                    }
                 )
                 return false
             }

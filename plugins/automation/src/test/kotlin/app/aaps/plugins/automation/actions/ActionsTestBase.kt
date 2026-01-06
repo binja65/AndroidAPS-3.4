@@ -72,7 +72,7 @@ ActionsTestBase : TestBaseWithProfile() {
     @BeforeEach
     fun mock() {
         whenever(profileFunction.getUnits()).thenReturn(GlucoseUnit.MGDL)
-        whenever(profileFunction.getProfile()).thenReturn(validProfile)
+        whenever(profileFunction.getProfile()).thenReturn(effectiveProfile)
         whenever(activePlugin.activeProfileSource).thenReturn(profilePlugin)
         whenever(profilePlugin.profile).thenReturn(getValidProfileStore())
         whenever(loop.handleRunningModeChange(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyInt(), anyOrNull())).thenReturn(true)
