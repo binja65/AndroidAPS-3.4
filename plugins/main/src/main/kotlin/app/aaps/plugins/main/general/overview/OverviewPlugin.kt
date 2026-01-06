@@ -61,7 +61,6 @@ import app.aaps.core.validators.preferences.AdaptiveIntentPreference
 import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 import app.aaps.core.validators.preferences.AdaptiveUnitPreference
 import app.aaps.plugins.main.R
-import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
 import app.aaps.plugins.main.general.overview.keys.OverviewIntentKey
 import app.aaps.plugins.main.general.overview.keys.OverviewStringKey
 import app.aaps.plugins.main.general.overview.notifications.NotificationStore
@@ -171,8 +170,8 @@ class OverviewPlugin @Inject constructor(
             .put(UnitDoubleKey.OverviewHighMark, preferences)
             .put(IntKey.OverviewCageWarning, preferences)
             .put(IntKey.OverviewCageCritical, preferences)
-            .put(OverviewIntKey.IageWarning, preferences)
-            .put(OverviewIntKey.IageCritical, preferences)
+            .put(IntKey.OverviewIageWarning, preferences)
+            .put(IntKey.OverviewIageCritical, preferences)
             .put(IntKey.OverviewSageWarning, preferences)
             .put(IntKey.OverviewSageCritical, preferences)
             .put(IntKey.OverviewSbatWarning, preferences)
@@ -201,8 +200,8 @@ class OverviewPlugin @Inject constructor(
             .store(UnitDoubleKey.OverviewHighMark, preferences)
             .store(IntKey.OverviewCageWarning, preferences)
             .store(IntKey.OverviewCageCritical, preferences)
-            .store(OverviewIntKey.IageWarning, preferences)
-            .store(OverviewIntKey.IageCritical, preferences)
+            .store(IntKey.OverviewIageWarning, preferences)
+            .store(IntKey.OverviewIageCritical, preferences)
             .store(IntKey.OverviewSageWarning, preferences)
             .store(IntKey.OverviewSageCritical, preferences)
             .store(IntKey.OverviewSbatWarning, preferences)
@@ -311,8 +310,8 @@ class OverviewPlugin @Inject constructor(
                     BooleanKey.OverviewShowStatusLights,
                     IntKey.OverviewCageWarning,
                     IntKey.OverviewCageCritical,
-                    OverviewIntKey.IageWarning,
-                    OverviewIntKey.IageCritical,
+                    IntKey.OverviewIageWarning,
+                    IntKey.OverviewIageCritical,
                     IntKey.OverviewSageWarning,
                     IntKey.OverviewSageCritical,
                     IntKey.OverviewSbatWarning,
@@ -397,7 +396,6 @@ class OverviewPlugin @Inject constructor(
             })
             addPreference(preferenceManager.createPreferenceScreen(context).apply {
                 key = "range_settings"
-                summary = rh.gs(R.string.prefs_range_summary)
                 title = rh.gs(R.string.prefs_range_title)
                 addPreference(AdaptiveUnitPreference(ctx = context, unitKey = UnitDoubleKey.OverviewLowMark, title = app.aaps.core.keys.R.string.pref_title_low_mark))
                 addPreference(AdaptiveUnitPreference(ctx = context, unitKey = UnitDoubleKey.OverviewHighMark, title = app.aaps.core.keys.R.string.pref_title_high_mark))
@@ -408,22 +406,20 @@ class OverviewPlugin @Inject constructor(
                 key = "statuslights_overview_advanced"
                 title = rh.gs(app.aaps.core.ui.R.string.statuslights)
                 addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.OverviewShowStatusLights, title = app.aaps.core.keys.R.string.pref_title_show_status_lights))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewCageWarning, title = R.string.statuslights_cage_warning))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewCageCritical, title = R.string.statuslights_cage_critical))
-                if (pump.pumpDescription.isPatchPump.not()) {
-                    addPreference(AdaptiveIntPreference(ctx = context, intKey = OverviewIntKey.IageWarning, title = R.string.statuslights_iage_warning))
-                    addPreference(AdaptiveIntPreference(ctx = context, intKey = OverviewIntKey.IageCritical, title = R.string.statuslights_iage_critical))
-                }
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSageWarning, title = R.string.statuslights_sage_warning))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSageCritical, title = R.string.statuslights_sage_critical))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSbatWarning, title = R.string.statuslights_sbat_warning))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSbatCritical, title = R.string.statuslights_sbat_critical))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewResWarning, title = R.string.statuslights_res_warning))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewResCritical, title = R.string.statuslights_res_critical))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBattWarning, title = R.string.statuslights_bat_warning))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBattCritical, title = R.string.statuslights_bat_critical))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBageWarning, title = R.string.statuslights_bage_warning))
-                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBageCritical, title = R.string.statuslights_bage_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewCageWarning, title = app.aaps.core.keys.R.string.pref_title_cage_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewCageCritical, title = app.aaps.core.keys.R.string.pref_title_cage_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewIageWarning, title = app.aaps.core.keys.R.string.pref_title_iage_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewIageCritical, title = app.aaps.core.keys.R.string.pref_title_iage_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSageWarning, title = app.aaps.core.keys.R.string.pref_title_sage_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSageCritical, title = app.aaps.core.keys.R.string.pref_title_sage_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSbatWarning, title = app.aaps.core.keys.R.string.pref_title_sbat_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewSbatCritical, title = app.aaps.core.keys.R.string.pref_title_sbat_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewResWarning, title = app.aaps.core.keys.R.string.pref_title_res_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewResCritical, title = app.aaps.core.keys.R.string.pref_title_res_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBattWarning, title = app.aaps.core.keys.R.string.pref_title_batt_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBattCritical, title = app.aaps.core.keys.R.string.pref_title_batt_critical))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBageWarning, title = app.aaps.core.keys.R.string.pref_title_bage_warning))
+                addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.OverviewBageCritical, title = app.aaps.core.keys.R.string.pref_title_bage_critical))
                 addPreference(
                     AdaptiveClickPreference(
                         ctx = context, stringKey = StringKey.OverviewCopySettingsFromNs, title = R.string.statuslights_copy_ns,
@@ -461,8 +457,8 @@ class OverviewPlugin @Inject constructor(
             val bageCritical = nsSettingStatus.getExtendedWarnValue("bage", "urgent")?.toInt()
             cageWarn?.let { preferences.put(IntKey.OverviewCageWarning, it) }
             cageCritical?.let { preferences.put(IntKey.OverviewCageCritical, it) }
-            iageWarn?.let { preferences.put(OverviewIntKey.IageWarning, it) }
-            iageCritical?.let { preferences.put(OverviewIntKey.IageCritical, it) }
+            iageWarn?.let { preferences.put(IntKey.OverviewIageWarning, it) }
+            iageCritical?.let { preferences.put(IntKey.OverviewIageCritical, it) }
             sageWarn?.let { preferences.put(IntKey.OverviewSageWarning, it) }
             sageCritical?.let { preferences.put(IntKey.OverviewSageCritical, it) }
             bageWarn?.let { preferences.put(IntKey.OverviewBageWarning, it) }

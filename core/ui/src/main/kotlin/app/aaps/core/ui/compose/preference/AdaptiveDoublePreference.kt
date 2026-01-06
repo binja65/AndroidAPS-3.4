@@ -54,10 +54,22 @@ fun AdaptiveDoublePreferenceItem(
             text.toDoubleOrNull()?.coerceIn(doubleKey.min, doubleKey.max)
         },
         enabled = visibility.enabled,
-        summary = if (showRange && hasValidRange) {
-            { Text("$value$unit (${doubleKey.min}-${doubleKey.max})") }
-        } else {
-            { Text("$value$unit") }
+        summary = {
+            val unitsResId = doubleKey.unitsResId
+            val summaryText = when {
+                unitsResId != null -> {
+                    // Use formatted string resource with units
+                    stringResource(unitsResId, value, doubleKey.min, doubleKey.max)
+                }
+                showRange && hasValidRange -> {
+                    // Fallback to old behavior with unit parameter
+                    "$value$unit (${doubleKey.min} - ${doubleKey.max})"
+                }
+                else -> {
+                    "$value$unit"
+                }
+            }
+            Text(summaryText)
         }
     )
 }

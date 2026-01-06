@@ -55,10 +55,22 @@ fun AdaptiveIntPreferenceItem(
             text.toIntOrNull()?.coerceIn(intKey.min, intKey.max)
         },
         enabled = visibility.enabled,
-        summary = if (showRange && hasValidRange) {
-            { Text("$value$unit (${intKey.min}-${intKey.max})") }
-        } else {
-            { Text("$value$unit") }
+        summary = {
+            val unitsResId = intKey.unitsResId
+            val summaryText = when {
+                unitsResId != null -> {
+                    // Use formatted string resource with units
+                    stringResource(unitsResId, value, intKey.min, intKey.max)
+                }
+                showRange && hasValidRange -> {
+                    // Fallback to old behavior with unit parameter
+                    "$value$unit (${intKey.min} - ${intKey.max})"
+                }
+                else -> {
+                    "$value$unit"
+                }
+            }
+            Text(summaryText)
         }
     )
 }

@@ -15,7 +15,6 @@ import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.plugins.main.general.overview.keys.OverviewIntKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -57,7 +56,7 @@ class StatusLightHandler @Inject constructor(
         val pump = activePlugin.activePump
         val bgSource = activePlugin.activeBgSource
         handleAge(cannulaAge, TE.Type.CANNULA_CHANGE, IntKey.OverviewCageWarning, IntKey.OverviewCageCritical)
-        handleAge(insulinAge, TE.Type.INSULIN_CHANGE, OverviewIntKey.IageWarning, OverviewIntKey.IageCritical)
+        handleAge(insulinAge, TE.Type.INSULIN_CHANGE, IntKey.OverviewIageWarning, IntKey.OverviewIageCritical)
         handleAge(sensorAge, TE.Type.SENSOR_CHANGE, IntKey.OverviewSageWarning, IntKey.OverviewSageCritical)
         if (pump.pumpDescription.isBatteryReplaceable || pump.isBatteryChangeLoggingEnabled()) {
             handleAge(batteryAge, TE.Type.PUMP_BATTERY_CHANGE, IntKey.OverviewBageWarning, IntKey.OverviewBageCritical)

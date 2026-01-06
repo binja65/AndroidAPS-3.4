@@ -216,7 +216,7 @@ fun PreferenceNavigationHost(
     onBackClick: () -> Unit
 ) {
     var currentSubScreen by rememberSaveable { mutableStateOf<String?>(null) }
-    val sectionState = rememberPreferenceSectionState()
+    val sectionState = rememberPreferenceSectionState(accordionMode = true)
 
     val selectedSubScreen = content.subscreens.find { it.key == currentSubScreen }
 
@@ -428,16 +428,22 @@ fun LazyListScope.addNavigablePreferenceContent(
         ) {
             // Show main content first (if any)
             content.mainContent?.invoke(sectionState)
-            // Then show each subscreen as a collapsible section
+            // Then show each subscreen as a simple collapsible section (no extra card)
             content.subscreens.forEach { subScreen ->
                 val subSectionKey = "${content.keyPrefix}_${subScreen.key}"
                 val isSubExpanded = sectionState?.isExpanded(subSectionKey) ?: false
-                CollapsibleCardSectionContent(
+
+                // Header without card
+                ClickablePreferenceCategoryHeader(
                     titleResId = subScreen.titleResId,
                     summaryItems = subScreen.effectiveSummaryItems(),
                     expanded = isSubExpanded,
-                    onToggle = { sectionState?.toggle(subSectionKey) }
-                ) {
+                    onToggle = { sectionState?.toggle(subSectionKey) },
+                    insideCard = true
+                )
+
+                // Content without card wrapper
+                if (isSubExpanded) {
                     subScreen.content(sectionState)
                 }
             }
@@ -502,15 +508,21 @@ fun LazyListScope.addPreferenceSubScreenDef(
                             }
                         }
                         is PreferenceSubScreenDef -> {
-                            // Render nested subscreen as collapsible section
+                            // Render nested subscreen as simple collapsible section (no extra card)
                             val subSectionKey = "${def.key}_${item.key}"
                             val isSubExpanded = sectionState?.isExpanded(subSectionKey) ?: false
-                            CollapsibleCardSectionContent(
+
+                            // Header without card
+                            ClickablePreferenceCategoryHeader(
                                 titleResId = item.titleResId,
                                 summaryItems = item.effectiveSummaryItems(),
                                 expanded = isSubExpanded,
-                                onToggle = { sectionState?.toggle(subSectionKey) }
-                            ) {
+                                onToggle = { sectionState?.toggle(subSectionKey) },
+                                insideCard = true
+                            )
+
+                            // Content without card wrapper
+                            if (isSubExpanded) {
                                 if (item.customContent != null) {
                                     item.customContent.invoke(sectionState)
                                 } else if (preferences != null && config != null) {
@@ -534,62 +546,3 @@ fun LazyListScope.addPreferenceSubScreenDef(
     }
 }
 
-/**
- * Host composable for rendering subscreen content inside a CollapsibleCardSectionContent.
- */
-@Composable
-private fun SubScreenContentHost(
-    subScreen: PreferenceSubScreen,
-    sectionState: PreferenceSectionState?
-) {
-    // Render the subscreen's composable content directly
-    subScreen.content(sectionState)
-}
-
-/**
- * A navigable preference item for use inside CollapsibleCardSectionContent.
- * Similar to NavigablePreferenceItem but styled for card context.
- */
-@Composable
-fun NavigableCardPreferenceItem(
-    titleResId: Int,
-    summaryResId: Int? = null,
-    onClick: () -> Unit
-) {
-    val theme = LocalPreferenceTheme.current
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            ProvideTextStyle(value = theme.titleTextStyle) {
-                Text(
-                    text = stringResource(titleResId),
-                    color = theme.titleColor
-                )
-            }
-            if (summaryResId != null) {
-                ProvideTextStyle(value = theme.summaryTextStyle) {
-                    Text(
-                        text = stringResource(summaryResId),
-                        color = theme.summaryColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-        }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}

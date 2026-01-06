@@ -18,7 +18,8 @@ enum class UnitDoubleKey(
     override val dependency: BooleanPreferenceKey? = null,
     override val negativeDependency: BooleanPreferenceKey? = null,
     override val hideParentScreenIfHidden: Boolean = false,
-    override val exportable: Boolean = true
+    override val exportable: Boolean = true,
+    override val unitsResId: Int? = null
 ) : UnitDoublePreferenceKey {
 
     OverviewEatingSoonTarget(key = "eatingsoon_target", defaultValue = 90.0, minMgdl = 72, maxMgdl = 160, titleResId = R.string.pref_title_eating_soon_target, defaultedBySM = true),

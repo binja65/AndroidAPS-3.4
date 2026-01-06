@@ -11,11 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.profile.ProfileUtil
+import app.aaps.core.keys.R
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.UnitDoublePreferenceKey
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.abs
 
 /**
  * Composable unit double preference for use inside card sections.
@@ -48,16 +50,22 @@ fun AdaptiveUnitDoublePreferenceItem(
     if (!visibility.visible || (preferences.simpleMode && unitKey.defaultedBySM)) return
 
     val state = rememberUnitDoublePreferenceState(preferences, profileUtil, unitKey)
-    val minDisplay = profileUtil.valueInCurrentUnitsDetect(unitKey.minMgdl.toDouble())
-    val maxDisplay = profileUtil.valueInCurrentUnitsDetect(unitKey.maxMgdl.toDouble())
-    // Check if using mg/dL by comparing converted values
-    val isMgdl = minDisplay == unitKey.minMgdl.toDouble()
+
+    // Convert min/max values from mg/dL to current units using ProfileUtil
+    val minDisplay = profileUtil.fromMgdlToUnits(unitKey.minMgdl.toDouble())
+    val maxDisplay = profileUtil.fromMgdlToUnits(unitKey.maxMgdl.toDouble())
+
+    // Detect if using mg/dL by checking if conversion preserved the value
+    val isMgdl = abs(minDisplay - unitKey.minMgdl.toDouble()) < 0.01
+
     val precision = if (isMgdl) 0 else 1
-    val unit = if (isMgdl) "mg/dl" else "mmol/L"
     val minFormatted = BigDecimal(minDisplay).setScale(precision, RoundingMode.HALF_UP).toPlainString()
     val maxFormatted = BigDecimal(maxDisplay).setScale(precision, RoundingMode.HALF_UP).toPlainString()
 
     val textState = remember { mutableStateOf(state.displayValue) }
+
+    // Choose the appropriate formatted unit string based on user's glucose unit preference
+    val unitFormatResId = if (isMgdl) R.string.units_format_mgdl_range else R.string.units_format_mmol_range
 
     TextFieldPreference(
         state = textState,
@@ -72,6 +80,6 @@ fun AdaptiveUnitDoublePreferenceItem(
             }
         },
         enabled = visibility.enabled,
-        summary = { Text("${state.displayValue} $unit ($minFormatted-$maxFormatted)") }
+        summary = { Text(stringResource(unitFormatResId, state.displayValue, minFormatted, maxFormatted)) }
     )
 }

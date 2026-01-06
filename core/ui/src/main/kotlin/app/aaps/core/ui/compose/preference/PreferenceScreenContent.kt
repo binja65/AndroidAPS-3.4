@@ -11,9 +11,12 @@ import androidx.core.os.bundleOf
 /**
  * State holder for collapsible preference sections.
  * Tracks which sections are expanded and persists across configuration changes.
+ *
+ * @param accordionMode If true, only one section can be expanded at a time (accordion behavior)
  */
 class PreferenceSectionState(
-    private val expandedSections: SnapshotStateMap<String, Boolean> = mutableStateMapOf()
+    private val expandedSections: SnapshotStateMap<String, Boolean> = mutableStateMapOf(),
+    val accordionMode: Boolean = false
 ) {
 
     /**
@@ -23,31 +26,64 @@ class PreferenceSectionState(
 
     /**
      * Toggle the expanded state of a section
+     * In accordion mode, expanding a section collapses only sibling sections (same hierarchy level)
      */
     fun toggle(sectionKey: String) {
-        expandedSections[sectionKey] = !isExpanded(sectionKey)
-    }
+        val newState = !isExpanded(sectionKey)
 
-    /**
-     * Set the expanded state of a section
-     */
-    fun setExpanded(sectionKey: String, expanded: Boolean) {
-        expandedSections[sectionKey] = expanded
+        if (accordionMode && newState) {
+            val isTopLevel = sectionKey.endsWith("_main")
+            // Get plugin prefix (part before first underscore)
+            val pluginPrefix = sectionKey.substringBefore("_", "")
+
+            // Collapse only sibling sections (convert to list to avoid concurrent modification)
+            expandedSections.keys.toList().forEach { key ->
+                if (key != sectionKey) {
+                    val keyIsTopLevel = key.endsWith("_main")
+                    val keyPluginPrefix = key.substringBefore("_", "")
+
+                    // Top-level sections (_main): collapse all other top-level sections
+                    // Subscreens: collapse only siblings with the same plugin prefix
+                    val shouldCollapse = if (isTopLevel && keyIsTopLevel) {
+                        true  // All top-level "_main" sections collapse each other
+                    } else if (!isTopLevel && !keyIsTopLevel && keyPluginPrefix == pluginPrefix) {
+                        true  // Subscreens under same plugin collapse each other
+                    } else {
+                        false
+                    }
+
+                    if (shouldCollapse) {
+                        expandedSections[key] = false
+                    }
+                }
+            }
+        }
+
+        expandedSections[sectionKey] = newState
     }
 
     companion object {
 
+        private const val KEY_ACCORDION_MODE = "_accordionMode"
+
         val Saver: Saver<PreferenceSectionState, Bundle> = Saver(
             save = { state ->
-                bundleOf(*state.expandedSections.map { (k, v) -> k to v }.toTypedArray())
+                bundleOf(
+                    KEY_ACCORDION_MODE to state.accordionMode,
+                    *state.expandedSections.map { (k, v) -> k to v }.toTypedArray()
+                )
             },
             restore = { bundle ->
+                val accordionMode = bundle.getBoolean(KEY_ACCORDION_MODE, false)
                 PreferenceSectionState(
-                    mutableStateMapOf<String, Boolean>().apply {
+                    expandedSections = mutableStateMapOf<String, Boolean>().apply {
                         bundle.keySet().forEach { key ->
-                            put(key, bundle.getBoolean(key))
+                            if (key != KEY_ACCORDION_MODE) {
+                                put(key, bundle.getBoolean(key))
+                            }
                         }
-                    }
+                    },
+                    accordionMode = accordionMode
                 )
             }
         )
@@ -56,10 +92,12 @@ class PreferenceSectionState(
 
 /**
  * Remember and save preference section state across configuration changes
+ *
+ * @param accordionMode If true, only one section can be expanded at a time (accordion behavior)
  */
 @Composable
-fun rememberPreferenceSectionState(): PreferenceSectionState {
+fun rememberPreferenceSectionState(accordionMode: Boolean = false): PreferenceSectionState {
     return rememberSaveable(saver = PreferenceSectionState.Saver) {
-        PreferenceSectionState()
+        PreferenceSectionState(accordionMode = accordionMode)
     }
 }

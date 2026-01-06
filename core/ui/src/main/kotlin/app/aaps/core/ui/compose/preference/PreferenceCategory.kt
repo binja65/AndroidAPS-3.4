@@ -18,6 +18,7 @@
 package app.aaps.core.ui.compose.preference
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -218,9 +219,17 @@ internal fun ClickablePreferenceCategoryHeader(
         theme.categoryPadding
     }
 
+    // Use subtle background color when expanded (Material 3 pattern)
+    val backgroundColor = if (expanded && insideCard) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+    } else {
+        androidx.compose.ui.graphics.Color.Transparent
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .background(backgroundColor)
             .clickable(onClick = onToggle)
             .padding(headerPadding),
         verticalAlignment = Alignment.CenterVertically
