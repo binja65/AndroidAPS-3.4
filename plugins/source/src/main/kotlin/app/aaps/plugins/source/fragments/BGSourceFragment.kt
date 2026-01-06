@@ -1,4 +1,4 @@
-package app.aaps.plugins.source
+package app.aaps.plugins.source.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -36,6 +36,7 @@ import app.aaps.core.objects.ui.ActionModeHelper
 import app.aaps.core.ui.dialogs.OKDialog
 import app.aaps.core.ui.extensions.toVisibility
 import app.aaps.core.ui.extensions.toVisibilityKeepSpace
+import app.aaps.plugins.source.R
 import app.aaps.plugins.source.databinding.SourceFragmentBinding
 import app.aaps.plugins.source.databinding.SourceItemBinding
 import dagger.android.support.DaggerFragment
