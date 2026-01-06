@@ -389,7 +389,7 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
             initialExpandedChildrenCount = 0
             addPreference(AdaptiveListPreference(ctx = context, stringKey = StringKey.GeneralUnits, title = R.string.unitsnosemicolon, entries = unitsEntries, entryValues = unitsValues))
             addPreference(AdaptiveListPreference(ctx = context, stringKey = StringKey.GeneralLanguage, title = R.string.language, entries = languageEntries, entryValues = languageValues))
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.GeneralSimpleMode, title = R.string.simple_mode))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.GeneralSimpleMode, title = app.aaps.core.keys.R.string.pref_title_simple_mode))
             addPreference(
                 AdaptiveStringPreference(
                     ctx = context, stringKey = StringKey.GeneralPatientName, summary = app.aaps.core.keys.R.string.pref_summary_patient_name, title = app.aaps.core.keys.R.string.pref_title_patient_name,
@@ -515,7 +515,7 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
             key = "pump_settings"
             title = rh.gs(app.aaps.core.ui.R.string.pump)
             initialExpandedChildrenCount = 0
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.PumpBtWatchdog, title = app.aaps.core.ui.R.string.btwatchdog_title, summary = app.aaps.core.ui.R.string.btwatchdog_summary))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.PumpBtWatchdog, title = app.aaps.core.keys.R.string.pref_title_bt_watchdog, summary = app.aaps.core.keys.R.string.pref_summary_bt_watchdog))
         }
     }
 
@@ -531,13 +531,13 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
             key = "local_alerts_settings"
             title = rh.gs(R.string.localalertsettings_title)
             initialExpandedChildrenCount = 0
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertMissedBgReading, title = R.string.enable_missed_bg_readings_alert))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertMissedBgReading, title = app.aaps.core.keys.R.string.pref_title_alert_missed_bg_reading))
             addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.AlertsStaleDataThreshold, title = app.aaps.plugins.sync.R.string.ns_alarm_stale_data_value_label))
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertPumpUnreachable, title = R.string.enable_pump_unreachable_alert))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertPumpUnreachable, title = app.aaps.core.keys.R.string.pref_title_alert_pump_unreachable))
             addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.AlertsPumpUnreachableThreshold, title = R.string.pump_unreachable_threshold))
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertCarbsRequired, title = R.string.enable_carbs_req_alert))
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertUrgentAsAndroidNotification, title = app.aaps.core.ui.R.string.raise_notifications_as_android_notifications))
-            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertIncreaseVolume, title = R.string.gradually_increase_notification_volume))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertCarbsRequired, title = app.aaps.core.keys.R.string.pref_title_alert_carbs_required))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertUrgentAsAndroidNotification, title = app.aaps.core.keys.R.string.pref_title_alert_urgent_as_android_notification))
+            addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.AlertIncreaseVolume, title = app.aaps.core.keys.R.string.pref_title_alert_increase_volume))
         }
     }
 }

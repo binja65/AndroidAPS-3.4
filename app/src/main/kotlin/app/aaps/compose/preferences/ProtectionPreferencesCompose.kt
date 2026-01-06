@@ -15,15 +15,12 @@ import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.protection.ProtectionCheck.ProtectionType
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
-import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.OkDialog
 import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptiveListIntPreferenceItem
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
-import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.PreferenceSubScreenDef
 import app.aaps.core.ui.compose.preference.rememberPreferenceIntState
 import app.aaps.core.ui.compose.preference.rememberPreferenceStringState
 
@@ -31,22 +28,14 @@ import app.aaps.core.ui.compose.preference.rememberPreferenceStringState
  * Compose implementation of Protection preferences.
  * Note: Uses custom rendering due to conditional password/PIN fields.
  */
-class ProtectionPreferencesCompose(
-    private val preferences: Preferences,
-    private val config: Config,
-    private val passwordCheck: PasswordCheck
-) : NavigablePreferenceContent {
-
-    override val titleResId: Int = app.aaps.plugins.configuration.R.string.protection
-
-    override val mainKeys: List<PreferenceKey> = listOf(
-        IntKey.ProtectionTypeSettings,
-        IntKey.ProtectionTypeApplication,
-        IntKey.ProtectionTypeBolus,
-        IntKey.ProtectionTimeout
-    )
-
-    override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
+fun ProtectionPreferencesCompose(
+    preferences: Preferences,
+    config: Config,
+    passwordCheck: PasswordCheck
+) = PreferenceSubScreenDef(
+    key = "protection",
+    titleResId = app.aaps.plugins.configuration.R.string.protection,
+    customContent = { _ ->
         val context = LocalContext.current
 
         // Protection type entries
@@ -191,9 +180,7 @@ class ProtectionPreferencesCompose(
             bolusProtectionState = bolusProtectionState
         )
     }
-
-    override val subscreens: List<PreferenceSubScreen> = emptyList()
-}
+)
 
 /**
  * Master password preference that requires current password before allowing change.

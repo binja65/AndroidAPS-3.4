@@ -26,6 +26,7 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.configuration.ConfigBuilder
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.protection.ProtectionCheck
 import app.aaps.core.interfaces.rx.AapsSchedulers
@@ -74,6 +75,7 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
     @Inject lateinit var automationPlugin: AutomationPlugin
     @Inject lateinit var autotunePlugin: AutotunePlugin
     @Inject lateinit var maintenancePlugin: MaintenancePlugin
+    @Inject lateinit var profileUtil: ProfileUtil
 
     // ViewModels
     @Inject lateinit var mainViewModel: MainViewModel
@@ -268,6 +270,7 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
                             automationPlugin = automationPlugin,
                             autotunePlugin = autotunePlugin,
                             maintenancePlugin = maintenancePlugin,
+                            profileUtil = profileUtil,
                             skins = skinProvider.list,
                             onBackClick = { navController.popBackStack() }
                         )

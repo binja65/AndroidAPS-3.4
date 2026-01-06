@@ -15,6 +15,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import app.aaps.R
@@ -22,17 +26,26 @@ import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
+import app.aaps.core.interfaces.plugin.PluginBaseWithPreferences
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.resources.ResourceHelper
+import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.withEntries
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
 import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceNavigationHost
+import app.aaps.core.ui.compose.preference.PreferenceSubScreenDef
 import app.aaps.core.ui.compose.preference.ProvidePreferenceTheme
-import app.aaps.core.ui.compose.preference.addNavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.addPreferenceContent
 import app.aaps.core.ui.compose.preference.rememberPreferenceSectionState
 import app.aaps.core.ui.compose.preference.verticalScrollIndicators
-import app.aaps.plugins.automation.AutomationPlugin
 import app.aaps.plugins.aps.autotune.AutotunePlugin
+import app.aaps.plugins.automation.AutomationPlugin
 import app.aaps.plugins.configuration.maintenance.MaintenancePlugin
 import app.aaps.plugins.main.general.smsCommunicator.SmsCommunicatorPlugin
 import app.aaps.plugins.main.skins.SkinInterface
@@ -42,12 +55,18 @@ import app.aaps.plugins.main.skins.SkinInterface
  * Uses NavigablePreferenceContent for hierarchical navigation.
  *
  * @param plugin The plugin whose preferences to display
+ * @param config Config instance for rendering
+ * @param profileUtil ProfileUtil instance for unit preferences
+ * @param visibilityContext Context for evaluating visibility conditions
  * @param onBackClick Callback when back button is clicked
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PluginPreferencesScreen(
     plugin: PluginBase,
+    config: Config? = null,
+    profileUtil: ProfileUtil? = null,
+    visibilityContext: PreferenceVisibilityContext? = null,
     onBackClick: () -> Unit
 ) {
     val preferenceScreenContent = plugin.getPreferenceScreenContent()
@@ -55,8 +74,21 @@ fun PluginPreferencesScreen(
 
     ProvidePreferenceTheme {
         when (preferenceScreenContent) {
+            is PreferenceSubScreenDef -> {
+                // New pattern: PreferenceSubScreenDef with structure defined in plugin
+                PreferenceSubScreenRenderer(
+                    screen = preferenceScreenContent,
+                    title = title,
+                    plugin = plugin,
+                    config = config,
+                    profileUtil = profileUtil,
+                    visibilityContext = visibilityContext,
+                    onBackClick = onBackClick
+                )
+            }
+
             is NavigablePreferenceContent -> {
-                // Use navigation-based subscreens (click to open)
+                // Legacy pattern: NavigablePreferenceContent with separate compose class
                 PreferenceNavigationHost(
                     content = preferenceScreenContent,
                     title = title,
@@ -104,6 +136,95 @@ fun PluginPreferencesScreen(
 }
 
 /**
+ * Generic renderer for PreferenceSubScreenDef structure.
+ * Handles navigation between main screen and nested subscreens.
+ *
+ * @param screen The root preference screen structure
+ * @param title Title for the main screen
+ * @param plugin The plugin (used to extract preferences and config)
+ * @param onBackClick Callback when back button is clicked on main screen
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PreferenceSubScreenRenderer(
+    screen: PreferenceSubScreenDef,
+    title: String,
+    plugin: PluginBase,
+    config: Config? = null,
+    profileUtil: ProfileUtil? = null,
+    visibilityContext: PreferenceVisibilityContext? = null,
+    onBackClick: () -> Unit
+) {
+    // Extract dependencies from plugin
+    val preferences = (plugin as? PluginBaseWithPreferences)?.preferences
+        ?: return Text("Plugin does not support preferences")
+
+    var navigationStack by rememberSaveable { mutableStateOf(listOf(screen)) }
+    val currentScreen = navigationStack.last()
+    val isMainScreen = navigationStack.size == 1
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = if (isMainScreen) title else stringResource(currentScreen.titleResId),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        if (isMainScreen) {
+                            onBackClick()
+                        } else {
+                            navigationStack = navigationStack.dropLast(1)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(app.aaps.core.ui.R.string.back)
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        val listState = rememberLazyListState()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScrollIndicators(listState),
+            state = listState
+        ) {
+            item(key = "screen_content") {
+                Column {
+                    // Use customContent if provided, otherwise auto-render with AdaptivePreferenceList
+                    if (currentScreen.customContent != null) {
+                        currentScreen.customContent!!.invoke(null)
+                    } else if (config != null) {
+                        // Auto-render using enhanced AdaptivePreferenceList
+                        AdaptivePreferenceList(
+                            items = currentScreen.effectiveItems,
+                            preferences = preferences,
+                            config = config,
+                            profileUtil = profileUtil,
+                            visibilityContext = visibilityContext,
+                            onNavigateToSubScreen = { subscreen ->
+                                navigationStack = navigationStack + subscreen
+                            }
+                        )
+                    } else {
+                        // Fallback if no config provided
+                        Text("Missing Config dependency for rendering")
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
  * Screen for displaying all preferences from all plugins.
  * Maintains the same ordering as the legacy MyPreferenceFragment.
  *
@@ -131,17 +252,47 @@ fun AllPreferencesScreen(
     automationPlugin: AutomationPlugin,
     autotunePlugin: AutotunePlugin,
     maintenancePlugin: MaintenancePlugin,
+    profileUtil: ProfileUtil,
     skins: List<SkinInterface>,
     onBackClick: () -> Unit
 ) {
     // Built-in preference screens
-    val generalPreferences = GeneralPreferencesCompose(preferences, config, rh, skins)
+    val generalPreferences = PreferenceSubScreenDef(
+        key = "general",
+        titleResId = app.aaps.plugins.configuration.R.string.configbuilder_general,
+        items = listOf(
+            StringKey.GeneralUnits,
+            StringKey.GeneralLanguage,
+            BooleanKey.GeneralSimpleMode,
+            StringKey.GeneralPatientName,
+            StringKey.GeneralSkin.withEntries(skins.associate { skin -> skin.javaClass.name to rh.gs(skin.description) }),
+            StringKey.GeneralDarkMode
+        )
+    )
     val protectionPreferences = ProtectionPreferencesCompose(preferences, config, passwordCheck)
-    val pumpPreferences = PumpPreferencesCompose(preferences, config)
-    val alertsPreferences = AlertsPreferencesCompose(preferences, config)
+    val pumpPreferences = PreferenceSubScreenDef(
+        key = "pump",
+        titleResId = app.aaps.core.ui.R.string.pump,
+        items = listOf(
+            BooleanKey.PumpBtWatchdog
+        )
+    )
+    val alertsPreferences = PreferenceSubScreenDef(
+        key = "alerts",
+        titleResId = R.string.localalertsettings_title,
+        items = listOf(
+            BooleanKey.AlertMissedBgReading,
+            IntKey.AlertsStaleDataThreshold,
+            BooleanKey.AlertPumpUnreachable,
+            IntKey.AlertsPumpUnreachableThreshold,
+            BooleanKey.AlertCarbsRequired,
+            BooleanKey.AlertUrgentAsAndroidNotification,
+            BooleanKey.AlertIncreaseVolume
+        )
+    )
 
     // Helper function to get preference content if plugin is enabled
-    fun getPreferenceContentIfEnabled(plugin: PluginBase, enabledCondition: Boolean = true): NavigablePreferenceContent? {
+    fun getPreferenceContentIfEnabled(plugin: PluginBase, enabledCondition: Boolean = true): Any? {
         // Check simple mode visibility
         if (preferences.simpleMode && !plugin.pluginDescription.preferencesVisibleInSimpleMode && !config.isDev()) {
             return null
@@ -150,7 +301,13 @@ fun AllPreferencesScreen(
         if (!enabledCondition || !plugin.isEnabled()) {
             return null
         }
-        return plugin.getPreferenceScreenContent() as? NavigablePreferenceContent
+        val content = plugin.getPreferenceScreenContent()
+        // Accept both NavigablePreferenceContent (legacy) and PreferenceSubScreenDef (new)
+        return when (content) {
+            is NavigablePreferenceContent -> content
+            is PreferenceSubScreenDef     -> content
+            else                          -> null
+        }
     }
 
     // Build plugin preference screens in the same order as MyPreferenceFragment
@@ -228,25 +385,25 @@ fun AllPreferencesScreen(
                 state = listState
             ) {
                 // Built-in: General settings (first)
-                addNavigablePreferenceContent(generalPreferences, sectionState)
+                addPreferenceContent(generalPreferences, sectionState, preferences, config, profileUtil)
 
                 // Built-in: Protection settings
-                addNavigablePreferenceContent(protectionPreferences, sectionState)
+                addPreferenceContent(protectionPreferences, sectionState, preferences, config, profileUtil)
 
                 // Plugin preferences (in fixed order, only enabled plugins)
                 pluginContents.forEach { content ->
-                    addNavigablePreferenceContent(content, sectionState)
+                    addPreferenceContent(content, sectionState, preferences, config, profileUtil)
                 }
 
                 // Built-in: Pump settings
-                addNavigablePreferenceContent(pumpPreferences, sectionState)
+                addPreferenceContent(pumpPreferences, sectionState, preferences, config, profileUtil)
 
                 // Built-in: Alerts settings
-                addNavigablePreferenceContent(alertsPreferences, sectionState)
+                addPreferenceContent(alertsPreferences, sectionState, preferences, config, profileUtil)
 
                 // Maintenance plugin (last)
                 getPreferenceContentIfEnabled(maintenancePlugin)?.let { content ->
-                    addNavigablePreferenceContent(content, sectionState)
+                    addPreferenceContent(content, sectionState, preferences, config, profileUtil)
                 }
             }
         }

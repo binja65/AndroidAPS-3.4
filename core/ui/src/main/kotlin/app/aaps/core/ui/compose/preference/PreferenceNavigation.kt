@@ -41,24 +41,39 @@ import app.aaps.core.keys.interfaces.PreferenceKey
 
 /**
  * Lightweight preference subscreen definition.
- * Content is auto-generated from keys using AdaptivePreferenceList unless customContent is provided.
+ * Can contain both PreferenceKeys and nested PreferenceSubScreenDefs for hierarchical structure.
+ * Content is auto-generated from items using AdaptivePreferenceList unless customContent is provided.
  *
  * @param key Unique key for this subscreen
  * @param titleResId String resource ID for the screen title
- * @param keys List of preference keys - content is auto-generated from these
+ * @param items List of preference items (keys and/or nested subscreens)
+ * @param keys Legacy parameter for backward compatibility - use items instead
  * @param summaryResId Optional string resource ID for summary shown in parent list
- * @param customContent Optional custom content - when null, content is auto-generated from keys
+ * @param customContent Optional custom content - when null, content is auto-generated from items
  */
 data class PreferenceSubScreenDef(
     val key: String,
     val titleResId: Int,
+    val items: List<PreferenceItem> = emptyList(),
+    @Deprecated("Use items instead", ReplaceWith("items"))
     val keys: List<PreferenceKey> = emptyList(),
     val summaryResId: Int? = null,
     val customContent: (@Composable (PreferenceSectionState?) -> Unit)? = null
 ) : PreferenceItem {
-    /** Effective summary items - from keys' titleResId */
+
+    /** Effective items - use items if provided, otherwise fall back to keys for backward compatibility */
+    val effectiveItems: List<PreferenceItem>
+        get() = if (items.isNotEmpty()) items else keys
+
+    /** Effective summary items - from items' titleResId */
     fun effectiveSummaryItems(): List<Int> =
-        keys.map { it.titleResId }.filter { it != 0 }
+        effectiveItems.mapNotNull { item ->
+            when (item) {
+                is PreferenceKey -> item.titleResId.takeIf { it != 0 }
+                is PreferenceSubScreenDef -> item.titleResId.takeIf { it != 0 }
+                else -> null
+            }
+        }
 }
 
 /**
@@ -117,7 +132,7 @@ interface NavigablePreferenceContent {
      * For backward compatibility - new code should use [items] instead.
      */
     val mainKeys: List<PreferenceKey>
-        get() = items.filterIsInstance<PreferenceKey>()
+        get() = emptyList()
 
     /**
      * Optional list of preference title resource IDs to show as summary when collapsed.
@@ -157,23 +172,17 @@ interface NavigablePreferenceContent {
      * Converts PreferenceSubScreenDef to PreferenceSubScreen with auto-generated content.
      */
     val subscreens: List<PreferenceSubScreen>
-        get() = items.mapNotNull { item ->
-            when (item) {
-                is PreferenceSubScreen -> item
-                is PreferenceSubScreenDef -> item.toPreferenceSubScreen()
-                else -> null
-            }
-        }
+        get() = emptyList()
 
     /**
      * Converts PreferenceSubScreenDef to PreferenceSubScreen.
-     * Auto-generates content from keys if customContent is not provided.
+     * Auto-generates content from items if customContent is not provided.
      */
     private fun PreferenceSubScreenDef.toPreferenceSubScreen(): PreferenceSubScreen =
         PreferenceSubScreen(
             key = key,
             titleResId = titleResId,
-            keys = keys,
+            keys = effectiveItems.filterIsInstance<PreferenceKey>(),
             summaryResId = summaryResId,
             content = customContent ?: { _ ->
                 // Auto-generate content - implementation provided by concrete class
@@ -430,6 +439,95 @@ fun LazyListScope.addNavigablePreferenceContent(
                     onToggle = { sectionState?.toggle(subSectionKey) }
                 ) {
                     subScreen.content(sectionState)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Helper function to add any preference content (legacy or new) inline in a LazyListScope.
+ * Handles both NavigablePreferenceContent (legacy) and PreferenceSubScreenDef (new).
+ */
+fun LazyListScope.addPreferenceContent(
+    content: Any,
+    sectionState: PreferenceSectionState? = null,
+    preferences: app.aaps.core.keys.interfaces.Preferences? = null,
+    config: app.aaps.core.interfaces.configuration.Config? = null,
+    profileUtil: app.aaps.core.interfaces.profile.ProfileUtil? = null
+) {
+    when (content) {
+        is NavigablePreferenceContent -> addNavigablePreferenceContent(content, sectionState)
+        is PreferenceSubScreenDef -> addPreferenceSubScreenDef(content, sectionState, preferences, config, profileUtil)
+    }
+}
+
+/**
+ * Helper function to add PreferenceSubScreenDef inline in a LazyListScope.
+ * This displays as one collapsible card with main content and nested subscreens inside.
+ * Content is rendered using the new pattern (no NavigablePreferenceContent interface).
+ */
+fun LazyListScope.addPreferenceSubScreenDef(
+    def: PreferenceSubScreenDef,
+    sectionState: PreferenceSectionState? = null,
+    preferences: app.aaps.core.keys.interfaces.Preferences? = null,
+    config: app.aaps.core.interfaces.configuration.Config? = null,
+    profileUtil: app.aaps.core.interfaces.profile.ProfileUtil? = null
+) {
+    val sectionKey = "${def.key}_main"
+    item(key = sectionKey) {
+        val isExpanded = sectionState?.isExpanded(sectionKey) ?: false
+        CollapsibleCardSectionContent(
+            titleResId = def.titleResId,
+            summaryItems = def.effectiveSummaryItems(),
+            expanded = isExpanded,
+            onToggle = { sectionState?.toggle(sectionKey) }
+        ) {
+            // Show custom content first (if any)
+            if (def.customContent != null) {
+                def.customContent.invoke(sectionState)
+            } else {
+                // Render items in order, preserving the original structure
+                def.effectiveItems.forEach { item ->
+                    when (item) {
+                        is app.aaps.core.keys.interfaces.PreferenceKey -> {
+                            // Render individual preference key
+                            if (preferences != null && config != null) {
+                                AdaptivePreferenceList(
+                                    keys = listOf(item),
+                                    preferences = preferences,
+                                    config = config,
+                                    profileUtil = profileUtil
+                                )
+                            }
+                        }
+                        is PreferenceSubScreenDef -> {
+                            // Render nested subscreen as collapsible section
+                            val subSectionKey = "${def.key}_${item.key}"
+                            val isSubExpanded = sectionState?.isExpanded(subSectionKey) ?: false
+                            CollapsibleCardSectionContent(
+                                titleResId = item.titleResId,
+                                summaryItems = item.effectiveSummaryItems(),
+                                expanded = isSubExpanded,
+                                onToggle = { sectionState?.toggle(subSectionKey) }
+                            ) {
+                                if (item.customContent != null) {
+                                    item.customContent.invoke(sectionState)
+                                } else if (preferences != null && config != null) {
+                                    // Auto-render nested subscreen keys
+                                    val subKeys = item.effectiveItems.filterIsInstance<app.aaps.core.keys.interfaces.PreferenceKey>()
+                                    if (subKeys.isNotEmpty()) {
+                                        AdaptivePreferenceList(
+                                            keys = subKeys,
+                                            preferences = preferences,
+                                            config = config,
+                                            profileUtil = profileUtil
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
