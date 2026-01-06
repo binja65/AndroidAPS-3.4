@@ -29,6 +29,7 @@ enum class OverviewIntentKey(
     CopyStatusLightsFromNS(
         key = "statuslights_copy_ns",
         titleResId = R.string.statuslights_copy_ns,
-        preferenceType = PreferenceType.CLICK
+        preferenceType = PreferenceType.CLICK,
+        dependency = app.aaps.core.keys.BooleanKey.OverviewShowStatusLights
     )
 }

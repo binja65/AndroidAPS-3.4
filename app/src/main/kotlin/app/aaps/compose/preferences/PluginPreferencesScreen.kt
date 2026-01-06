@@ -64,8 +64,8 @@ import app.aaps.plugins.main.skins.SkinInterface
 @Composable
 fun PluginPreferencesScreen(
     plugin: PluginBase,
-    config: Config? = null,
-    profileUtil: ProfileUtil? = null,
+    config: Config,
+    profileUtil: ProfileUtil,
     visibilityContext: PreferenceVisibilityContext? = null,
     onBackClick: () -> Unit
 ) {
@@ -150,8 +150,8 @@ fun PreferenceSubScreenRenderer(
     screen: PreferenceSubScreenDef,
     title: String,
     plugin: PluginBase,
-    config: Config? = null,
-    profileUtil: ProfileUtil? = null,
+    config: Config,
+    profileUtil: ProfileUtil,
     visibilityContext: PreferenceVisibilityContext? = null,
     onBackClick: () -> Unit
 ) {

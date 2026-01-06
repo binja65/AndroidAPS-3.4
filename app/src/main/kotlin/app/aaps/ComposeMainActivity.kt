@@ -284,6 +284,8 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
                         if (plugin != null) {
                             PluginPreferencesScreen(
                                 plugin = plugin,
+                                config = config,
+                                profileUtil = profileUtil,
                                 onBackClick = { navController.popBackStack() }
                             )
                         }
