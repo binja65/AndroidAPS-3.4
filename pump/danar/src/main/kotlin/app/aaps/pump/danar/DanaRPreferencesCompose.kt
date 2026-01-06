@@ -1,5 +1,8 @@
 package app.aaps.pump.danar
 
+// TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
+// Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
+
 import android.Manifest
 import android.bluetooth.BluetoothManager
 import android.content.Context

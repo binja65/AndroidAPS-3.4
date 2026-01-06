@@ -212,7 +212,12 @@ fun AdaptivePreferenceItem(
  * @param config The Config instance
  * @param profileUtil Required for UnitDoublePreferenceKey
  * @param visibilityContext Optional context for evaluating runtime visibility conditions
+ * @deprecated Use AdaptivePreferenceList(items: List<PreferenceItem>) instead - it handles PreferenceKey + DialogIntentPreference + other PreferenceItem types
  */
+@Deprecated(
+    message = "Use AdaptivePreferenceList(items: List<PreferenceItem>) to support DialogIntentPreference and other PreferenceItem types",
+    replaceWith = ReplaceWith("AdaptivePreferenceList(items = keys, preferences = preferences, config = config, profileUtil = profileUtil, visibilityContext = visibilityContext, onNavigateToSubScreen = null)")
+)
 @Composable
 fun AdaptivePreferenceList(
     keys: List<PreferenceKey>,

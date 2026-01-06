@@ -182,12 +182,14 @@ class SensitivityWeightedAveragePlugin @Inject constructor(
 
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any? {
         // Share with SensitivityAAPSPlugin
         val aapsPlugin = activePlugin.getPluginsList().firstOrNull { it::class == SensitivityAAPSPlugin::class } ?: return null
         return aapsPlugin.getPreferenceScreenContent()
     }
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         // Share with SensitivityAAPSPlugin
         val aapsPlugin = activePlugin.getPluginsList().firstOrNull { it::class == SensitivityAAPSPlugin::class } ?: return

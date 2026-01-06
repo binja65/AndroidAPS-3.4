@@ -152,8 +152,10 @@ class TidepoolPlugin @Inject constructor(
     override val connected: Boolean
         get() = authFlowOut.connectionStatus == AuthFlowOut.ConnectionStatus.SESSION_ESTABLISHED
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = TidepoolPreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "tidepool_connection_options" && requiredKey != "tidepool_advanced") return
         val category = PreferenceCategory(context)

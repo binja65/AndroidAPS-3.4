@@ -941,12 +941,14 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         return new_SMB
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = OpenAPSAutoISFPreferencesCompose(
         preferences = preferences,
         config = config,
         activePlugin = activePlugin
     )
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null &&
             requiredKey != "absorption_smb_advanced" &&

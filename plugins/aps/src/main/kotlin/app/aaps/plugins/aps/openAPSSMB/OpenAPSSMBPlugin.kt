@@ -590,6 +590,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
             .store(IntKey.ApsDynIsfAdjustmentFactor, preferences)
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = OpenAPSSMBPreferencesCompose(
         preferences = preferences,
         config = config,
@@ -597,6 +598,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
         activePlugin = activePlugin
     )
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "absorption_smb_advanced") return
         val category = PreferenceCategory(context)

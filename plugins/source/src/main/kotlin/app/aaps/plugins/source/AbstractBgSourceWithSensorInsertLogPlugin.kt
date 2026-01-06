@@ -27,6 +27,7 @@ abstract class AbstractBgSourceWithSensorInsertLogPlugin(
     private val config: Config
 ) : PluginBase(pluginDescription, aapsLogger, rh), BgSource {
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return
         val category = PreferenceCategory(context)
@@ -40,6 +41,7 @@ abstract class AbstractBgSourceWithSensorInsertLogPlugin(
         }
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = AbstractBgSourceWithSensorPreferencesCompose(
         preferences = preferences,
         config = config,

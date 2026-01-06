@@ -460,12 +460,14 @@ class MedtrumPlugin @Inject constructor(
         return pumpEnactResultProvider.get().success(connectionOK)
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = MedtrumPreferencesCompose(
         preferences = preferences,
         config = config,
         isPumpInitialized = { isInitialized() }
     )
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "medtrum_advanced") return
 

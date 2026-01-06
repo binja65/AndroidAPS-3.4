@@ -195,6 +195,7 @@ class WearPlugin @Inject constructor(
         }
     }
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "wear_wizard_settings" && requiredKey != "wear_custom_watchface_settings" && requiredKey != "wear_general_settings") return
         val category = PreferenceCategory(context)
@@ -237,5 +238,6 @@ class WearPlugin @Inject constructor(
         }
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = WearPreferencesCompose(preferences, config)
 }

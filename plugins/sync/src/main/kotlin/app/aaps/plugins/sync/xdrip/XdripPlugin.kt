@@ -377,8 +377,10 @@ class XdripPlugin @Inject constructor(
         }
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = XdripPreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "xdrip_advanced") return
         val category = PreferenceCategory(context)

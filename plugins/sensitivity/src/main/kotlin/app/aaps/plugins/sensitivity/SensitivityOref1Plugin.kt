@@ -236,8 +236,10 @@ class SensitivityOref1Plugin @Inject constructor(
         return value
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = SensitivityOref1PreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "absorption_oref1_advanced") return
         val category = PreferenceCategory(context)

@@ -244,8 +244,10 @@ class MaintenancePlugin @Inject constructor(
         }
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = MaintenancePreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && !(requiredKey == "data_choice_setting" || requiredKey == "unattended_export_setting")) return
         val category = PreferenceCategory(context)

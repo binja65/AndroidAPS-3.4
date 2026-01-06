@@ -314,11 +314,13 @@ class OpenAPSAMAPlugin @Inject constructor(
     override fun configuration(): JsonObject = JsonObject(emptyMap())
     override fun applyConfiguration(configuration: JsonObject) {}
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = OpenAPSAMAPreferencesCompose(
         preferences = preferences,
         config = config
     )
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null && requiredKey != "absorption_ama_advanced") return
         val category = PreferenceCategory(context)

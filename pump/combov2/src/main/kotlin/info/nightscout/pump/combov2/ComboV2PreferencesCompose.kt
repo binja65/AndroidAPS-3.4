@@ -1,5 +1,8 @@
 package info.nightscout.pump.combov2
 
+// TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
+// Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue

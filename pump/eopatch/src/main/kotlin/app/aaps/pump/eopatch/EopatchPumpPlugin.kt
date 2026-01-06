@@ -511,8 +511,10 @@ class EopatchPumpPlugin @Inject constructor(
         return pumpSync.expectedPumpState().temporaryBasal
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = EopatchPreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: androidx.preference.PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return
 

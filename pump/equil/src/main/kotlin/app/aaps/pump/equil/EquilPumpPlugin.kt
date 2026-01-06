@@ -459,8 +459,10 @@ class EquilPumpPlugin @Inject constructor(
         fun toDuration(dateTime: DateTime): Duration = Duration(dateTime.toLocalTime().millisOfDay.toLong())
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = EquilPreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(
         preferenceManager: PreferenceManager,
         parent: PreferenceScreen,

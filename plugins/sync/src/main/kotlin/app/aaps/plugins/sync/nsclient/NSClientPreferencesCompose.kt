@@ -1,5 +1,8 @@
 package app.aaps.plugins.sync.nsclient
 
+// TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
+// Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
+
 import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.BooleanKey

@@ -1,5 +1,8 @@
 package app.aaps.compose.preferences
 
+// TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
+// Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
+
 import android.content.Context
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

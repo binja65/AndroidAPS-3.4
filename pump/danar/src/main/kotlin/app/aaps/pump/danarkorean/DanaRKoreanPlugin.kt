@@ -340,8 +340,10 @@ class DanaRKoreanPlugin @Inject constructor(
     override fun loadEvents(): PumpEnactResult = pumpEnactResultProvider.get() // no history, not needed
     override fun setUserOptions(): PumpEnactResult = pumpEnactResultProvider.get()
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = app.aaps.pump.danar.DanaRPreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return
 

@@ -1249,8 +1249,10 @@ class MedtronicPumpPlugin @Inject constructor(
 
     private val pumpFreqEntries = arrayOf<CharSequence>(rh.gs(RileyLinkTargetFrequency.MedtronicUS.friendlyName!!), rh.gs(RileyLinkTargetFrequency.MedtronicWorldWide.friendlyName!!))
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = MedtronicPreferencesCompose(preferences, config)
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return
 

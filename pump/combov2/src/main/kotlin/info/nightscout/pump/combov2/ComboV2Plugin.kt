@@ -2279,6 +2279,7 @@ class ComboV2Plugin @Inject constructor(
             else                     -> false
         }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = ComboV2PreferencesCompose(
         preferences = preferences,
         config = config,
@@ -2286,6 +2287,7 @@ class ComboV2Plugin @Inject constructor(
         onUnpairClick = { /* Unpair handled via dialog in preference screen */ }
     )
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return
 

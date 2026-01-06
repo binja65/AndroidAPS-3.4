@@ -29,6 +29,7 @@ abstract class AbstractBgSourcePlugin(
     private val config: Config
 ) : PluginBaseWithPreferences(pluginDescription, ownPreferences, aapsLogger, rh, preferences), BgSource {
 
+    // TODO: Remove after full migration to Compose preferences (getPreferenceScreenContent)
     override fun addPreferenceScreen(preferenceManager: PreferenceManager, parent: PreferenceScreen, context: Context, requiredKey: String?) {
         if (requiredKey != null) return
         val category = PreferenceCategory(context)
@@ -41,6 +42,7 @@ abstract class AbstractBgSourcePlugin(
         }
     }
 
+    // TODO: Remove after full migration to new Compose preferences - replace with PreferenceSubScreenDef
     override fun getPreferenceScreenContent(): Any = AbstractBgSourcePreferencesCompose(
         preferences = preferences,
         config = config,
