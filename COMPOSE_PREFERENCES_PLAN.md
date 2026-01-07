@@ -572,13 +572,14 @@ PreferenceSubScreenDef(
 
 ### Phase 0: Prerequisites (before plugin migrations)
 
-- [ ] **Implement `hideParentScreenIfHidden` in Compose**
+- [x] **Implement `hideParentScreenIfHidden` in Compose** ✅ DONE
   - Location: `core/ui/src/main/kotlin/app/aaps/core/ui/compose/preference/AdaptivePreferenceList.kt`
+  - Added `shouldShowSubScreen()` composable function
   - When rendering `PreferenceSubScreenDef` entry:
-    1. Find first item with `hideParentScreenIfHidden = true`
-    2. Evaluate that item's visibility using `calculatePreferenceVisibility()`
-    3. If hidden → don't render the subscreen entry
-  - Test with: Overview plugin subscreens in simple mode
+    1. Find items with `hideParentScreenIfHidden = true`
+    2. Evaluate visibility using `calculatePreferenceVisibility()`
+    3. If any controlling item hidden → hide the subscreen entry
+  - Handles: BooleanPreferenceKey, IntPreferenceKey, LongPreferenceKey, IntentPreferenceKey
 
 ### Phase 1: Migrate Simple Plugins (no dynamic visibility)
 - [ ] VirtualPumpPreferencesCompose.kt
