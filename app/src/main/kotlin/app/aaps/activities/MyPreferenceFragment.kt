@@ -435,7 +435,7 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
                 AdaptiveClickPreference(
                     ctx = context, stringKey = StringKey.ProtectionMasterPassword, title = app.aaps.core.keys.R.string.master_password,
                     onPreferenceClickListener = {
-                        passwordCheck.queryPassword(context, app.aaps.plugins.configuration.R.string.current_master_password, StringKey.ProtectionMasterPassword, {
+                        passwordCheck.queryPassword(context, app.aaps.core.ui.R.string.current_master_password, StringKey.ProtectionMasterPassword, {
                             passwordCheck.setPassword(context, app.aaps.core.keys.R.string.master_password, StringKey.ProtectionMasterPassword)
                         })
                         true

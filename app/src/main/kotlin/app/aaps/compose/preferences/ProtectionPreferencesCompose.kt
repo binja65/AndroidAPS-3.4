@@ -11,6 +11,7 @@ import app.aaps.core.keys.ProtectionType
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveIntPreferenceItem
+import app.aaps.core.ui.compose.preference.AdaptiveMasterPasswordPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptivePasswordPreferenceItem
 import app.aaps.core.ui.compose.preference.AdaptivePreferenceItem
 import app.aaps.core.ui.compose.preference.PreferenceSubScreenDef
@@ -30,8 +31,9 @@ fun ProtectionPreferencesCompose(
         val context = LocalContext.current
 
         // Master Password
-        MasterPasswordPreference(
+        AdaptiveMasterPasswordPreferenceItem(
             preferences = preferences,
+            config = config,
             passwordCheck = passwordCheck,
             context = context
         )
