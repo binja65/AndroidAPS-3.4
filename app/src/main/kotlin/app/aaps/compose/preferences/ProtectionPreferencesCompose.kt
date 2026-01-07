@@ -161,7 +161,8 @@ fun ProtectionPreferencesCompose(
             preferences = preferences,
             config = config,
             intKey = IntKey.ProtectionTimeout,
-            titleResId = app.aaps.core.ui.R.string.protection_timeout_title
+            titleResId = app.aaps.core.ui.R.string.protection_timeout_title,
+            summaryResId = app.aaps.core.ui.R.string.protection_timeout_summary
         )
 
         // Biometric fallback validation
