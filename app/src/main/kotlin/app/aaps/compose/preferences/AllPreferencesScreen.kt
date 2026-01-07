@@ -28,13 +28,17 @@ import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.keys.interfaces.withEntries
 import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.LocalPasswordCheck
+import app.aaps.core.ui.compose.preference.LocalVisibilityContext
 import app.aaps.core.ui.compose.preference.PreferenceSubScreenDef
 import app.aaps.core.ui.compose.preference.ProvidePreferenceTheme
 import app.aaps.core.ui.compose.preference.addPreferenceContent
 import app.aaps.core.ui.compose.preference.rememberPreferenceSectionState
 import app.aaps.core.ui.compose.preference.verticalScrollIndicators
+import androidx.compose.runtime.CompositionLocalProvider
 import app.aaps.plugins.aps.autotune.AutotunePlugin
 import app.aaps.plugins.automation.AutomationPlugin
 import app.aaps.plugins.configuration.maintenance.MaintenancePlugin
@@ -65,6 +69,7 @@ fun AllPreferencesScreen(
     config: Config,
     rh: ResourceHelper,
     passwordCheck: PasswordCheck,
+    visibilityContext: PreferenceVisibilityContext,
     smsCommunicatorPlugin: SmsCommunicatorPlugin,
     automationPlugin: AutomationPlugin,
     autotunePlugin: AutotunePlugin,
@@ -86,7 +91,28 @@ fun AllPreferencesScreen(
             StringKey.GeneralDarkMode
         )
     )
-    val protectionPreferences = ProtectionPreferencesCompose(preferences, config, passwordCheck)
+    val protectionPreferences = PreferenceSubScreenDef(
+        key = "protection",
+        titleResId = app.aaps.plugins.configuration.R.string.protection,
+        items = listOf(
+            // Master Password
+            StringKey.ProtectionMasterPassword,
+            // Settings Protection
+            IntKey.ProtectionTypeSettings,
+            StringKey.ProtectionSettingsPassword,  // Visibility defined on StringKey
+            StringKey.ProtectionSettingsPin,       // Visibility defined on StringKey
+            // Application Protection
+            IntKey.ProtectionTypeApplication,
+            StringKey.ProtectionApplicationPassword,
+            StringKey.ProtectionApplicationPin,
+            // Bolus Protection
+            IntKey.ProtectionTypeBolus,
+            StringKey.ProtectionBolusPassword,
+            StringKey.ProtectionBolusPin,
+            // Protection Timeout
+            IntKey.ProtectionTimeout
+        )
+    )
     val pumpPreferences = PreferenceSubScreenDef(
         key = "pump",
         titleResId = app.aaps.core.ui.R.string.pump,
@@ -171,6 +197,10 @@ fun AllPreferencesScreen(
     }
     // Note: Maintenance plugin is added after Alerts in the LazyColumn below
 
+    CompositionLocalProvider(
+        LocalPasswordCheck provides passwordCheck,
+        LocalVisibilityContext provides visibilityContext
+    ) {
     ProvidePreferenceTheme {
         Scaffold(
             topBar = {
@@ -224,5 +254,6 @@ fun AllPreferencesScreen(
                 }
             }
         }
+    }
     }
 }

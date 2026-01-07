@@ -98,12 +98,30 @@ enum class StringKey(
     AapsDirectoryUri(key = "aaps_directory", defaultValue = "", titleResId = R.string.pref_title_aaps_directory),
 
     ProtectionMasterPassword(key = "master_password", defaultValue = "", titleResId = R.string.pref_title_master_password, isPassword = true),
-    ProtectionSettingsPassword(key = "settings_password", defaultValue = "", titleResId = R.string.pref_title_settings_password, isPassword = true),
-    ProtectionSettingsPin(key = "settings_pin", defaultValue = "", titleResId = R.string.pref_title_settings_pin, isPin = true),
-    ProtectionApplicationPassword(key = "application_password", defaultValue = "", titleResId = R.string.pref_title_application_password, isPassword = true),
-    ProtectionApplicationPin(key = "application_pin", defaultValue = "", titleResId = R.string.pref_title_application_pin, isPin = true),
-    ProtectionBolusPassword(key = "bolus_password", defaultValue = "", titleResId = R.string.pref_title_bolus_password, isPassword = true),
-    ProtectionBolusPin(key = "bolus_pin", defaultValue = "", titleResId = R.string.pref_title_bolus_pin, isPin = true),
+    ProtectionSettingsPassword(
+        key = "settings_password", defaultValue = "", titleResId = R.string.pref_title_settings_password, isPassword = true,
+        visibility = PreferenceVisibility.intEquals(IntKey.ProtectionTypeSettings, ProtectionType.CUSTOM_PASSWORD.ordinal)
+    ),
+    ProtectionSettingsPin(
+        key = "settings_pin", defaultValue = "", titleResId = R.string.pref_title_settings_pin, isPin = true,
+        visibility = PreferenceVisibility.intEquals(IntKey.ProtectionTypeSettings, ProtectionType.CUSTOM_PIN.ordinal)
+    ),
+    ProtectionApplicationPassword(
+        key = "application_password", defaultValue = "", titleResId = R.string.pref_title_application_password, isPassword = true,
+        visibility = PreferenceVisibility.intEquals(IntKey.ProtectionTypeApplication, ProtectionType.CUSTOM_PASSWORD.ordinal)
+    ),
+    ProtectionApplicationPin(
+        key = "application_pin", defaultValue = "", titleResId = R.string.pref_title_application_pin, isPin = true,
+        visibility = PreferenceVisibility.intEquals(IntKey.ProtectionTypeApplication, ProtectionType.CUSTOM_PIN.ordinal)
+    ),
+    ProtectionBolusPassword(
+        key = "bolus_password", defaultValue = "", titleResId = R.string.pref_title_bolus_password, isPassword = true,
+        visibility = PreferenceVisibility.intEquals(IntKey.ProtectionTypeBolus, ProtectionType.CUSTOM_PASSWORD.ordinal)
+    ),
+    ProtectionBolusPin(
+        key = "bolus_pin", defaultValue = "", titleResId = R.string.pref_title_bolus_pin, isPin = true,
+        visibility = PreferenceVisibility.intEquals(IntKey.ProtectionTypeBolus, ProtectionType.CUSTOM_PIN.ordinal)
+    ),
 
     OverviewCopySettingsFromNs(key = "statuslights_copy_ns", defaultValue = "", titleResId = R.string.pref_title_copy_settings_from_ns, dependency = BooleanKey.OverviewShowStatusLights),
 

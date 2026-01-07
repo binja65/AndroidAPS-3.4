@@ -3,12 +3,14 @@ package app.aaps.core.ui.compose.preference
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.navigable.addNavigablePreferenceContent
 
@@ -44,6 +46,8 @@ fun LazyListScope.addPreferenceSubScreenDef(
     val sectionKey = "${def.key}_main"
     item(key = sectionKey) {
         val isExpanded = sectionState?.isExpanded(sectionKey) ?: false
+        // Get visibility context from CompositionLocal
+        val visibilityContext = LocalVisibilityContext.current
         CollapsibleCardSectionContent(
             titleResId = def.titleResId,
             summaryItems = def.effectiveSummaryItems(),
@@ -55,54 +59,79 @@ fun LazyListScope.addPreferenceSubScreenDef(
                 def.customContent.invoke(sectionState)
             } else {
                 // Render items in order, preserving the original structure
-                def.effectiveItems.forEach { item ->
-                    when (item) {
-                        is PreferenceKey -> {
-                            // Render individual preference key
-                            if (preferences != null && config != null) {
-                                @Suppress("DEPRECATION")
-                                AdaptivePreferenceListForListKeys(
-                                    keys = listOf(item),
+                RenderPreferenceItems(
+                    items = def.effectiveItems,
+                    parentKey = def.key,
+                    sectionState = sectionState,
+                    preferences = preferences,
+                    config = config,
+                    profileUtil = profileUtil,
+                    visibilityContext = visibilityContext
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Helper composable to render a list of preference items with visibility support.
+ */
+@Composable
+private fun RenderPreferenceItems(
+    items: List<Any>,
+    parentKey: String,
+    sectionState: PreferenceSectionState?,
+    preferences: Preferences?,
+    config: Config?,
+    profileUtil: ProfileUtil?,
+    visibilityContext: PreferenceVisibilityContext?
+) {
+    items.forEach { item ->
+        when (item) {
+            is PreferenceKey -> {
+                // Render using AdaptivePreferenceItem which handles visibility reactively
+                if (preferences != null && config != null) {
+                    AdaptivePreferenceItem(
+                        key = item,
+                        preferences = preferences,
+                        config = config,
+                        profileUtil = profileUtil,
+                        visibilityContext = visibilityContext
+                    )
+                }
+            }
+            is PreferenceSubScreenDef -> {
+                // Render nested subscreen as simple collapsible section (no extra card)
+                val subSectionKey = "${parentKey}_${item.key}"
+                val isSubExpanded = sectionState?.isExpanded(subSectionKey) ?: false
+
+                // Header without card
+                ClickablePreferenceCategoryHeader(
+                    titleResId = item.titleResId,
+                    summaryItems = item.effectiveSummaryItems(),
+                    expanded = isSubExpanded,
+                    onToggle = { sectionState?.toggle(subSectionKey) },
+                    insideCard = true
+                )
+
+                // Content without card wrapper
+                if (isSubExpanded) {
+                    if (item.customContent != null) {
+                        item.customContent.invoke(sectionState)
+                    } else if (preferences != null && config != null) {
+                        // Auto-render nested subscreen items (including DialogIntentPreference)
+                        if (item.effectiveItems.isNotEmpty()) {
+                            Column(
+                                modifier = Modifier.padding(start = 16.dp)
+                            ) {
+                                AdaptivePreferenceList(
+                                    items = item.effectiveItems,
                                     preferences = preferences,
                                     config = config,
-                                    profileUtil = profileUtil
+                                    profileUtil = profileUtil,
+                                    visibilityContext = visibilityContext,
+                                    onNavigateToSubScreen = null // Nested subscreens not supported here
                                 )
-                            }
-                        }
-                        is PreferenceSubScreenDef -> {
-                            // Render nested subscreen as simple collapsible section (no extra card)
-                            val subSectionKey = "${def.key}_${item.key}"
-                            val isSubExpanded = sectionState?.isExpanded(subSectionKey) ?: false
-
-                            // Header without card
-                            ClickablePreferenceCategoryHeader(
-                                titleResId = item.titleResId,
-                                summaryItems = item.effectiveSummaryItems(),
-                                expanded = isSubExpanded,
-                                onToggle = { sectionState?.toggle(subSectionKey) },
-                                insideCard = true
-                            )
-
-                            // Content without card wrapper
-                            if (isSubExpanded) {
-                                if (item.customContent != null) {
-                                    item.customContent.invoke(sectionState)
-                                } else if (preferences != null && config != null) {
-                                    // Auto-render nested subscreen items (including DialogIntentPreference)
-                                    if (item.effectiveItems.isNotEmpty()) {
-                                        Column(
-                                            modifier = Modifier.padding(start = 16.dp)
-                                        ) {
-                                            AdaptivePreferenceList(
-                                                items = item.effectiveItems,
-                                                preferences = preferences,
-                                                config = config,
-                                                profileUtil = profileUtil,
-                                                onNavigateToSubScreen = null // Nested subscreens not supported here
-                                            )
-                                        }
-                                    }
-                                }
                             }
                         }
                     }

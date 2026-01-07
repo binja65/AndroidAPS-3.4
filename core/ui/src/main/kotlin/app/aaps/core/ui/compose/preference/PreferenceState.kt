@@ -37,6 +37,37 @@ data class PreferenceVisibilityState(
 )
 
 /**
+ * Wrapper around PreferenceVisibilityContext that reads IntKeys through
+ * the shared state map, making visibility checks reactive.
+ */
+private class ReactiveVisibilityContext(
+    private val delegate: PreferenceVisibilityContext,
+    private val delegatePreferences: Preferences
+) : PreferenceVisibilityContext {
+    override val isPatchPump: Boolean get() = delegate.isPatchPump
+    override val isBatteryReplaceable: Boolean get() = delegate.isBatteryReplaceable
+    override val isBatteryChangeLoggingEnabled: Boolean get() = delegate.isBatteryChangeLoggingEnabled
+    override val advancedFilteringSupported: Boolean get() = delegate.advancedFilteringSupported
+    override val isPumpPaired: Boolean get() = delegate.isPumpPaired
+    override val isPumpInitialized: Boolean get() = delegate.isPumpInitialized
+
+    // Return a reactive preferences wrapper
+    override val preferences: Preferences get() = ReactivePreferencesWrapper(delegatePreferences)
+
+    /**
+     * Wrapper that reads IntKeys through the shared state map for reactivity.
+     */
+    private class ReactivePreferencesWrapper(
+        private val delegate: Preferences
+    ) : Preferences by delegate {
+        override fun get(key: IntPreferenceKey): Int {
+            // Read through shared state for reactivity
+            return getSharedIntState(key.key, delegate.get(key))
+        }
+    }
+}
+
+/**
  * Calculates visibility and enabled state for a preference based on mode settings and dependencies.
  * This is a @Composable function to enable reactive updates when dependency preferences change.
  * Uses reactive state for simpleMode and dependencies so UI recomposes automatically on changes.
@@ -107,12 +138,15 @@ fun calculatePreferenceVisibility(
     }
 
     // Check runtime visibility condition
+    // For reactive visibility, we need to read dependent IntKeys through shared state
     visibilityContext?.let { context ->
-        if (!preferenceKey.visibility.isVisible(context)) {
+        // Create a reactive visibility context that reads through shared state
+        val reactiveContext = ReactiveVisibilityContext(context, preferences)
+        if (!preferenceKey.visibility.isVisible(reactiveContext)) {
             visible = false
         }
         // Check runtime enabled condition
-        if (!preferenceKey.enabledCondition.isEnabled(context)) {
+        if (!preferenceKey.enabledCondition.isEnabled(reactiveContext)) {
             enabled = false
         }
     }
@@ -183,12 +217,15 @@ fun calculateIntentPreferenceVisibility(
     }
 
     // Check runtime visibility condition
+    // For reactive visibility, we need to read dependent IntKeys through shared state
     visibilityContext?.let { context ->
-        if (!intentKey.visibility.isVisible(context)) {
+        // Create a reactive visibility context that reads through shared state
+        val reactiveContext = ReactiveVisibilityContext(context, preferences)
+        if (!intentKey.visibility.isVisible(reactiveContext)) {
             visible = false
         }
         // Check runtime enabled condition
-        if (!intentKey.enabledCondition.isEnabled(context)) {
+        if (!intentKey.enabledCondition.isEnabled(reactiveContext)) {
             enabled = false
         }
     }

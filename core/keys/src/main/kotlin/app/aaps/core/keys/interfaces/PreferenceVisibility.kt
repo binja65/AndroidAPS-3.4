@@ -53,5 +53,12 @@ fun interface PreferenceVisibility {
          * Visible only when BG source supports advanced filtering (for certain SMB options)
          */
         val ADVANCED_FILTERING = PreferenceVisibility { it.advancedFilteringSupported }
+
+        /**
+         * Creates a visibility condition that checks if an IntKey equals a specific value.
+         */
+        fun intEquals(key: IntPreferenceKey, value: Int) = PreferenceVisibility { ctx ->
+            ctx.intEquals(key, value)
+        }
     }
 }

@@ -7,9 +7,11 @@ package app.aaps.core.ui.compose.preference
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.PreferenceType
+import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.DoublePreferenceKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
@@ -113,39 +115,65 @@ fun AdaptivePreferenceItem(
         }
 
         is StringPreferenceKey   -> {
-            when (key.preferenceType) {
-                PreferenceType.LIST       -> {
-                    // Check for runtime-resolved entries first (from withEntries)
-                    val entriesMap = key.resolvedEntries
-                        ?: key.entries.takeIf { it.isNotEmpty() }?.mapValues { (_, resId) -> stringResource(resId) }
-
-                    if (entriesMap != null) {
-                        AdaptiveStringListPreferenceItem(
+            // Handle password/PIN fields specially
+            if (key.isPassword || key.isPin) {
+                val passwordCheck = LocalPasswordCheck.current
+                val context = LocalContext.current
+                if (passwordCheck != null) {
+                    // Special handling for master password (requires current password first)
+                    if (key == StringKey.ProtectionMasterPassword) {
+                        AdaptiveMasterPasswordPreferenceItem(
+                            preferences = preferences,
+                            config = config,
+                            passwordCheck = passwordCheck,
+                            context = context
+                        )
+                    } else {
+                        AdaptivePasswordPreferenceItem(
                             preferences = preferences,
                             config = config,
                             stringKey = key,
-                            entries = entriesMap,
+                            passwordCheck = passwordCheck,
+                            context = context,
                             visibilityContext = visibilityContext
                         )
                     }
                 }
+            } else {
+                when (key.preferenceType) {
+                    PreferenceType.LIST       -> {
+                        // Check for runtime-resolved entries first (from withEntries)
+                        val entriesMap = key.resolvedEntries
+                            ?: key.entries.takeIf { it.isNotEmpty() }?.mapValues { (_, resId) -> stringResource(resId) }
 
-                PreferenceType.TEXT_FIELD -> {
-                    AdaptiveStringPreferenceItem(
-                        preferences = preferences,
-                        config = config,
-                        stringKey = key,
-                        visibilityContext = visibilityContext
-                    )
-                }
+                        if (entriesMap != null) {
+                            AdaptiveStringListPreferenceItem(
+                                preferences = preferences,
+                                config = config,
+                                stringKey = key,
+                                entries = entriesMap,
+                                visibilityContext = visibilityContext
+                            )
+                        }
+                    }
 
-                else                      -> {
-                    AdaptiveStringPreferenceItem(
-                        preferences = preferences,
-                        config = config,
-                        stringKey = key,
-                        visibilityContext = visibilityContext
-                    )
+                    PreferenceType.TEXT_FIELD -> {
+                        AdaptiveStringPreferenceItem(
+                            preferences = preferences,
+                            config = config,
+                            stringKey = key,
+                            visibilityContext = visibilityContext
+                        )
+                    }
+
+                    else                      -> {
+                        AdaptiveStringPreferenceItem(
+                            preferences = preferences,
+                            config = config,
+                            stringKey = key,
+                            visibilityContext = visibilityContext
+                        )
+                    }
                 }
             }
         }

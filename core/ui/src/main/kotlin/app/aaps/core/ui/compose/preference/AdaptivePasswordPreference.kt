@@ -8,6 +8,9 @@ import android.content.Context
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.protection.PasswordCheck
@@ -64,8 +67,8 @@ fun AdaptivePasswordPreferenceItem(
 
     if (!visibility.visible) return
 
-    val passwordState by rememberPreferenceStringState(preferences, stringKey)
-    val hasValue = passwordState.isNotEmpty()
+    // Use mutable state to track if password is set, updated via callbacks
+    var hasValue by remember { mutableStateOf(preferences.get(stringKey).isNotEmpty()) }
     val isPin = stringKey.isPin
 
     val summary = when {
@@ -84,6 +87,8 @@ fun AdaptivePasswordPreferenceItem(
                     context = context,
                     labelId = effectiveTitleResId,
                     preference = stringKey,
+                    ok = { hasValue = true },
+                    clear = { hasValue = false },
                     pinInput = isPin
                 )
             }

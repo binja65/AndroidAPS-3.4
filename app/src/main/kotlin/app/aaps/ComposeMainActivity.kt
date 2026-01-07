@@ -29,6 +29,7 @@ import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.protection.PasswordCheck
 import app.aaps.core.interfaces.protection.ProtectionCheck
+import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
 import app.aaps.core.interfaces.rx.AapsSchedulers
 import app.aaps.core.interfaces.rx.events.EventPreferenceChange
 import app.aaps.core.interfaces.ui.UiInteraction
@@ -76,6 +77,7 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
     @Inject lateinit var autotunePlugin: AutotunePlugin
     @Inject lateinit var maintenancePlugin: MaintenancePlugin
     @Inject lateinit var profileUtil: ProfileUtil
+    @Inject lateinit var visibilityContext: PreferenceVisibilityContext
 
     // ViewModels
     @Inject lateinit var mainViewModel: MainViewModel
@@ -266,6 +268,7 @@ class ComposeMainActivity : DaggerAppCompatActivityWithResult() {
                             config = config,
                             rh = rh,
                             passwordCheck = passwordCheck,
+                            visibilityContext = visibilityContext,
                             smsCommunicatorPlugin = smsCommunicatorPlugin,
                             automationPlugin = automationPlugin,
                             autotunePlugin = autotunePlugin,
