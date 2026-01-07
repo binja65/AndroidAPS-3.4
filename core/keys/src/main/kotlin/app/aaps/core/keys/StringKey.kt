@@ -1,6 +1,8 @@
 package app.aaps.core.keys
 
 import app.aaps.core.keys.interfaces.BooleanPreferenceKey
+import app.aaps.core.keys.interfaces.PreferenceEnabledCondition
+import app.aaps.core.keys.interfaces.PreferenceVisibility
 import app.aaps.core.keys.interfaces.StringPreferenceKey
 import app.aaps.core.keys.interfaces.StringValidator
 
@@ -21,7 +23,9 @@ enum class StringKey(
     override val isPassword: Boolean = false,
     override val isPin: Boolean = false,
     override val exportable: Boolean = true,
-    override val validator: StringValidator = StringValidator.NONE
+    override val validator: StringValidator = StringValidator.NONE,
+    override val visibility: PreferenceVisibility = PreferenceVisibility.ALWAYS,
+    override val enabledCondition: PreferenceEnabledCondition = PreferenceEnabledCondition.ALWAYS
 ) : StringPreferenceKey {
 
     GeneralUnits(

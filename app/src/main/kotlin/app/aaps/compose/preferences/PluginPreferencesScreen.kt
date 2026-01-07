@@ -202,7 +202,7 @@ fun PreferenceSubScreenRenderer(
                     // Use customContent if provided, otherwise auto-render with AdaptivePreferenceList
                     if (currentScreen.customContent != null) {
                         currentScreen.customContent!!.invoke(null)
-                    } else if (config != null) {
+                    } else {
                         // Auto-render using enhanced AdaptivePreferenceList
                         AdaptivePreferenceList(
                             items = currentScreen.effectiveItems,
@@ -214,9 +214,6 @@ fun PreferenceSubScreenRenderer(
                                 navigationStack = navigationStack + subscreen
                             }
                         )
-                    } else {
-                        // Fallback if no config provided
-                        Text("Missing Config dependency for rendering")
                     }
                 }
             }

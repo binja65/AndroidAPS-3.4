@@ -24,5 +24,8 @@ enum class PreferenceType {
     URL,
 
     /** Launches an Activity (for IntentPreferenceKey) */
-    ACTIVITY
+    ACTIVITY,
+
+    /** Master password with two-step dialog (query old password, then set new) */
+    MASTER_PASSWORD
 }

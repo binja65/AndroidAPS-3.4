@@ -50,3 +50,31 @@ interface PreferenceVisibilityContext {
     val isPumpInitialized: Boolean
         get() = false
 }
+
+/**
+ * Helper function to check if an IntKey equals a specific value.
+ * Useful for conditional visibility based on enum-like IntKey values.
+ *
+ * Example:
+ * ```
+ * runtimeVisibility = { ctx ->
+ *     ctx.intEquals(IntKey.ProtectionTypeSettings, ProtectionType.CUSTOM_PASSWORD.ordinal)
+ * }
+ * ```
+ */
+fun PreferenceVisibilityContext.intEquals(key: IntPreferenceKey, value: Int): Boolean =
+    preferences.get(key) == value
+
+/**
+ * Helper function to check if an IntKey is one of several values.
+ * Useful for conditional visibility based on multiple enum values.
+ *
+ * Example:
+ * ```
+ * runtimeVisibility = { ctx ->
+ *     ctx.intIn(IntKey.ProtectionType, setOf(2, 3, 4)) // Any password type
+ * }
+ * ```
+ */
+fun PreferenceVisibilityContext.intIn(key: IntPreferenceKey, values: Set<Int>): Boolean =
+    preferences.get(key) in values
