@@ -29,7 +29,7 @@ internal fun MasterPasswordPreference(
     }
 
     Preference(
-        title = { Text(stringResource(app.aaps.core.ui.R.string.master_password)) },
+        title = { Text(stringResource(app.aaps.core.keys.R.string.master_password)) },
         summary = { Text(summary) },
         onClick = {
             passwordCheck.queryPassword(
@@ -39,7 +39,7 @@ internal fun MasterPasswordPreference(
                 ok = {
                     passwordCheck.setPassword(
                         context = context,
-                        labelId = app.aaps.core.ui.R.string.master_password,
+                        labelId = app.aaps.core.keys.R.string.master_password,
                         preference = StringKey.ProtectionMasterPassword
                     )
                 }

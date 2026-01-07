@@ -40,7 +40,7 @@
     <string name="do_ns_upload_title">Upload BG data to NS</string>
     <string name="configbuilder_insulin">Insulin</string>
     <string name="value_unavailable_short">n/a</string>
-    <string name="master_password">Master password</string>
+    <!-- master_password moved to core/keys/strings.xml -->
     <string name="ue_export_to_csv">Export User Entries to Excel (csv)</string>
     <string name="confirm">Confirm</string>
     <string name="pump">Pump</string>

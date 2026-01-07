@@ -277,9 +277,9 @@ class SWDefinition @Inject constructor(
             .add(swEditStringProvider.get().validator(String::isNotEmpty).preference(StringKey.GeneralPatientName))
 
     private val screenMasterPassword
-        get() = swScreenProvider.get().with(app.aaps.core.ui.R.string.master_password)
+        get() = swScreenProvider.get().with(app.aaps.core.keys.R.string.master_password)
             .skippable(false)
-            .add(swInfoTextProvider.get().label(app.aaps.core.ui.R.string.master_password))
+            .add(swInfoTextProvider.get().label(app.aaps.core.keys.R.string.master_password))
             .add(swEditEncryptedPasswordProvider.get().preference(StringKey.ProtectionMasterPassword))
             .add(swBreakProvider.get())
             .add(swInfoTextProvider.get().label(R.string.master_password_summary))

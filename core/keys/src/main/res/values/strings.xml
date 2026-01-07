@@ -200,6 +200,12 @@
     <string name="pref_title_protection_type_settings">Settings protection</string>
     <string name="pref_title_protection_type_application">Application protection</string>
     <string name="pref_title_protection_type_bolus">Bolus protection</string>
+    <!-- Protection type entries (canonical location - also used by core/ui) -->
+    <string name="noprotection">No protection</string>
+    <string name="biometric">Biometric</string>
+    <string name="master_password">Master password</string>
+    <string name="custom_password">Custom password</string>
+    <string name="custom_pin">Custom PIN</string>
 
     <!-- IntKey: Safety preferences -->
     <string name="pref_title_max_carbs">Maximum carbs allowed</string>
@@ -278,6 +284,7 @@
     <!-- Formatted unit strings with value and range -->
     <string name="units_format_grams_range">%1$d g (%2$d - %3$d)</string>
     <string name="units_format_min_range">%1$d min (%2$d - %3$d)</string>
+    <string name="units_format_sec_range">%1$d sec (%2$d - %3$d)</string>
     <string name="units_format_hours_range">%1$d h (%2$d - %3$d)</string>
     <string name="units_format_days_range">%1$d days (%2$d - %3$d)</string>
     <string name="units_format_percent_range">%1$d%% (%2$d - %3$d)</string>

@@ -24,9 +24,9 @@ import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.plugin.PluginBase
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.protection.PasswordCheck
-import app.aaps.core.interfaces.protection.ProtectionCheck.ProtectionType.BIOMETRIC
-import app.aaps.core.interfaces.protection.ProtectionCheck.ProtectionType.CUSTOM_PASSWORD
-import app.aaps.core.interfaces.protection.ProtectionCheck.ProtectionType.CUSTOM_PIN
+import app.aaps.core.keys.ProtectionType.BIOMETRIC
+import app.aaps.core.keys.ProtectionType.CUSTOM_PASSWORD
+import app.aaps.core.keys.ProtectionType.CUSTOM_PIN
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventPreferenceChange
@@ -417,11 +417,11 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
         val rootScreen = preferenceScreen ?: preferenceManager.createPreferenceScreen(context).also { preferenceScreen = it }
 
         val protectionTypeEntries = arrayOf<CharSequence>(
-            rh.gs(app.aaps.core.ui.R.string.noprotection),
-            rh.gs(app.aaps.core.ui.R.string.biometric),
-            rh.gs(app.aaps.core.ui.R.string.master_password),
-            rh.gs(app.aaps.core.ui.R.string.custom_password),
-            rh.gs(app.aaps.core.ui.R.string.custom_pin),
+            rh.gs(app.aaps.core.keys.R.string.noprotection),
+            rh.gs(app.aaps.core.keys.R.string.biometric),
+            rh.gs(app.aaps.core.keys.R.string.master_password),
+            rh.gs(app.aaps.core.keys.R.string.custom_password),
+            rh.gs(app.aaps.core.keys.R.string.custom_pin),
         )
         val protectionTypeValues = arrayOf<CharSequence>("0", "1", "2", "3", "4")
 
@@ -433,10 +433,10 @@ class MyPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChang
             initialExpandedChildrenCount = 0
             addPreference(
                 AdaptiveClickPreference(
-                    ctx = context, stringKey = StringKey.ProtectionMasterPassword, title = app.aaps.core.ui.R.string.master_password,
+                    ctx = context, stringKey = StringKey.ProtectionMasterPassword, title = app.aaps.core.keys.R.string.master_password,
                     onPreferenceClickListener = {
                         passwordCheck.queryPassword(context, app.aaps.plugins.configuration.R.string.current_master_password, StringKey.ProtectionMasterPassword, {
-                            passwordCheck.setPassword(context, app.aaps.core.ui.R.string.master_password, StringKey.ProtectionMasterPassword)
+                            passwordCheck.setPassword(context, app.aaps.core.keys.R.string.master_password, StringKey.ProtectionMasterPassword)
                         })
                         true
                     }
