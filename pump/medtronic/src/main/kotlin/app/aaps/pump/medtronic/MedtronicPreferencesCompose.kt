@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.pump.common.hw.rileylink.keys.RileyLinkIntentPreferenceKey
 import app.aaps.pump.common.hw.rileylink.keys.RileyLinkStringPreferenceKey
 import app.aaps.pump.common.hw.rileylink.keys.RileylinkBooleanPreferenceKey
@@ -45,7 +45,7 @@ class MedtronicPreferencesCompose(
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptivePreferenceList(
+        AdaptivePreferenceListForListKeys(
             keys = mainKeys,
             preferences = preferences,
             config = config

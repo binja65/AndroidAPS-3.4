@@ -12,11 +12,11 @@ import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.pump.diaconn.keys.DiaconnBooleanKey
 import app.aaps.pump.diaconn.keys.DiaconnIntKey
 
@@ -51,7 +51,7 @@ class DiaconnG8PreferencesCompose(
         }
 
         // All other preferences are key-based (BolusSpeed has entries on key)
-        AdaptivePreferenceList(
+        AdaptivePreferenceListForListKeys(
             keys = listOf(
                 DiaconnIntKey.BolusSpeed,
                 DiaconnBooleanKey.LogInsulinChange,

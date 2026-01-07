@@ -1,4 +1,4 @@
-package app.aaps.pump.danar
+﻿package app.aaps.pump.danar
 
 // TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
 // Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
@@ -17,11 +17,11 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withEntries
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.Preference
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.pump.dana.R
 import app.aaps.pump.dana.keys.DanaBooleanKey
 import app.aaps.pump.dana.keys.DanaIntKey
@@ -49,7 +49,7 @@ class DanaRPreferencesCompose(
         val bondedDevices = remember { getBondedBluetoothDevices(context) }
 
         if (bondedDevices.isNotEmpty()) {
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = listOf(
                     DanaStringKey.RName.withEntries(bondedDevices.associateWith { it }),
                     DanaIntKey.Password,
@@ -66,7 +66,7 @@ class DanaRPreferencesCompose(
                 summary = { Text(stringResource(app.aaps.core.ui.R.string.need_connect_permission)) },
                 enabled = false
             )
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = listOf(DanaIntKey.Password, DanaIntKey.BolusSpeed, DanaBooleanKey.UseExtended),
                 preferences = preferences,
                 config = config

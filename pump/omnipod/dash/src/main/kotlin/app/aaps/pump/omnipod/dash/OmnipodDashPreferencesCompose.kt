@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.pump.omnipod.common.keys.OmnipodBooleanPreferenceKey
 import app.aaps.pump.omnipod.common.keys.OmnipodIntPreferenceKey
 import app.aaps.pump.omnipod.dash.keys.DashBooleanPreferenceKey
@@ -58,7 +58,7 @@ class OmnipodDashPreferencesCompose(
             titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_confirmation_beeps,
             keys = beepKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = beepKeys,
                 preferences = preferences,
                 config = config
@@ -70,7 +70,7 @@ class OmnipodDashPreferencesCompose(
             titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_alerts,
             keys = alertKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = alertKeys,
                 preferences = preferences,
                 config = config
@@ -82,7 +82,7 @@ class OmnipodDashPreferencesCompose(
             titleResId = app.aaps.pump.omnipod.common.R.string.omnipod_common_preferences_category_notifications,
             keys = notificationKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = notificationKeys,
                 preferences = preferences,
                 config = config

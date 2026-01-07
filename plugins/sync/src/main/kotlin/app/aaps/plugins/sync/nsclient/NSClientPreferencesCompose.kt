@@ -1,4 +1,4 @@
-package app.aaps.plugins.sync.nsclient
+﻿package app.aaps.plugins.sync.nsclient
 
 // TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
 // Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
@@ -10,10 +10,10 @@ import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.plugins.sync.R
 
 /**
@@ -70,7 +70,7 @@ class NSClientPreferencesCompose(
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptivePreferenceList(
+        AdaptivePreferenceListForListKeys(
             keys = mainKeys,
             preferences = preferences,
             config = config
@@ -83,7 +83,7 @@ class NSClientPreferencesCompose(
             titleResId = R.string.ns_sync_options,
             keys = syncKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = syncKeys,
                 preferences = preferences,
                 config = config
@@ -95,7 +95,7 @@ class NSClientPreferencesCompose(
             titleResId = R.string.ns_alarm_options,
             keys = alarmKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = alarmKeys,
                 preferences = preferences,
                 config = config
@@ -107,7 +107,7 @@ class NSClientPreferencesCompose(
             titleResId = R.string.connection_settings_title,
             keys = connectionKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = connectionKeys,
                 preferences = preferences,
                 config = config
@@ -119,7 +119,7 @@ class NSClientPreferencesCompose(
             titleResId = app.aaps.core.ui.R.string.advanced_settings_title,
             keys = advancedKeys
         ) { _ ->
-            AdaptivePreferenceList(
+            AdaptivePreferenceListForListKeys(
                 keys = advancedKeys,
                 preferences = preferences,
                 config = config

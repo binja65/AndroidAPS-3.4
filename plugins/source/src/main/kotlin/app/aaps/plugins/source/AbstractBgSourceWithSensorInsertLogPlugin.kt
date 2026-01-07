@@ -1,4 +1,4 @@
-package app.aaps.plugins.source
+﻿package app.aaps.plugins.source
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -14,9 +14,9 @@ import app.aaps.core.interfaces.source.BgSource
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.compose.preference.AdaptiveSwitchPreferenceItem
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 
 abstract class AbstractBgSourceWithSensorInsertLogPlugin(

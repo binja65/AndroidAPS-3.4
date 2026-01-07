@@ -14,7 +14,6 @@ import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.DoublePreferenceKey
 import app.aaps.core.keys.interfaces.IntPreferenceKey
 import app.aaps.core.keys.interfaces.IntentPreferenceKey
-import app.aaps.core.keys.interfaces.PreferenceItem
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.PreferenceVisibilityContext
@@ -219,7 +218,7 @@ fun AdaptivePreferenceItem(
     replaceWith = ReplaceWith("AdaptivePreferenceList(items = keys, preferences = preferences, config = config, profileUtil = profileUtil, visibilityContext = visibilityContext, onNavigateToSubScreen = null)")
 )
 @Composable
-fun AdaptivePreferenceList(
+fun AdaptivePreferenceListForListKeys(
     keys: List<PreferenceKey>,
     preferences: Preferences,
     config: Config,
@@ -241,79 +240,5 @@ fun AdaptivePreferenceList(
             profileUtil = profileUtil,
             visibilityContext = visibilityContext
         )
-    }
-}
-
-/**
- * Renders a list of preference items (keys, subscreens, custom items).
- * This is the enhanced version that handles all PreferenceItem types.
- *
- * Supported types:
- * - PreferenceKey: Rendered with AdaptivePreferenceItem
- * - PreferenceSubScreenDef: Rendered as navigation item
- * - DialogIntentPreference: Rendered with dialog handling
- * - ComposablePreferenceItem: Renders custom composable
- *
- * @param items List of PreferenceItems to render
- * @param preferences The Preferences instance
- * @param config The Config instance
- * @param profileUtil Required for UnitDoublePreferenceKey
- * @param visibilityContext Optional context for evaluating runtime visibility conditions
- * @param onNavigateToSubScreen Callback for navigating to subscreens
- */
-@Composable
-fun AdaptivePreferenceList(
-    items: List<PreferenceItem>,
-    preferences: Preferences,
-    config: Config,
-    profileUtil: ProfileUtil? = null,
-    visibilityContext: PreferenceVisibilityContext? = null,
-    onNavigateToSubScreen: ((PreferenceSubScreenDef) -> Unit)? = null
-) {
-    items.forEach { item ->
-        when (item) {
-            is PreferenceKey -> {
-                // Handle standard preference keys
-                if (visibilityContext == null || item.visibility.isVisible(visibilityContext)) {
-                    AdaptivePreferenceItem(
-                        key = item,
-                        preferences = preferences,
-                        config = config,
-                        profileUtil = profileUtil,
-                        visibilityContext = visibilityContext
-                    )
-                }
-            }
-
-            is PreferenceSubScreenDef -> {
-                // Handle subscreens as navigation items
-                if (onNavigateToSubScreen != null) {
-                    NavigablePreferenceItem(
-                        titleResId = item.titleResId,
-                        summaryResId = item.summaryResId,
-                        summaryItems = item.effectiveSummaryItems(),
-                        onClick = { onNavigateToSubScreen(item) }
-                    )
-                }
-            }
-
-            is DialogIntentPreference -> {
-                // Handle dialog preferences
-                item.Render { keyToRender ->
-                    AdaptivePreferenceItem(
-                        key = keyToRender,
-                        preferences = preferences,
-                        config = config,
-                        profileUtil = profileUtil,
-                        visibilityContext = visibilityContext
-                    )
-                }
-            }
-
-            is ComposablePreferenceItem -> {
-                // Handle custom composables
-                item.content()
-            }
-        }
     }
 }

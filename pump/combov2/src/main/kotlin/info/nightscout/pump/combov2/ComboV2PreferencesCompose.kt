@@ -1,4 +1,4 @@
-package info.nightscout.pump.combov2
+﻿package info.nightscout.pump.combov2
 
 // TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
 // Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
@@ -12,10 +12,10 @@ import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withActivity
 import app.aaps.core.keys.interfaces.withClick
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import info.nightscout.pump.combov2.activities.ComboV2PairingActivity
 import info.nightscout.pump.combov2.keys.ComboBooleanKey
 import info.nightscout.pump.combov2.keys.ComboIntKey
@@ -58,7 +58,7 @@ class ComboV2PreferencesCompose(
             override val isPumpPaired: Boolean = isPaired
         }
 
-        AdaptivePreferenceList(
+        AdaptivePreferenceListForListKeys(
             keys = mainKeys,
             preferences = preferences,
             config = config,

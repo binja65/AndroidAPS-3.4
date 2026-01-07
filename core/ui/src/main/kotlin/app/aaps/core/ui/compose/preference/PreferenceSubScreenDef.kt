@@ -1,0 +1,42 @@
+package app.aaps.core.ui.compose.preference
+
+import androidx.compose.runtime.Composable
+import app.aaps.core.keys.interfaces.PreferenceItem
+import app.aaps.core.keys.interfaces.PreferenceKey
+
+/**
+ * Lightweight preference subscreen definition.
+ * Can contain both PreferenceKeys and nested PreferenceSubScreenDefs for hierarchical structure.
+ * Content is auto-generated from items using AdaptivePreferenceList unless customContent is provided.
+ *
+ * @param key Unique key for this subscreen
+ * @param titleResId String resource ID for the screen title
+ * @param items List of preference items (keys and/or nested subscreens)
+ * @param keys Legacy parameter for backward compatibility - use items instead
+ * @param summaryResId Optional string resource ID for summary shown in parent list
+ * @param customContent Optional custom content - when null, content is auto-generated from items
+ */
+data class PreferenceSubScreenDef(
+    val key: String,
+    val titleResId: Int,
+    val items: List<PreferenceItem> = emptyList(),
+    @Deprecated("Use items instead", ReplaceWith("items"))
+    val keys: List<PreferenceKey> = emptyList(),
+    val summaryResId: Int? = null,
+    val customContent: (@Composable (PreferenceSectionState?) -> Unit)? = null
+) : PreferenceItem {
+
+    /** Effective items - use items if provided, otherwise fall back to keys for backward compatibility */
+    val effectiveItems: List<PreferenceItem>
+        get() = if (items.isNotEmpty()) items else keys
+
+    /** Effective summary items - from items' titleResId */
+    fun effectiveSummaryItems(): List<Int> =
+        effectiveItems.mapNotNull { item ->
+            when (item) {
+                is PreferenceKey -> item.titleResId.takeIf { it != 0 }
+                is PreferenceSubScreenDef -> item.titleResId.takeIf { it != 0 }
+                else -> null
+            }
+        }
+}

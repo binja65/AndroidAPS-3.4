@@ -10,18 +10,6 @@ import app.aaps.core.keys.interfaces.withClick
 import app.aaps.core.ui.compose.OkCancelDialog
 
 /**
- * A custom composable preference that can render arbitrary Compose content.
- * Use this for preferences that don't fit standard patterns.
- *
- * @param key Unique identifier for this preference item
- * @param content Composable content to render
- */
-class ComposablePreferenceItem(
-    val key: String,
-    val content: @Composable () -> Unit
-) : PreferenceItem
-
-/**
  * An intent preference that shows a confirmation dialog before executing.
  * Automatically manages dialog state and rendering.
  *

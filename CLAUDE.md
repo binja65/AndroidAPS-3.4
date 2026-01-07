@@ -22,6 +22,7 @@
 - Detect project path in WSL at start
 - Can edit files and run commands freely without asking for permission
 - Can use internet/web search as needed
+- For compilation do not use gradle daemon
 
 ## Project Info
 

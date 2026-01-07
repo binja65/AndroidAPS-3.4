@@ -8,10 +8,10 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withActivity
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.pump.insight.app_layer.activities.InsightPairingInformationActivity
 import app.aaps.pump.insight.keys.InsightBooleanKey
 import app.aaps.pump.insight.keys.InsightIntKey
@@ -45,7 +45,7 @@ class InsightPreferencesCompose(
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptivePreferenceList(
+        AdaptivePreferenceListForListKeys(
             keys = mainKeys,
             preferences = preferences,
             config = config

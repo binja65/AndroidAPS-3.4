@@ -1,4 +1,4 @@
-package app.aaps.pump.eopatch
+﻿package app.aaps.pump.eopatch
 
 // TODO: Remove after full migration to new Compose preferences (PreferenceSubScreenDef)
 // Replace this custom Compose UI with declarative preference definitions in the plugin's getPreferenceScreenContent()
@@ -8,10 +8,10 @@ import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.keys.interfaces.PreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.keys.interfaces.withEntries
-import app.aaps.core.ui.compose.preference.AdaptivePreferenceList
-import app.aaps.core.ui.compose.preference.NavigablePreferenceContent
+import app.aaps.core.ui.compose.preference.AdaptivePreferenceListForListKeys
+import app.aaps.core.ui.compose.preference.navigable.NavigablePreferenceContent
 import app.aaps.core.ui.compose.preference.PreferenceSectionState
-import app.aaps.core.ui.compose.preference.PreferenceSubScreen
+import app.aaps.core.ui.compose.preference.navigable.PreferenceSubScreen
 import app.aaps.pump.eopatch.keys.EopatchBooleanKey
 import app.aaps.pump.eopatch.keys.EopatchIntKey
 
@@ -32,7 +32,7 @@ class EopatchPreferencesCompose(
     )
 
     override val mainContent: (@Composable (PreferenceSectionState?) -> Unit) = { _ ->
-        AdaptivePreferenceList(
+        AdaptivePreferenceListForListKeys(
             keys = mainKeys,
             preferences = preferences,
             config = config
