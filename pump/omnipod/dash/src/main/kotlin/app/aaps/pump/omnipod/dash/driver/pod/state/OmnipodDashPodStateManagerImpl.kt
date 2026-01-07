@@ -706,7 +706,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
         if (isActivationCompleted) {
             logger.info(
                 LTag.PUMP,
-                "PUMP_BASAL err=%+.3fU dErr=%+.3fU act=%.3fU (tot=%.3fU bol=%.3fU) exp=%.3fU".format(
+                "PUMP_BASAL err=%+.2fU dErr=%+.2fU act=%.2fU (tot=%.2fU bol=%.2fU) exp=%.2fU".format(
                     basalDrift,
                     basalDrift - driftBefore,
                     basalDelivered,
