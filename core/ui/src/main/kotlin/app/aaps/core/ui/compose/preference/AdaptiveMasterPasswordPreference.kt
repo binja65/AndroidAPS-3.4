@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.protection.PasswordCheck
@@ -40,13 +41,24 @@ fun AdaptiveMasterPasswordPreferenceItem(
 
     if (!visibility.visible) return
 
-    val passwordState by rememberPreferenceStringState(preferences, stringKey)
+    // Use var to allow updating state via callbacks, which updates shared state for reactivity
+    var passwordState by rememberPreferenceStringState(preferences, stringKey)
     val hasPassword = passwordState.isNotEmpty()
 
     val summary = if (hasPassword) {
         stringResource(R.string.password_set)
     } else {
         stringResource(R.string.password_not_set)
+    }
+
+    // Callbacks to update shared state when password is set/cleared
+    val onPasswordSet: (String) -> Unit = { newPassword ->
+        // Update shared state with hashed value to trigger reactivity
+        // The actual value doesn't matter for visibility, just needs to be non-empty
+        passwordState = preferences.get(stringKey)
+    }
+    val onPasswordCleared: () -> Unit = {
+        passwordState = ""
     }
 
     Preference(
@@ -65,7 +77,9 @@ fun AdaptiveMasterPasswordPreferenceItem(
                             passwordCheck.setPassword(
                                 context = context,
                                 labelId = app.aaps.core.keys.R.string.master_password,
-                                preference = stringKey
+                                preference = stringKey,
+                                ok = onPasswordSet,
+                                clear = onPasswordCleared
                             )
                         }
                     )
@@ -74,7 +88,9 @@ fun AdaptiveMasterPasswordPreferenceItem(
                     passwordCheck.setPassword(
                         context = context,
                         labelId = app.aaps.core.keys.R.string.master_password,
-                        preference = stringKey
+                        preference = stringKey,
+                        ok = onPasswordSet,
+                        clear = onPasswordCleared
                     )
                 }
             }

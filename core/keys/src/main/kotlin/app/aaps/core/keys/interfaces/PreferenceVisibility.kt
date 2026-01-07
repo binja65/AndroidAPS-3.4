@@ -60,5 +60,12 @@ fun interface PreferenceVisibility {
         fun intEquals(key: IntPreferenceKey, value: Int) = PreferenceVisibility { ctx ->
             ctx.intEquals(key, value)
         }
+
+        /**
+         * Creates a visibility condition that checks if a StringKey is not empty.
+         */
+        fun stringNotEmpty(key: StringPreferenceKey) = PreferenceVisibility { ctx ->
+            ctx.preferences.get(key).isNotEmpty()
+        }
     }
 }

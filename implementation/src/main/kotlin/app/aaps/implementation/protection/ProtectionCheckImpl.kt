@@ -53,15 +53,19 @@ class ProtectionCheckImpl @Inject constructor(
     )
 
     override fun isLocked(protection: ProtectionCheck.Protection): Boolean {
+        // No master password = no protection at all
+        if (preferences.get(StringKey.ProtectionMasterPassword).isEmpty()) {
+            return false
+        }
         if (activeSession(protection)) {
             return false
         }
         return when (ProtectionType.entries[preferences.get(protectionTypeResourceIDs[protection.ordinal])]) {
             ProtectionType.NONE            -> false
             ProtectionType.BIOMETRIC       -> true
-            ProtectionType.MASTER_PASSWORD -> preferences.get(StringKey.ProtectionMasterPassword) != ""
-            ProtectionType.CUSTOM_PASSWORD -> preferences.get(passwordsResourceIDs[protection.ordinal]) != ""
-            ProtectionType.CUSTOM_PIN      -> preferences.get(pinsResourceIDs[protection.ordinal]) != ""
+            ProtectionType.MASTER_PASSWORD -> true
+            ProtectionType.CUSTOM_PASSWORD -> preferences.get(passwordsResourceIDs[protection.ordinal]).isNotEmpty()
+            ProtectionType.CUSTOM_PIN      -> preferences.get(pinsResourceIDs[protection.ordinal]).isNotEmpty()
         }
     }
 
@@ -84,6 +88,11 @@ class ProtectionCheckImpl @Inject constructor(
 
     @UiThread
     override fun queryProtection(activity: FragmentActivity, protection: ProtectionCheck.Protection, ok: Runnable?, cancel: Runnable?, fail: Runnable?) {
+        // No master password = no protection at all
+        if (preferences.get(StringKey.ProtectionMasterPassword).isEmpty()) {
+            ok?.run()
+            return
+        }
         if (activeSession(protection)) {
             onOk(protection)
             ok?.run()

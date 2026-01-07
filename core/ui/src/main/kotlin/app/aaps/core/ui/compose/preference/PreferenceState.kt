@@ -55,7 +55,7 @@ private class ReactiveVisibilityContext(
     override val preferences: Preferences get() = ReactivePreferencesWrapper(delegatePreferences)
 
     /**
-     * Wrapper that reads IntKeys through the shared state map for reactivity.
+     * Wrapper that reads keys through the shared state map for reactivity.
      */
     private class ReactivePreferencesWrapper(
         private val delegate: Preferences
@@ -63,6 +63,11 @@ private class ReactiveVisibilityContext(
         override fun get(key: IntPreferenceKey): Int {
             // Read through shared state for reactivity
             return getSharedIntState(key.key, delegate.get(key))
+        }
+
+        override fun get(key: StringPreferenceKey): String {
+            // Read through shared state for reactivity
+            return getSharedStringState(key.key, delegate.get(key))
         }
     }
 }

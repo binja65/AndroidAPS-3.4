@@ -51,7 +51,16 @@ enum class IntKey(
     OverviewBattCritical(key = "statuslights_bat_critical", defaultValue = 26, min = 0, max = 100, titleResId = R.string.pref_title_batt_critical, defaultedBySM = true, dependency = BooleanKey.OverviewShowStatusLights, unitsResId = R.string.units_format_percent_range),
     OverviewBolusPercentage(key = "boluswizard_percentage", defaultValue = 100, min = 10, max = 100, titleResId = R.string.pref_title_bolus_percentage, summaryResId = R.string.deliverpartofboluswizard, unitsResId = R.string.units_format_percent_range),
     OverviewResetBolusPercentageTime(key = "key_reset_boluswizard_percentage_time", defaultValue = 16, min = 6, max = 120, titleResId = R.string.pref_title_reset_bolus_percentage_time, summaryResId = R.string.deliver_part_of_boluswizard_reset_time, defaultedBySM = true, engineeringModeOnly = true, unitsResId = R.string.units_format_hours_range),
-    ProtectionTimeout(key = "protection_timeout", defaultValue = 1, min = 1, max = 180, titleResId = R.string.pref_title_protection_timeout, defaultedBySM = true, unitsResId = R.string.units_format_sec_range),
+    ProtectionTimeout(
+        key = "protection_timeout",
+        defaultValue = 1,
+        min = 1,
+        max = 180,
+        titleResId = R.string.pref_title_protection_timeout,
+        defaultedBySM = true,
+        unitsResId = R.string.units_format_sec_range,
+        visibility = PreferenceVisibility.stringNotEmpty(StringKey.ProtectionMasterPassword)
+    ),
     ProtectionTypeSettings(
         key = "settings_protection",
         defaultValue = ProtectionType.NONE.ordinal,
@@ -65,7 +74,8 @@ enum class IntKey(
             ProtectionType.MASTER_PASSWORD.ordinal to R.string.master_password,
             ProtectionType.CUSTOM_PASSWORD.ordinal to R.string.custom_password,
             ProtectionType.CUSTOM_PIN.ordinal to R.string.custom_pin
-        )
+        ),
+        visibility = PreferenceVisibility.stringNotEmpty(StringKey.ProtectionMasterPassword)
     ),
     ProtectionTypeApplication(
         key = "application_protection",
@@ -80,7 +90,8 @@ enum class IntKey(
             ProtectionType.MASTER_PASSWORD.ordinal to R.string.master_password,
             ProtectionType.CUSTOM_PASSWORD.ordinal to R.string.custom_password,
             ProtectionType.CUSTOM_PIN.ordinal to R.string.custom_pin
-        )
+        ),
+        visibility = PreferenceVisibility.stringNotEmpty(StringKey.ProtectionMasterPassword)
     ),
     ProtectionTypeBolus(
         key = "bolus_protection",
@@ -95,7 +106,8 @@ enum class IntKey(
             ProtectionType.MASTER_PASSWORD.ordinal to R.string.master_password,
             ProtectionType.CUSTOM_PASSWORD.ordinal to R.string.custom_password,
             ProtectionType.CUSTOM_PIN.ordinal to R.string.custom_pin
-        )
+        ),
+        visibility = PreferenceVisibility.stringNotEmpty(StringKey.ProtectionMasterPassword)
     ),
     SafetyMaxCarbs(key = "treatmentssafety_maxcarbs", defaultValue = 48, min = 1, max = 200, titleResId = R.string.pref_title_max_carbs, unitsResId = R.string.units_format_grams_range),
     LoopOpenModeMinChange(key = "loop_openmode_min_change", defaultValue = 30, min = 0, max = 50, titleResId = R.string.pref_title_open_mode_min_change, summaryResId = R.string.loop_open_mode_min_change_summary, defaultedBySM = true, unitsResId = R.string.units_format_percent_range),
