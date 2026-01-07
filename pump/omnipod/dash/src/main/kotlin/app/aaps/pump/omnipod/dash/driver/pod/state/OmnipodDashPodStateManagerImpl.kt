@@ -316,21 +316,6 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
         return total
     }
 
-    private fun logBasalDrift() {
-        // Log basal drift (actual - expected: positive = over-delivery, negative = under-delivery)
-        logger.info(
-            LTag.PUMP,
-            """
-            Basal Drift:
-              actual   = ${"%.3f".format(basalDelivered)}U
-                total delivered = ${"%.3f".format((pulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS)}U
-                bolus delivered = ${"%.3f".format((bolusPulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS)}U
-              expected = ${"%.3f".format(podState.basalExpected ?: basalDelivered)}U
-              error    = ${"%.3f".format(basalDrift)}U
-            """.trimIndent()
-        )
-    }
-
     override val lastStatusResponseReceived: Long
         get() = podState.lastStatusResponseReceived
 
@@ -684,6 +669,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
     override fun updateFromDefaultStatusResponse(response: DefaultStatusResponse) {
         val now = System.currentTimeMillis()
         val nowRealtime = SystemClock.elapsedRealtime()
+        val driftBefore = basalDrift.takeIf { isActivationCompleted } ?: 0.0  // for delta tracking
         
         logger.debug(LTag.PUMPCOMM, "Default status response :$response")
         podState.deliveryStatus = response.deliveryStatus
@@ -711,7 +697,21 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
             podState.activationTime = now - (response.minutesSinceActivation * 60_000)
         }
 
-        logBasalDrift()
+        // Log basal tracking information
+        if (isActivationCompleted) {
+            logger.info(
+                LTag.PUMP,
+                "PUMP_BASAL err=%+.3fU dErr=%+.3fU act=%.3fU (tot=%.3fU bol=%.3fU) exp=%.3fU".format(
+                    basalDrift,
+                    basalDrift - driftBefore,
+                    basalDelivered,
+                    (pulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS,
+                    (bolusPulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS,
+                    podState.basalExpected ?: 0.0
+                )
+            )
+        }
+
         store()
         rxBus.send(EventOmnipodDashPumpValuesChanged())
     }
@@ -766,6 +766,7 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
     override fun updateFromAlarmStatusResponse(response: AlarmStatusResponse) {
         val now = System.currentTimeMillis()
         val nowRealtime = SystemClock.elapsedRealtime()
+        val driftBefore = basalDrift.takeIf { isActivationCompleted } ?: 0.0  // for delta tracking
         
         logger.info(
             LTag.PUMPCOMM,
@@ -794,6 +795,21 @@ class OmnipodDashPodStateManagerImpl @Inject constructor(
         podState.lastUpdatedSystem = now
         podState.lastStatusResponseReceived = nowRealtime
         updateLastBolusFromResponse(response.bolusPulsesRemaining)
+
+        // Log basal tracking information
+        if (isActivationCompleted) {
+            logger.info(
+                LTag.PUMP,
+                "PUMP_BASAL err=%+.3fU dErr=%+.3fU act=%.3fU (tot=%.3fU bol=%.3fU) exp=%.3fU".format(
+                    basalDrift,
+                    basalDrift - driftBefore,
+                    basalDelivered,
+                    (pulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS,
+                    (bolusPulsesDelivered ?: 0) * PodConstants.POD_PULSE_BOLUS_UNITS,
+                    podState.basalExpected ?: 0.0
+                )
+            )
+        }
 
         store()
         rxBus.send(EventOmnipodDashPumpValuesChanged())
